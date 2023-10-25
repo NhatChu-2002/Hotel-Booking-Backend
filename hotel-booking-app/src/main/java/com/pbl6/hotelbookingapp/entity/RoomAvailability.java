@@ -17,7 +17,7 @@ public class RoomAvailability {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id")
-    private Long id;
+    private Integer id;
     @Column(name="start_day")
     private Date startDay;
     @Column(name="end_day")

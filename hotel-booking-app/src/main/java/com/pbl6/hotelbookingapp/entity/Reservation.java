@@ -18,7 +18,7 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private Integer id;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -38,7 +38,7 @@ public class Reservation {
     @PrimaryKeyJoinColumn
     private Invoice invoice;
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
-    private Set<ReservationStatus> reservationStatuses = new HashSet<>();
+    private Set<ReservationStatusEvent> reservationStatusEvents = new HashSet<>();
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
     private Set<RoomReserved> roomReserved = new HashSet<>();
 

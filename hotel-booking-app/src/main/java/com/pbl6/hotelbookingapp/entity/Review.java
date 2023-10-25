@@ -15,7 +15,7 @@ public class Review {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id")
-    private Long id;
+    private Integer id;
     @ManyToOne
     @JoinColumn(name="hotel_id")
     private Hotel hotel;
@@ -24,11 +24,11 @@ public class Review {
     private User user;
 
     @Column(name="cleanliness_rating")
-    private Double cleanlinessRating;
+    private Integer cleanlinessRating;
     @Column(name="location_rating")
-    private Double locationRating;
+    private Integer locationRating;
     @Column(name="staff_rating")
-    private Double staffRating;
+    private Integer staffRating;
     @Column(name="comment")
     private String comment;
 

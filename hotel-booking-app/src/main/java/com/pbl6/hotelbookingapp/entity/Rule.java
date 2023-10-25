@@ -7,14 +7,14 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Set;
 @Entity
-@Table(name="hotel_rule")
+@Table(name="rule")
 @Getter
 @Setter
-public class HotelRule {
+public class Rule {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id")
-    private Long id;
+    private Integer id;
     @Column(name="name")
     private String name;
     @Column(name="description")

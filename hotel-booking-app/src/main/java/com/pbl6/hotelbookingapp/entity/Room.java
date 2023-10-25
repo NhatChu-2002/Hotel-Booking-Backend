@@ -18,7 +18,7 @@ public class Room {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id")
-    private Long id;
+    private Integer id;
     @Column(name="price")
     private Double price;
     @Column(name="bathroom_count")
@@ -43,6 +43,9 @@ public class Room {
     @ManyToOne
     @JoinColumn(name = "room_type_id")
     private RoomType roomType;
+    @ManyToOne
+    @JoinColumn(name = "view_id")
+    private View view;
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private Set<RoomAvailability> roomAvailabilities = new HashSet<>();
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)

@@ -6,7 +6,6 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.sql.Time;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.HashSet;
@@ -20,7 +19,7 @@ public class Hotel {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id")
-    private Long id;
+    private Integer id;
     @Column(name="name")
     private String name;
     @Column(name="description")
@@ -58,7 +57,7 @@ public class Hotel {
     @JoinTable(name="hotel_rule",
             joinColumns = @JoinColumn(name="hotel_id"),
             inverseJoinColumns = @JoinColumn(name="rule_id"))
-    private Set<HotelRule> hotelRules = new HashSet<>();
+    private Set<Rule> hotelRules = new HashSet<>();
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
     private Set<ExtraService> extraServices = new HashSet<>();
 

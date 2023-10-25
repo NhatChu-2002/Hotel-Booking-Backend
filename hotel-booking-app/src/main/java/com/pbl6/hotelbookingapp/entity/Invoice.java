@@ -16,7 +16,7 @@ public class Invoice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private Integer id;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -33,7 +33,7 @@ public class Invoice {
     @Column(name = "time_canceled")
     private Date timeCanceled;
     @ManyToOne
-    @JoinColumn(name = "payment_type_id")
+    @JoinColumn(name = "payment_types_id")
     private PaymentType paymentType;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name= "reservation_id", referencedColumnName = "id")
