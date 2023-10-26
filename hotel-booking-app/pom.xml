@@ -64,6 +64,9 @@
 			<artifactId>jjwt-impl</artifactId>
 			<version>0.11.5</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-docker-compose -->
+
+
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-jackson</artifactId>
