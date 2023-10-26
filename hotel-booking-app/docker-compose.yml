@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  springboot-app:
+    image: springboot-app
+    restart: always
+    build: .
+    ports:
+      - 8001:8443
+    environment:
+      MYSQL_HOST: mysqldb
+      MYSQL_USER: root
+      MYSQL_PASSWORD: admin123
+      MYSQL_PORT: 3306
+  mysqldb:
+    container_name: mysqldb
+    image: mysql:8.0.34
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_DATABASE: booking-app
+      MYSQL_ROOT_PASSWORD: admin123
+
