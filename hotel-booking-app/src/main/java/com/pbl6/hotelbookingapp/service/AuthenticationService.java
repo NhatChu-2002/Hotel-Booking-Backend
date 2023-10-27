@@ -1,6 +1,7 @@
 package com.pbl6.hotelbookingapp.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pbl6.hotelbookingapp.Exception.UserAlreadyExistsException;
 import com.pbl6.hotelbookingapp.dto.AuthenticationRequest;
 import com.pbl6.hotelbookingapp.dto.AuthenticationResponse;
 import com.pbl6.hotelbookingapp.dto.RegisterRequest;
@@ -24,6 +25,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Optional;
 
 
 @Service
@@ -35,6 +37,11 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     public AuthenticationResponse register(RegisterRequest request) {
+        Optional<User> checkUser = repository.findByEmail(request.getEmail());
+        if (checkUser.isPresent()){
+            throw new UserAlreadyExistsException(
+                    "User with email "+request.getEmail() + " already exists");
+        }
         var user = User.builder()
                 .fullName(request.getFullName())
                 .email(request.getEmail())

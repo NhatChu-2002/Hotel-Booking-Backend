@@ -52,8 +52,6 @@ public class User implements UserDetails {
     private Set<Invoice> invoices = new HashSet<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Review> reviews = new HashSet<>();
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private Set<RoomImage> roomImages = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
