@@ -52,6 +52,7 @@ public class Hotel {
     @ManyToOne
     @JoinColumn(name = "rate_id")
     private HotelRate hotelRate;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE,
             CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name="hotel_rule",
@@ -67,4 +68,6 @@ public class Hotel {
     private Set<Room> rooms = new HashSet<>();
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
     private Set<Review> reviews = new HashSet<>();
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+    private Set<HotelImage> hotelImages = new HashSet<>();
 }
