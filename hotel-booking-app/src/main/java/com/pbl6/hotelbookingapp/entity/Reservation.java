@@ -34,11 +34,11 @@ public class Reservation {
     @Column(name = "modified_at")
     @UpdateTimestamp
     private Date modifiedAt;
+    @Enumerated(EnumType.STRING)
+    private ReservationStatus status;
     @OneToOne
     @PrimaryKeyJoinColumn
     private Invoice invoice;
-    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
-    private Set<ReservationStatusEvent> reservationStatusEvents = new HashSet<>();
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
     private Set<RoomReserved> roomReserved = new HashSet<>();
 

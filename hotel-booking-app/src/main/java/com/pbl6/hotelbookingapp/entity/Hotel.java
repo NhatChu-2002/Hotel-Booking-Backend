@@ -24,6 +24,8 @@ public class Hotel {
     private String name;
     @Column(name="description")
     private String description;
+    @Column(name="rule")
+    private String rule;
     @Column(name="province")
     private String province;
     @Column(name="district")
@@ -53,12 +55,8 @@ public class Hotel {
     @JoinColumn(name = "rate_id")
     private HotelRate hotelRate;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE,
-            CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinTable(name="hotel_rule",
-            joinColumns = @JoinColumn(name="hotel_id"),
-            inverseJoinColumns = @JoinColumn(name="rule_id"))
-    private Set<Rule> hotelRules = new HashSet<>();
+    @Enumerated(EnumType.STRING)
+    private HotelStatus status;
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
     private Set<ExtraService> extraServices = new HashSet<>();
 

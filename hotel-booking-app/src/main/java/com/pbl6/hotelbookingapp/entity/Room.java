@@ -53,12 +53,8 @@ public class Room {
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private Set<RoomImage> roomImages = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE,
-            CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinTable(name="room_bed_type",
-            joinColumns = @JoinColumn(name="room_id"),
-            inverseJoinColumns = @JoinColumn(name="bed_type_id"))
-    private Set<BedType> bedTypes = new HashSet<>();
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    private Set<RoomBedType> roomBedTypes = new HashSet<>();
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE,
             CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name="room_amenity",

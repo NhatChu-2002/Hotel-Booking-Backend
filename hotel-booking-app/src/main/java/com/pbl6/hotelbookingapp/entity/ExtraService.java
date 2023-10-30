@@ -9,7 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.util.Date;
 
 @Entity
-@Table(name="extra_service")
+@Table(name="extra_amenity")
 @Getter
 @Setter
 public class ExtraService {

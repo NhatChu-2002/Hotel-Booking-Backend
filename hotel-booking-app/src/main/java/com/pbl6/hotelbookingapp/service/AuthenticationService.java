@@ -71,6 +71,8 @@ public class AuthenticationService {
         );
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
+        var id = user.getId();
+        var role = user.getRole();
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
@@ -79,6 +81,8 @@ public class AuthenticationService {
                 .builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
+                .id(id)
+                .role(String.valueOf(role))
                 .build();
     }
     private void revokeAllUserTokens(User user)

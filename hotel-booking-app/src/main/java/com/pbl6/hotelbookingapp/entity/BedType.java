@@ -28,10 +28,6 @@ public class BedType {
     @Column(name="modified_at")
     @UpdateTimestamp
     private Date modifiedAt;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE,
-            CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinTable(name="room_bed_type",
-            joinColumns = @JoinColumn(name="bed_type_id"),
-            inverseJoinColumns = @JoinColumn(name="room_id"))
-    private Set<Room> rooms = new HashSet<>();
+    @OneToMany(mappedBy = "bedType", cascade = CascadeType.ALL)
+    private Set<RoomBedType> roomBedTypes = new HashSet<>();
 }
