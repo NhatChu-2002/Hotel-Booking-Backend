@@ -22,7 +22,7 @@ public class RoomImage {
 
     @ManyToOne
     @JoinColumn(name="room_id")
-    private Room room;
+    private RoomType roomType;
     @Column(name="image_path")
     private String imagePath;
     @Column(name="created_at")

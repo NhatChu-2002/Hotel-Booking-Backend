@@ -11,8 +11,8 @@ import lombok.Setter;
 public class RoomBedType {
     @Id
     @ManyToOne
-    @JoinColumn(name = "room_id")
-    private Room room;
+    @JoinColumn(name = "room_type_id")
+    private RoomType roomType;
     @Id
     @ManyToOne
     @JoinColumn(name = "bed_type_id")

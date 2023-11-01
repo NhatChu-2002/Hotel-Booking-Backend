@@ -24,7 +24,14 @@ public class RegistrationExceptionHandler {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(UserAlreadyExistsException.class)
-    public Map<String, String> userNotFound(UserAlreadyExistsException ex){
+    public Map<String, String> userAlreadyExists(UserAlreadyExistsException ex){
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return error;
+    }
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(UserNotFoundException.class)
+    public Map<String, String> userNotFound(UserNotFoundException ex){
         Map<String, String> error = new HashMap<>();
         error.put("error", ex.getMessage());
         return error;

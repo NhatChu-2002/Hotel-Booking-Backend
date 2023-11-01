@@ -3,6 +3,7 @@ package com.pbl6.hotelbookingapp.controller;
 import com.pbl6.hotelbookingapp.dto.AuthenticationRequest;
 import com.pbl6.hotelbookingapp.dto.AuthenticationResponse;
 import com.pbl6.hotelbookingapp.dto.RegisterRequest;
+import com.pbl6.hotelbookingapp.dto.RegisterResponse;
 import com.pbl6.hotelbookingapp.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,7 +25,7 @@ public class AuthenticationController {
     private final AuthenticationService service;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
+    public ResponseEntity<RegisterResponse> register(
             @RequestBody @Valid RegisterRequest request
     ) {
         return ResponseEntity.ok(service.register(request));

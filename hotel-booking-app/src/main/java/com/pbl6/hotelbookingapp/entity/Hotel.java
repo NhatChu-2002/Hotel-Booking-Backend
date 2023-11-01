@@ -63,7 +63,7 @@ public class Hotel {
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
     private Set<HotelService> hotelServices = new HashSet<>();
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
-    private Set<Room> rooms = new HashSet<>();
+    private Set<RoomType> roomTypes = new HashSet<>();
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
     private Set<Review> reviews = new HashSet<>();
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)

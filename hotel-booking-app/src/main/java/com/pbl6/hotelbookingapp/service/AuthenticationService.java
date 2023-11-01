@@ -2,9 +2,11 @@ package com.pbl6.hotelbookingapp.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pbl6.hotelbookingapp.Exception.UserAlreadyExistsException;
+import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
 import com.pbl6.hotelbookingapp.dto.AuthenticationRequest;
 import com.pbl6.hotelbookingapp.dto.AuthenticationResponse;
 import com.pbl6.hotelbookingapp.dto.RegisterRequest;
+import com.pbl6.hotelbookingapp.dto.RegisterResponse;
 import com.pbl6.hotelbookingapp.entity.Role;
 import com.pbl6.hotelbookingapp.entity.Token;
 import com.pbl6.hotelbookingapp.entity.TokenType;
@@ -17,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,7 +39,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    public AuthenticationResponse register(RegisterRequest request) {
+    public RegisterResponse register(RegisterRequest request) {
         Optional<User> checkUser = repository.findByEmail(request.getEmail());
         if (checkUser.isPresent()){
             throw new UserAlreadyExistsException(
@@ -55,7 +58,7 @@ public class AuthenticationService {
 
         saveUserToken(savedUser, jwtToken);
 
-        return AuthenticationResponse.builder().accessToken(jwtToken)
+        return RegisterResponse.builder().accessToken(jwtToken)
                 .refreshToken(refreshToken).build();
     }
 
@@ -63,14 +66,29 @@ public class AuthenticationService {
 
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        Optional<User> checkUser = repository.findByEmail(request.getEmail());
+        if (!checkUser.isPresent()){
+            throw new UserNotFoundException(
+                    "User not found:  "+request.getEmail());
+        }
+        else{
+            User user = checkUser.get();
+            if(!passwordEncoder.matches(user.getPassword(), request.getPassword()))
+            {
+                throw new UserNotFoundException(
+                        "Wrong password! ");
+            }
+        }
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
-        var user = repository.findByEmail(request.getEmail())
-                .orElseThrow();
+
+
+
+        User user = checkUser.get();
         var id = user.getId();
         var role = user.getRole();
         var jwtToken = jwtService.generateToken(user);

@@ -10,10 +10,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 @Entity
-@Table(name="amenity")
+@Table(name="room_amenity")
 @Getter
 @Setter
-public class Amenity {
+public class RoomAmenity {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id")
@@ -28,8 +28,8 @@ public class Amenity {
     private Date modifiedAt;
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE,
             CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinTable(name="room_amenity",
-            joinColumns = @JoinColumn(name="amenity_id"),
-            inverseJoinColumns = @JoinColumn(name="room_id"))
-    private Set<Room> rooms = new HashSet<>();
+    @JoinTable(name="room_room_amenity",
+            joinColumns = @JoinColumn(name="room_amenity_id"),
+            inverseJoinColumns = @JoinColumn(name="room_type_id"))
+    private Set<RoomType> roomTypes = new HashSet<>();
 }

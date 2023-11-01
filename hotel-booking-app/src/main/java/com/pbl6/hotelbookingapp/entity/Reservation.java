@@ -24,10 +24,6 @@ public class Reservation {
     private User user;
     @Column(name = "email")
     private String email;
-    @Column(name = "start_day")
-    private Date startDate;
-    @Column(name = "end_date")
-    private Date endDate;
     @Column(name = "created_at")
     @CreationTimestamp
     private Date createdAt;

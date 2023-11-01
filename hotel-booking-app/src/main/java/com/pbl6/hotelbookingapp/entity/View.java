@@ -29,5 +29,5 @@ public class View {
     @UpdateTimestamp
     private Date modifiedAt;
     @OneToMany(mappedBy = "view", cascade = CascadeType.ALL)
-    private Set<Room> rooms = new HashSet<>();
+    private Set<RoomType> roomTypes = new HashSet<>();
 }

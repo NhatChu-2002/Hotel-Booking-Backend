@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
+
 @Entity
 @Table(name="room_reserved")
 @Getter
@@ -19,10 +20,12 @@ public class RoomReserved {
     @ManyToOne
     @JoinColumn(name="reservation_id")
     private Reservation reservation;
+    @Column(name="start_day")
+    private Date startDay;
+    @Column(name="end_day")
+    private Date endDay;
     @ManyToOne
     @JoinColumn(name="room_id")
     private Room room;
-    @Column(name="price_per_day")
-    private Double pricePerDay;
 
 }

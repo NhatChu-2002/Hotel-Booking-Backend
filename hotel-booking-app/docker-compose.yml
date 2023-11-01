@@ -1,0 +1,66 @@
+version: "3.8"
+services:
+  springboot-app:
+    image: springboot-app
+    restart: always
+    build: .
+    ports:
+      - 8001:8443
+    environment:
+      MYSQL_HOST: mysqldb
+      MYSQL_USER: root
+      MYSQL_PASSWORD: admin123
+      MYSQL_PORT: 3306
+  mysqldb:
+    container_name: mysqldb
+    image: mysql:8.0.34
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_DATABASE: booking-app
+      MYSQL_ROOT_PASSWORD: admin123
+
+#version: "3.8"
+#
+#services:
+#  mysqldb:
+#    image: mysql:8.0.34
+#    restart: unless-stopped
+#    env_file: ./.env
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+#      - MYSQL_DATABASE=$MYSQLDB_DATABASE
+#    ports:
+#      - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
+#    volumes:
+#      - db:/var/lib/mysql
+#  app:
+#    depends_on:
+#      - mysqldb
+#    build: .
+#    restart: on-failure
+#    env_file: ./.env
+#    ports:
+#      - $SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT
+#    environment:
+#      SPRING_APPLICATION_JSON: '{
+#            "spring.datasource.url"  : "jdbc:mysql://mysqldb:$MYSQLDB_DOCKER_PORT/$MYSQLDB_DATABASE?useSSL=false",
+#            "spring.datasource.username" : "$MYSQLDB_USER",
+#            "spring.datasource.password" : "$MYSQLDB_ROOT_PASSWORD",
+#            "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.MySQL5InnoDBDialect",
+#            "spring.jpa.hibernate.ddl-auto" : "update",
+#            "spring.data.rest.base-path" : "/api",
+#            "allowed.origins" : "*",
+#            "spring.jpa.show-sql" : "true",
+#            "server.port" : "8443",
+#            "application.security.jwt.secret-key" : "a67706fb63980991bcdc43d513f7dd6339dc26aec1a6a4d5e0ae0183f8e8a881"
+#            "application.security.jwt.expiration" : "86400000"
+#            "application.security.jwt.refresh-token.expiration" : "604800000"
+#          }'
+#    volumes:
+#      - .m2:/root/.m2
+#    stdin_open: true
+#    tty: true
+#
+#volumes:
+#  db:
