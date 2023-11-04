@@ -1,5 +1,6 @@
 package com.pbl6.hotelbookingapp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ public class RoomReserved {
     private Integer id;
     @ManyToOne
     @JoinColumn(name="reservation_id")
+    @JsonIgnore
     private Reservation reservation;
     @Column(name="start_day")
     private Date startDay;
@@ -26,6 +28,7 @@ public class RoomReserved {
     private Date endDay;
     @ManyToOne
     @JoinColumn(name="room_id")
+    @JsonIgnore
     private Room room;
 
 }

@@ -1,21 +1,33 @@
 package com.pbl6.hotelbookingapp.service;
 
+import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
 import com.pbl6.hotelbookingapp.dto.ChangePasswordRequest;
+import com.pbl6.hotelbookingapp.dto.EditUserRequest;
 import com.pbl6.hotelbookingapp.entity.User;
 import com.pbl6.hotelbookingapp.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
 
-    private final PasswordEncoder passwordEncoder;
-    private final UserRepository repository;
+    private PasswordEncoder passwordEncoder;
+    private UserRepository repository;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder)
+    {
+        this.passwordEncoder = passwordEncoder;
+        this.repository = userRepository;
+    }
+
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
 
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
@@ -35,4 +47,34 @@ public class UserService {
         // save the new password
         repository.save(user);
     }
+    public List<User> getAllUsers() {
+        return repository.findAll();
+    }
+    @Transactional
+    public void editUser (EditUserRequest updateUser, Integer id){
+        Optional<User> optionalUser = repository.findById(id);
+
+        if (optionalUser.isPresent()) {
+            if (repository.existsByEmailAndIdNot(updateUser.getEmail(), id))
+            {
+                throw new UserNotFoundException("Email already exists!");
+            }
+            if(!updateUser.getPhoneNumber().isBlank()){
+
+                if (!Validator.validatePhoneNumber(updateUser.getPhoneNumber())){
+                    throw new UserNotFoundException("Wrong phone number format!");
+                }
+            }
+            repository.updateUserDetails(id,updateUser.getFullName(),
+                                            updateUser.getEmail(),
+                                            updateUser.getPhoneNumber(),
+                                            updateUser.getGender(),
+                                            updateUser.getDateOfBirth());
+
+        } else {
+            throw new UserNotFoundException("User not found with id: " + id);
+        }
+
+    }
+
 }

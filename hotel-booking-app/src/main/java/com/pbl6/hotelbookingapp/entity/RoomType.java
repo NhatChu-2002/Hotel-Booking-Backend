@@ -1,5 +1,6 @@
 package com.pbl6.hotelbookingapp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,22 +41,28 @@ public class RoomType {
     private Date modifiedAt;
     @ManyToOne
     @JoinColumn(name = "hotel_id")
+    @JsonIgnore
     private Hotel hotel;
     @ManyToOne
     @JoinColumn(name = "view_id")
+    @JsonIgnore
     private View view;
     @OneToMany(mappedBy = "roomType", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Room> room = new HashSet<>();
     @OneToMany(mappedBy = "roomType", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<RoomImage> roomImages = new HashSet<>();
 
     @OneToMany(mappedBy = "roomType", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<RoomBedType> roomBedTypes = new HashSet<>();
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE,
             CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name="room_room_amenity",
             joinColumns = @JoinColumn(name="room_id"),
             inverseJoinColumns = @JoinColumn(name="room_amenity_id"))
+    @JsonIgnore
     private Set<RoomAmenity> amenities = new HashSet<>();
 
 }

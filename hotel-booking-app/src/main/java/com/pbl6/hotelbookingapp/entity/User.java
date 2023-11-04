@@ -1,5 +1,7 @@
 package com.pbl6.hotelbookingapp.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -31,26 +33,26 @@ public class User implements UserDetails {
     @Column(name="phone_number")
     private String phoneNumber;
     @Column(name="date_of_birth")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Date dateOfBirth;
     @Column(name="gender")
-    private Integer gender;
+    private Boolean gender;
     @Column(name="created_at")
     @CreationTimestamp
     private Date createdAt;
     @Column(name="modified_at")
     @UpdateTimestamp
     private Date modifiedAt;
-    @Column(name="expire_time")
-    private Date expireTime;
-    @Column(name="otp")
-    private String otp;
     @Enumerated(EnumType.STRING)
     private Role role;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Token> tokens;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Invoice> invoices = new HashSet<>();
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Review> reviews = new HashSet<>();
 
     @Override

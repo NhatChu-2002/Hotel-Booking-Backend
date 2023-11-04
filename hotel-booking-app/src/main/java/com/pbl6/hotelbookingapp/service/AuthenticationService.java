@@ -1,7 +1,6 @@
 package com.pbl6.hotelbookingapp.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pbl6.hotelbookingapp.Exception.UserAlreadyExistsException;
 import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
 import com.pbl6.hotelbookingapp.dto.AuthenticationRequest;
 import com.pbl6.hotelbookingapp.dto.AuthenticationResponse;
@@ -16,15 +15,10 @@ import com.pbl6.hotelbookingapp.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.parser.Authorization;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -42,7 +36,7 @@ public class AuthenticationService {
     public RegisterResponse register(RegisterRequest request) {
         Optional<User> checkUser = repository.findByEmail(request.getEmail());
         if (checkUser.isPresent()){
-            throw new UserAlreadyExistsException(
+            throw new UserNotFoundException(
                     "User with email "+request.getEmail() + " already exists");
         }
         var user = User.builder()
@@ -73,35 +67,35 @@ public class AuthenticationService {
         }
         else{
             User user = checkUser.get();
-            if(!passwordEncoder.matches(user.getPassword(), request.getPassword()))
+            if(!passwordEncoder.matches(request.getPassword(), user.getPassword()))
             {
                 throw new UserNotFoundException(
                         "Wrong password! ");
             }
+            else{
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                request.getEmail(),
+                                request.getPassword()
+                        )
+                );
+
+                var id = user.getId();
+                var role = user.getRole();
+                var jwtToken = jwtService.generateToken(user);
+                var refreshToken = jwtService.generateRefreshToken(user);
+                revokeAllUserTokens(user);
+                saveUserToken(user, jwtToken);
+                return AuthenticationResponse
+                        .builder()
+                        .accessToken(jwtToken)
+                        .refreshToken(refreshToken)
+                        .id(id)
+                        .role(String.valueOf(role))
+                        .build();
+            }
         }
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
 
-
-
-        User user = checkUser.get();
-        var id = user.getId();
-        var role = user.getRole();
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        revokeAllUserTokens(user);
-        saveUserToken(user, jwtToken);
-        return AuthenticationResponse
-                .builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .id(id)
-                .role(String.valueOf(role))
-                .build();
     }
     private void revokeAllUserTokens(User user)
     {
@@ -147,11 +141,11 @@ public class AuthenticationService {
                 var accessToken = jwtService.generateToken(user);
                 revokeAllUserTokens(user);
                 saveUserToken(user, accessToken);
-                var authResponse = AuthenticationResponse.builder()
+                var refreshResponse = RegisterResponse.builder()
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)
                         .build();
-                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+                new ObjectMapper().writeValue(response.getOutputStream(), refreshResponse);
             }
         }
     }
