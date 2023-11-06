@@ -1,18 +1,27 @@
-#FROM maven:3.8.3-openjdk-17 AS MAVEN_BUILD
 #
-#COPY ./ ./
+#FROM openjdk:17-alpine
 #
-#RUN mvn install package
-#
+#ADD target/*.jar app.jar
+#ENTRYPOINT ["java","-jar","app.jar"]
+
+
+
+FROM maven:3.8.3-openjdk-17 AS MAVEN_BUILD
+
+WORKDIR /app
+
+COPY pom.xml .
+
+RUN mvn dependency:go-offline
+
+COPY src ./src
+
+RUN mvn package -DskipTests
+
+RUN mv target/*.jar app.jar
+
 FROM openjdk:17-alpine
 
-#COPY --from=MAVEN_BUILD /hotel-booking-app/target/demo-0.0.1-SNAPSHOT.jar /demo.jar
-ADD target/*.jar app.jar
-ENTRYPOINT ["java","-jar","app.jar"]
-#FROM maven:3.8.5-openjdk-17
-#
-#WORKDIR /hotel-booking-app
-#COPY . .
-#RUN mvn clean install
-#
-#CMD mvn spring-boot:run
+COPY --from=MAVEN_BUILD /app/app.jar /app/app.jar
+
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
