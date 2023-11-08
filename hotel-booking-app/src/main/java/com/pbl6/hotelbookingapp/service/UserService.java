@@ -27,6 +27,10 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
         this.repository = userRepository;
     }
+    public Optional<User> findByEmail(String email)
+    {
+        return repository.findByEmail(email);
+    }
 
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
 

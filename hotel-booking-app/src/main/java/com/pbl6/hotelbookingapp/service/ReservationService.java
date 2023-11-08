@@ -8,24 +8,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReservationService {
     private RoomService roomService;
     private RoomTypeService roomTypeService;
     private HotelService hotelService;
+    private UserService userService;
     private ReservationRepository reservationRepository;
     private RoomReservedRepository roomReservedRepository;
 
 
-    public ReservationService(RoomService roomService, RoomTypeService roomTypeService, HotelService hotelService, ReservationRepository reservationRepository, RoomReservedRepository roomReservedRepository) {
-
+    public ReservationService(RoomService roomService, RoomTypeService roomTypeService, HotelService hotelService, UserService userService, ReservationRepository reservationRepository, RoomReservedRepository roomReservedRepository) {
         this.roomService = roomService;
         this.roomTypeService = roomTypeService;
         this.hotelService = hotelService;
+        this.userService = userService;
         this.reservationRepository = reservationRepository;
         this.roomReservedRepository = roomReservedRepository;
     }
+
+
     public void makeReservation(ReservationRequest request) {
         List<Room> availableRooms = roomService.getAvailableRooms(request.getHotelName(),
                                                                     request.getProvince(),
@@ -42,6 +46,7 @@ public class ReservationService {
 
         // Tiến hành đặt phòng
         try {
+//            Optional<User> user = userService.findByEmail(request.getEmail());
 //            Reservation reservation = new Reservation();
 //            reservation.setUser();
 //            reservation.setEmail();
@@ -67,7 +72,7 @@ public class ReservationService {
 //                roomService.markRoomAsReserved(room.getId(), reservation.getId());
             }
         } catch (Exception e) {
-            throw new RuntimeException("Đặt phòng không thành công.");
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

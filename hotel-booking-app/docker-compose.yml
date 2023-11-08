@@ -22,6 +22,10 @@ services:
     environment:
       MYSQL_DATABASE: booking-app
       MYSQL_ROOT_PASSWORD: admin123
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_general_ci
+    volumes:
+      - ./init-scripts:/docker-entrypoint-initdb.d
     networks:
       - shared_network
 networks:

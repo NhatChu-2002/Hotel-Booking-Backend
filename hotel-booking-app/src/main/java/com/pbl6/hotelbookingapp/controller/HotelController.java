@@ -10,7 +10,7 @@ import java.util.Set;
 
 
 @RestController
-@RequestMapping("api/hotels")
+@RequestMapping("api/hotel")
 public class HotelController {
     private HotelService hotelService;
 
