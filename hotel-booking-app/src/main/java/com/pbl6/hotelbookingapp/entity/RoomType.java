@@ -19,20 +19,25 @@ public class RoomType {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id")
     private Integer id;
-    @Column(name="price")
-    private Double price;
     @Column(name="name")
     private String name;
+<<<<<<< HEAD
     @Column(name="count")
     private Double count;
+=======
+    @Column(name = "count")
+    private Integer count;
+    @Column(name="price")
+    private Double price;
+>>>>>>> 19689a4420e4a29f5d912ac8a9a82a0e05cb0258
     @Column(name="bathroom_count")
-    private Long bathroomCount;
+    private Integer bathroomCount;
     @Column(name="adult_count")
-    private Long adultCount;
+    private Integer adultCount;
     @Column(name="children_count")
-    private Long childrenCount;
+    private Integer childrenCount;
     @Column(name="room_area")
-    private Double roomArea;
+    private Integer roomArea;
     @Column(name="description")
     private String description;
     @Column(name="created_at")
@@ -51,7 +56,7 @@ public class RoomType {
     private View view;
     @OneToMany(mappedBy = "roomType", cascade = CascadeType.ALL)
     @JsonIgnore
-    private Set<Room> room = new HashSet<>();
+    private Set<Room> rooms = new HashSet<>();
     @OneToMany(mappedBy = "roomType", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<RoomImage> roomImages = new HashSet<>();

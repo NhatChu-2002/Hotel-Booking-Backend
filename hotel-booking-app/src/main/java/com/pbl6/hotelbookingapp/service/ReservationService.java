@@ -42,24 +42,24 @@ public class ReservationService {
 
         // Tiến hành đặt phòng
         try {
-            Reservation reservation = new Reservation();
-            reservation.setUser();
-            reservation.setEmail();
-            reservation.setStatus();
-            reservation.setSiteFee();
-            reservation.setTaxPaid();
-            reservation.setTotalPrice();
+//            Reservation reservation = new Reservation();
+//            reservation.setUser();
+//            reservation.setEmail();
+//            reservation.setStatus();
+//            reservation.setSiteFee();
+//            reservation.setTaxPaid();
+//            reservation.setTotalPrice();
+//
+//            RoomReserved roomReserved = new RoomReserved();
+//            roomReserved.setReservation(reservation);
+//            roomReserved.setRoom();
+//            roomReserved.setStartDay();
+//            roomReserved.setEndDay();
 
-            RoomReserved roomReserved = new RoomReserved();
-            roomReserved.setReservation(reservation);
-            roomReserved.setRoom();
-            roomReserved.setStartDay();
-            roomReserved.setEndDay();
 
 
-
-            reservationRepository.save(reservation);
-            roomReservedRepository.save(roomReserved);
+//            reservationRepository.save(reservation);
+//            roomReservedRepository.save(roomReserved);
 
             // Đánh dấu các phòng đã được đặt
             for (int i = 0; i < request.getCount(); i++) {

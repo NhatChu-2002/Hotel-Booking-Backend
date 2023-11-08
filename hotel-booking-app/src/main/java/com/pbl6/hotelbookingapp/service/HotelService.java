@@ -1,5 +1,6 @@
 package com.pbl6.hotelbookingapp.service;
 
+
 import com.pbl6.hotelbookingapp.entity.Hotel;
 import com.pbl6.hotelbookingapp.repository.HotelRepository;
 import org.springframework.stereotype.Service;
@@ -17,3 +18,4 @@ public class HotelService {
         return hotelRepository.findFirstByNameAndProvinceAndStreet(hotelName,province, street);
     }
 }
+
