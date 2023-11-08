@@ -15,7 +15,7 @@ DROP SCHEMA IF EXISTS `booking-app` ;
 -- -----------------------------------------------------
 -- Schema booking-app
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `booking-app` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci ;
+CREATE SCHEMA IF NOT EXISTS `booking-app` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci ;
 USE `booking-app` ;
 
 -- -----------------------------------------------------

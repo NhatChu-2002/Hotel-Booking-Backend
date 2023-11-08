@@ -17,13 +17,13 @@ services:
   mysqldb:
     container_name: mysqldb
     image: mysql:8.0.34
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
       - 3307:3306
     environment:
+      LANG: C.UTF-8
       MYSQL_DATABASE: booking-app
       MYSQL_ROOT_PASSWORD: admin123
-      MYSQL_CHARSET: utf8mb4
-      MYSQL_COLLATION: utf8mb4_general_ci
     volumes:
       - ./init-scripts:/docker-entrypoint-initdb.d
     networks:
