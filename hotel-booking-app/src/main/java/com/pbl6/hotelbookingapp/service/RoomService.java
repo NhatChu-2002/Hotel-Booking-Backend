@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,7 +26,7 @@ public class RoomService {
     private final HotelService hotelService;
     private final RoomReservedRepository roomReservedRepository;
 
-    public List<Room> getAvailableRooms(String hotelName,String province,String street, String roomTypeName, Date startDay, Date endDay, int count) {
+    public List<Room> getAvailableRooms(String hotelName, String province, String street, String roomTypeName, LocalDate startDay, LocalDate endDay, int count) {
         List<Room> availableRooms = new ArrayList<>();
 
         Optional<RoomType> roomType = roomTypeService.findRoomTypeByNameAndHotelId(roomTypeName, hotelService.getHotelByNameAndProvinceAndStreet(hotelName,province,street).get().getId());

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 @Data
 @Builder
@@ -19,8 +20,7 @@ public class ReservationRequest {
     private String email;
     private Integer count;
     private Double price;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    private Date startDay;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    private Date endDay;
+
+    private LocalDate startDay;
+    private LocalDate endDay;
 }

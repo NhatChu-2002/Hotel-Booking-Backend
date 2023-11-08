@@ -15,6 +15,6 @@ public interface RoomReservedRepository extends JpaRepository<RoomReserved,Integ
             "AND ((rr.startDay >= :startDay AND rr.startDay <= :endDay) OR " +
             "(rr.endDay >= :startDay AND rr.endDay <= :endDay))")
     List<RoomReserved> checkAvailability(@Param("roomId") Integer roomId,
-                                         @Param("startDay") @DateTimeFormat(pattern = "dd-MM-yyyy") Date startDay,
-                                         @Param("endDay") @DateTimeFormat(pattern = "dd-MM-yyyy") Date endDay);
+                                         @Param("startDay") LocalDate startDay,
+                                         @Param("endDay") LocalDate endDay);
 }
