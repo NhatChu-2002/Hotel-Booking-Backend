@@ -3,7 +3,6 @@ package com.pbl6.hotelbookingapp.controller;
 import com.pbl6.hotelbookingapp.dto.CustomSearchResult;
 import com.pbl6.hotelbookingapp.dto.HotelWithTopRating;
 import com.pbl6.hotelbookingapp.service.HotelService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.Set;
