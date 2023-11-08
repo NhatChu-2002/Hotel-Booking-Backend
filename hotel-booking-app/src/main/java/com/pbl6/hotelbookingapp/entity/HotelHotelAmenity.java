@@ -8,15 +8,15 @@ import lombok.Setter;
 @Table(name="hotel_hotel_amenity")
 @Getter
 @Setter
-public class HotelService {
+public class HotelHotelAmenity {
     @Id
     @ManyToOne
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
     @Id
     @ManyToOne
-    @JoinColumn(name = "service_id")
-    private Service service;
+    @JoinColumn(name = "hotel_amenity_id")
+    private HotelAmenity hotelAmenity;
     @Column(name="price")
     private Double price;
 }

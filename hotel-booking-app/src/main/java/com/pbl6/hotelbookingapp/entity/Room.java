@@ -16,7 +16,7 @@ public class Room {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="id")
     private Integer id;
-    @Column(name="desc")
+    @Column(name="description")
     private String desc;
     @ManyToOne
     @JoinColumn(name = "room_type_id")
