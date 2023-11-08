@@ -1,5 +1,6 @@
 package com.pbl6.hotelbookingapp.service;
 
+import com.pbl6.hotelbookingapp.entity.Hotel;
 import com.pbl6.hotelbookingapp.entity.Room;
 import com.pbl6.hotelbookingapp.entity.RoomReserved;
 import com.pbl6.hotelbookingapp.entity.RoomType;
@@ -26,11 +27,10 @@ public class RoomService {
     private final HotelService hotelService;
     private final RoomReservedRepository roomReservedRepository;
 
-    public List<Room> getAvailableRooms(String hotelName, String province, String street, String roomTypeName, LocalDate startDay, LocalDate endDay, int count) {
+    public List<Room> getAvailableRooms(RoomType roomType, LocalDate startDay, LocalDate endDay, int count) {
         List<Room> availableRooms = new ArrayList<>();
 
-        Optional<RoomType> roomType = roomTypeService.findRoomTypeByNameAndHotelId(roomTypeName, hotelService.getHotelByNameAndProvinceAndStreet(hotelName,province,street).get().getId());
-        List<Room> rooms = roomRepository.findByRoomTypeId(roomType.get().getId());
+        List<Room> rooms = roomRepository.findByRoomTypeId(roomType.getId());
 
         for (Room room : rooms) {
 

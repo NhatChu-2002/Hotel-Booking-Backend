@@ -2,6 +2,7 @@ package com.pbl6.hotelbookingapp.controller;
 
 import com.pbl6.hotelbookingapp.dto.CustomSearchResult;
 import com.pbl6.hotelbookingapp.dto.HotelWithTopRating;
+import com.pbl6.hotelbookingapp.dto.SearchRequest;
 import com.pbl6.hotelbookingapp.service.HotelService;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
@@ -23,13 +24,7 @@ public class HotelController {
     }
 
     @GetMapping("/search")
-    public CustomSearchResult searchHotels(
-            @RequestParam String province,
-            @RequestParam LocalDate checkinDay,
-            @RequestParam LocalDate checkoutDay,
-            @RequestParam int count,
-            @RequestParam int adultCount,
-            @RequestParam int childrenCount) {
-        return hotelService.searchHotels(province, checkinDay, checkoutDay, count, adultCount, childrenCount);
+    public CustomSearchResult searchHotels(@RequestBody SearchRequest request) {
+        return hotelService.searchHotels(request);
     }
 }

@@ -15,6 +15,7 @@ import java.util.Set;
 
 public interface HotelRepository extends JpaRepository<Hotel,Integer> {
     Optional<Hotel> findFirstByNameAndProvinceAndStreet(String name, String province, String street);
+    List<Hotel> findByProvince(String province);
     @Query("SELECT NEW com.pbl6.hotelbookingapp.dto.HotelWithTopRating(MIN(hi.imagePath), h.name, CONCAT(h.province, ', ', h.district, ', ', h.ward), AVG(r.ratingTotal), count(r)) " +
             "FROM Hotel h " +
             "JOIN HotelImage hi ON h.id = hi.hotel.id " +
@@ -24,6 +25,21 @@ public interface HotelRepository extends JpaRepository<Hotel,Integer> {
             "LIMIT 4")
     Set<HotelWithTopRating> getTop4HotelsWithFirstImage();
 
+//    @Query("SELECT h FROM Hotel h " +
+//            "JOIN h.roomTypes rt " +
+//            "JOIN rt.rooms r " +
+//            "JOIN r.roomReserved rr " +
+//            "WHERE (rr.startDay >= :checkOutDay OR rr.endDay <= :checkInDay) " +
+//            "OR NOT EXISTS ( " +
+//            "    SELECT 1 " +
+//            "    FROM RoomReserved rr2 " +
+//            "    JOIN rr2.room r2 " +
+//            "    WHERE (r2.id = r.id) " +
+//            "    AND (:checkInDate BETWEEN rr2.startDay AND rr2.endDay " +
+//            "        OR :checkOutDate BETWEEN rr2.startDay AND rr2.endDay) " +
+//            ")")
+//    List<Hotel> searchHotelsWithDate(@Param("checkInDate") LocalDate checkInDate, @Param("checkOutDate") LocalDate checkOutDate);
+//    List<Hotel> searchHotelsWithGuestCount(@Param("checkInDate") LocalDate checkInDate, @Param("checkOutDate") LocalDate checkOutDate);
     @Query(name = "searchHotels", nativeQuery = true)
     List<HotelSearchResult> searchHotels(
             @Param("province") String province,

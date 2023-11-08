@@ -26,11 +26,11 @@ public class Reservation {
     @Column(name = "email")
     private String email;
     @Column(name = "site_fees")
-    private String siteFee;
+    private Double siteFee;
     @Column(name = "tax_paid")
-    private String taxPaid;
+    private Double taxPaid;
     @Column(name = "total_price")
-    private String totalPrice;
+    private Double totalPrice;
     @Column(name = "created_at")
     @CreationTimestamp
     private Date createdAt;

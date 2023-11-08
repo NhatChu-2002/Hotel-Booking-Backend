@@ -29,4 +29,11 @@ public class RegistrationExceptionHandler {
         error.put("error", ex.getMessage());
         return error;
     }
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(ResponseException.class)
+    public Map<String, String> responseError(ResponseException ex){
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return error;
+    }
 }

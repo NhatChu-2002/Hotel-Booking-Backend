@@ -12,8 +12,8 @@ import jakarta.persistence.*;
                 "GROUP_CONCAT(DISTINCT ha.name) AS amenity, " +
                 "ROUND(COALESCE(AVG(r.rating_total), 0), 2) AS ratingTotal, " +
                 "MIN(rt.price) AS price " +
-                "FROM Hotel h " +
-                "LEFT JOIN Hotel_Image hi ON h.id = hi.hotel_id " +
+                "FROM hotel h " +
+                "LEFT JOIN hotel_image hi ON h.id = hi.hotel_id " +
                 "LEFT JOIN ( " +
                 "    SELECT hha.hotel_id, GROUP_CONCAT(ha.name) AS name " +
                 "    FROM hotel_hotel_amenity hha " +
@@ -24,8 +24,8 @@ import jakarta.persistence.*;
                 "LEFT JOIN room_type rt ON h.id = rt.hotel_id " +
                 "LEFT JOIN room ro ON rt.id = ro.room_type_id " +
                 "LEFT JOIN room_reserved rr ON ro.id = rr.room_id " +
-                "WHERE h.province = :province " +
-                "AND NOT EXISTS ( " +
+                "WHERE LOWER(REPLACE(h.province, ' ', '')) = LOWER(REPLACE(:province, ' ', '')) " +
+                "AND (NOT EXISTS ( " +
                 "    SELECT 1 " +
                 "    FROM room_reserved rr2 " +
                 "    JOIN room ro2 ON rr2.room_id = ro2.id " +
@@ -35,7 +35,7 @@ import jakarta.persistence.*;
                 "        :checkin_day BETWEEN rr2.start_day AND rr2.end_day " +
                 "        OR :checkout_day BETWEEN rr2.start_day AND rr2.end_day " +
                 "    ) " +
-                ") " +
+                ") OR (rr.start_day >= :checkout_day OR rr.end_day <= :checkin_day)) " +
                 "AND rt.count >= :count " +
                 "AND rt.adult_count >= :adult_count " +
                 "AND rt.children_count >= :children_count " +
