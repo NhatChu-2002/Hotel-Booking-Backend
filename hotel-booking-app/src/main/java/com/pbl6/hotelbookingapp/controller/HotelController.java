@@ -12,8 +12,11 @@ import java.util.Set;
 @RestController
 @RequestMapping("api/hotels")
 public class HotelController {
-    @Autowired
     private HotelService hotelService;
+
+    public HotelController(HotelService hotelService) {
+        this.hotelService = hotelService;
+    }
 
     @GetMapping("/top-4-hotels")
     public Set<HotelWithTopRating> getTop4HotelsWithFirstImage() {
