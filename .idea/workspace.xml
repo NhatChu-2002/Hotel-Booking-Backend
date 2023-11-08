@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="642bfe53-eb8d-4a89-a7c3-a1cefee97de8" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/dto/EditUserRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/dto/ErrorResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/service/Validator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hotel-booking-app/.env" beforeDir="false" afterPath="$PROJECT_DIR$/hotel-booking-app/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/Exception/RegistrationExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/Exception/RegistrationExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/Exception/UserAlreadyExistsException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/entity/Hotel.java" beforeDir="false" afterPath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/entity/Hotel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/entity/Reservation.java" beforeDir="false" afterPath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/entity/Reservation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/entity/Review.java" beforeDir="false" afterPath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/entity/Review.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/entity/RoomReserved.java" beforeDir="false" afterPath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/entity/RoomReserved.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/entity/RoomType.java" beforeDir="false" afterPath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/entity/RoomType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/entity/Service.java" beforeDir="false" afterPath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/entity/Service.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/repository/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/service/AuthenticationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/service/AuthenticationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/hotel-booking-app/src/main/java/com/pbl6/hotelbookingapp/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hotel-booking-app/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/hotel-booking-app/src/main/resources/application.properties" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/hotel-booking-app" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2XqYJaMMoxeNyEMschuAvBbyMeZ" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "D:/PBL6/Project_source/BE",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="642bfe53-eb8d-4a89-a7c3-a1cefee97de8" name="Changes" comment="" />
+      <created>1699358005811</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1699358005811</updated>
+      <workItem from="1699358007466" duration="22000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

@@ -23,6 +23,8 @@ public class RoomType {
     private Double price;
     @Column(name="name")
     private String name;
+    @Column(name="count")
+    private Double count;
     @Column(name="bathroom_count")
     private Long bathroomCount;
     @Column(name="adult_count")
@@ -60,7 +62,7 @@ public class RoomType {
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE,
             CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name="room_room_amenity",
-            joinColumns = @JoinColumn(name="room_id"),
+            joinColumns = @JoinColumn(name="room_type_id"),
             inverseJoinColumns = @JoinColumn(name="room_amenity_id"))
     @JsonIgnore
     private Set<RoomAmenity> amenities = new HashSet<>();

@@ -25,6 +25,12 @@ public class Reservation {
     private User user;
     @Column(name = "email")
     private String email;
+    @Column(name = "site_fees")
+    private String siteFee;
+    @Column(name = "tax_paid")
+    private String taxPaid;
+    @Column(name = "total_price")
+    private String totalPrice;
     @Column(name = "created_at")
     @CreationTimestamp
     private Date createdAt;
