@@ -23,7 +23,7 @@ public class HotelController {
         return hotelService.getTop4HotelsWithFirstImage();
     }
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     public CustomSearchResult searchHotels(@RequestBody SearchRequest request) {
         return hotelService.searchHotels(request);
     }
