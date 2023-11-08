@@ -22,13 +22,8 @@ public class Review {
     @ManyToOne
     @JoinColumn(name="user_id")
     private User user;
-
-    @Column(name="cleanliness_rating")
-    private Integer cleanlinessRating;
-    @Column(name="location_rating")
-    private Integer locationRating;
-    @Column(name="staff_rating")
-    private Integer staffRating;
+    @Column(name="rating_total")
+    private Double ratingTotal;
     @Column(name="comment")
     private String comment;
 

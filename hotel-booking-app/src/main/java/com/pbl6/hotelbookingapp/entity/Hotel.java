@@ -75,4 +75,10 @@ public class Hotel {
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<HotelImage> hotelImages = new HashSet<>();
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE,
+            CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name="hotel_hotel_amenity",
+            joinColumns = @JoinColumn(name="hotel_id"),
+            inverseJoinColumns = @JoinColumn(name="hotel_amenity_id"))
+    private Set<HotelAmenity> hotelAmenities = new HashSet<>();
 }
