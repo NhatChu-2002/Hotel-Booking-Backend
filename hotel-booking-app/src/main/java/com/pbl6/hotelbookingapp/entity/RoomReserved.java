@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -23,9 +24,9 @@ public class RoomReserved {
     @JsonIgnore
     private Reservation reservation;
     @Column(name="start_day")
-    private Date startDay;
+    private LocalDate startDay;
     @Column(name="end_day")
-    private Date endDay;
+    private LocalDate endDay;
     @ManyToOne
     @JoinColumn(name="room_id")
     @JsonIgnore
