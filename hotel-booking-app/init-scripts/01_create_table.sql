@@ -122,19 +122,6 @@ CREATE TABLE IF NOT EXISTS `booking-app`.`extra_amenity` (
 ENGINE = InnoDB;
 
 
--- -----------------------------------------------------
--- Table `booking-app`.`file_data`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `booking-app`.`file_data` ;
-
-CREATE TABLE IF NOT EXISTS `booking-app`.`file_data` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `file_path` VARCHAR(255) NULL DEFAULT NULL,
-  `name` VARCHAR(255) NULL DEFAULT NULL,
-  `type` VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
 
 -- -----------------------------------------------------
 -- Table `booking-app`.`hotel_amenity`
@@ -196,18 +183,6 @@ ENGINE = InnoDB
 AUTO_INCREMENT = 19;
 
 
--- -----------------------------------------------------
--- Table `booking-app`.`image_data`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `booking-app`.`image_data` ;
-
-CREATE TABLE IF NOT EXISTS `booking-app`.`image_data` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `imagedata` BLOB NULL DEFAULT NULL,
-  `name` VARCHAR(255) NULL DEFAULT NULL,
-  `type` VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------

@@ -6,13 +6,15 @@ import jakarta.persistence.*;
 @NamedNativeQuery(
         name = "searchHotels",
         query = "SELECT " +
+                "h.id AS hotelId, "+
                 "h.name AS hotelName, " +
                 "CONCAT(h.province, ', ', h.district, ', ', h.ward) AS address, " +
                 "MIN(IFNULL(hi.image_path, '')) AS hotelImgPath, " +
                 "GROUP_CONCAT(DISTINCT ha.name) AS amenity, " +
                 "ROUND(COALESCE(AVG(r.rating_total), 0), 2) AS ratingTotal, " +
-                "MIN(rt.price) AS price, " +
-                "COUNT(DISTINCT r.id) AS reviews " +
+                "COUNT(DISTINCT r.id) AS reviews, " +
+                "MIN(rt.price) AS minPrice, " +
+                "MAX(rt.price) AS maxPrice " +
                 "FROM hotel h " +
                 "LEFT JOIN hotel_image hi ON h.id = hi.hotel_id " +
                 "LEFT JOIN ( " +
@@ -48,13 +50,17 @@ import jakarta.persistence.*;
         classes = @ConstructorResult(
                 targetClass = HotelSearchResult.class,
                 columns = {
+                        @ColumnResult(name = "hotelId", type = Integer.class),
                         @ColumnResult(name = "hotelName", type = String.class),
                         @ColumnResult(name = "address", type = String.class),
                         @ColumnResult(name = "hotelImgPath", type = String.class),
                         @ColumnResult(name = "amenity", type = String.class),
                         @ColumnResult(name = "ratingTotal", type = Double.class),
-                        @ColumnResult(name = "price", type = Double.class),
-                        @ColumnResult(name = "reviews", type = Long.class)
+                        @ColumnResult(name = "reviews", type = Long.class),
+                        @ColumnResult(name = "minPrice", type = Double.class),
+                        @ColumnResult(name = "maxPrice", type = Double.class)
+
+
                 }
         )
 )

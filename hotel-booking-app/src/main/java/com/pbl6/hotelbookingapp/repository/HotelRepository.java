@@ -1,10 +1,12 @@
 package com.pbl6.hotelbookingapp.repository;
 
 
+import com.pbl6.hotelbookingapp.dto.HotelFilterSearchResult;
 import com.pbl6.hotelbookingapp.dto.HotelSearchResult;
 import com.pbl6.hotelbookingapp.dto.HotelWithTopRating;
 import com.pbl6.hotelbookingapp.entity.Hotel;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -13,9 +15,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public interface HotelRepository extends JpaRepository<Hotel,Integer> {
+public interface HotelRepository extends JpaRepository<Hotel, Integer>, JpaSpecificationExecutor<Hotel> {
     Optional<Hotel> findFirstByNameAndProvinceAndStreet(String name, String province, String street);
     List<Hotel> findByProvince(String province);
+    Optional<Hotel> findFirstById(Integer id);
     @Query("SELECT NEW com.pbl6.hotelbookingapp.dto.HotelWithTopRating(MIN(hi.imagePath), h.name, CONCAT(h.province, ', ', h.district, ', ', h.ward), AVG(r.ratingTotal), count(r)) " +
             "FROM Hotel h " +
             "JOIN HotelImage hi ON h.id = hi.hotel.id " +

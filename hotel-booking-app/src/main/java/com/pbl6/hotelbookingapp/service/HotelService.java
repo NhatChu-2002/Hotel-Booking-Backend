@@ -1,18 +1,29 @@
 package com.pbl6.hotelbookingapp.service;
 
 import com.pbl6.hotelbookingapp.Exception.ResponseException;
+
 import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
 import com.pbl6.hotelbookingapp.dto.*;
 import com.pbl6.hotelbookingapp.entity.*;
 import com.pbl6.hotelbookingapp.repository.*;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 
 @Service
 public class HotelService {
@@ -47,14 +58,35 @@ public class HotelService {
         }
 
         List<HotelSearchResult> hotels = hotelRepository.searchHotels(request.getProvince(), request.getCheckinDay(), request.getCheckoutDay(), request.getCount(), request.getAdultCount(), request.getChildrenCount());
-        result.setHotels(hotels);
 
-        Long totalItems = (long) hotels.size();
+        List<HotelFilterSearchResult> filteredHotels = new ArrayList<>();
+
+        for (HotelSearchResult hotel : hotels) {
+            HotelFilterSearchResult filteredHotel = new HotelFilterSearchResult();
+            filteredHotel.setId(hotel.getHotelId());
+            filteredHotel.setHotelName(hotel.getHotelName());
+            filteredHotel.setAddress(hotel.getAddress());
+            filteredHotel.setHotelImgPath(hotel.getHotelImgPath());
+
+            Optional<Hotel> tempHotel = hotelRepository.findFirstById(hotel.getHotelId());
+            Set<String> amenities = hotel.getAmenitiesSet();
+            filteredHotel.setAmenities(amenities);
+            filteredHotel.setMinPrice(hotel.getMinPrice());
+            filteredHotel.setMaxPrice(hotel.getMaxPrice());
+            filteredHotel.setReviews(tempHotel.get().getReviews().size());
+            filteredHotel.setRating(hotel.getRatingTotal());
+
+            filteredHotels.add(filteredHotel);
+        }
+        Optional<Hotel> tempHotel = hotelRepository.findFirstById(hotels.get(0).getHotelId());
+        Long totalItems = (long) filteredHotels.size();
+        result.setHotels(filteredHotels);
+        result.setLocation(tempHotel.get().getProvince());
         result.setTotalItems(totalItems);
-        String address = hotels.get(0).getAddress();
-        result.setLocation(address.substring(0,address.indexOf(',')));
+        
         return result;
     }
+
 
     public AddHotelResponse addHotel(AddHotelRequest addHotelRequest, Integer userId) throws IOException {
         Optional<User> userOptional  = userRepository.findById(userId);
@@ -118,6 +150,25 @@ public class HotelService {
         }
         return imagePaths;
     }
-}
+
+    public CustomSearchResult filterSearchHotel(FilterSearchRequest request){
+        CustomSearchResult result = new CustomSearchResult();
+
+        List<Hotel> hotels = hotelRepository.findAll(HotelSpecifications.withFilters(request));
+        List<HotelFilterSearchResult> searchResults = hotels.stream()
+                .map(HotelFilterSearchResult::fromHotel)
+                .collect(Collectors.toList());
+        result.setHotels(searchResults);
+        result.setTotalItems((long) searchResults.size());
+        if(searchResults.isEmpty())
+        {
+            result.setLocation(null);
+        }
+        else result.setLocation(hotels.get(0).getProvince());
+
+        return result;
+    }
+
+
 
 

@@ -11,8 +11,10 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomSearchResult {
-    private List<HotelFilterSearchResult> hotels;
-    private Long totalItems;
-    private String location;
+public class FilterSearchRequest {
+    private List<Integer> hotelIds;
+    private String rate;
+    private Double fromPrice;
+    private Double toPrice;
+    private Double review;
 }
