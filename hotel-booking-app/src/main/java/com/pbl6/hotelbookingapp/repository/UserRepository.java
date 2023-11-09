@@ -13,6 +13,7 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByEmail(String email);
+
     @Modifying
     @Query("UPDATE User u SET u.fullName=:fullName, u.gender = :gender, u.email = :email, u.phoneNumber = :phoneNumber, u.dateOfBirth = :dateOfBirth WHERE u.id = :id")
     void updateUserDetails(@Param("id") Integer id,

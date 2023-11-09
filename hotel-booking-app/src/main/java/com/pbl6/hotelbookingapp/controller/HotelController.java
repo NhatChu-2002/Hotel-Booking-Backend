@@ -1,9 +1,11 @@
 package com.pbl6.hotelbookingapp.controller;
 
-import com.pbl6.hotelbookingapp.dto.CustomSearchResult;
-import com.pbl6.hotelbookingapp.dto.HotelWithTopRating;
-import com.pbl6.hotelbookingapp.dto.SearchRequest;
+import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
+import com.pbl6.hotelbookingapp.dto.*;
+import com.pbl6.hotelbookingapp.entity.User;
 import com.pbl6.hotelbookingapp.service.HotelService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.Set;
@@ -23,8 +25,18 @@ public class HotelController {
         return hotelService.getTop4HotelsWithFirstImage();
     }
 
-    @GetMapping("/search")
+    @PostMapping ("/search")
     public CustomSearchResult searchHotels(@RequestBody SearchRequest request) {
         return hotelService.searchHotels(request);
     }
+    @RequestMapping(value = "/add" , method = RequestMethod.POST, consumes = { "multipart/form-data" })
+    public ResponseEntity<AddHotelResponse> addHotel(@ModelAttribute AddHotelRequest requestDTO, @RequestParam Integer userId) {
+        try {
+            AddHotelResponse responseDTO = hotelService.addHotel(requestDTO, userId);
+            return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new AddHotelResponse("Error adding hotel"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
+

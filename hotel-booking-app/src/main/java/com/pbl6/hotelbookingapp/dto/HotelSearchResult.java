@@ -11,14 +11,16 @@ public class HotelSearchResult {
     private String amenity;
     private Double ratingTotal;
     private Double price;
+    private Long reviews;
 
-    public HotelSearchResult(String hotelName, String address, String hotelImgPath, String amenity, Double ratingTotal, Double price) {
+    public HotelSearchResult(String hotelName, String address, String hotelImgPath, String amenity, Double ratingTotal, Double price, Long reviews) {
         this.hotelName = hotelName;
         this.address = address;
         this.hotelImgPath = hotelImgPath;
         this.amenity = amenity;
         this.ratingTotal = ratingTotal;
         this.price = price;
+        this.reviews = reviews;
     }
 }
 

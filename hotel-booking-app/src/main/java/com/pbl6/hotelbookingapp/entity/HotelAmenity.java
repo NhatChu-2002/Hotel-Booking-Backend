@@ -24,16 +24,22 @@ public class HotelAmenity {
     private String name;
     @Column(name="description")
     private String description;
-    @ManyToOne
-    @JoinColumn(name = "hotel_id")
-    private Hotel hotel;
+//    @ManyToOne
+//    @JoinColumn(name = "hotel_id")
+//    private Hotel hotel;
     @Column(name="created_at")
     @CreationTimestamp
     private Date createdAt;
     @Column(name="modified_at")
     @UpdateTimestamp
     private Date modifiedAt;
-    @OneToMany(mappedBy = "hotelAmenity", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Set<HotelHotelAmenity> hotelHotelAmenities = new HashSet<>();
+//    @OneToMany(mappedBy = "hotelAmenity", cascade = CascadeType.ALL)
+//    @JsonIgnore
+//    private Set<HotelHotelAmenity> hotelHotelAmenities = new HashSet<>();
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE,
+            CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name="hotel_hotel_amenity",
+            joinColumns = @JoinColumn(name="hotel_amenity_id"),
+            inverseJoinColumns = @JoinColumn(name="hotel_id"))
+    private Set<Hotel> hotels = new HashSet<>();
 }

@@ -1,26 +1,36 @@
 package com.pbl6.hotelbookingapp.service;
 
 import com.pbl6.hotelbookingapp.Exception.ResponseException;
-import com.pbl6.hotelbookingapp.dto.CustomSearchResult;
-import com.pbl6.hotelbookingapp.dto.HotelSearchResult;
-import com.pbl6.hotelbookingapp.dto.HotelWithTopRating;
-import com.pbl6.hotelbookingapp.dto.SearchRequest;
-import com.pbl6.hotelbookingapp.entity.Hotel;
-import com.pbl6.hotelbookingapp.repository.HotelRepository;
+import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
+import com.pbl6.hotelbookingapp.dto.*;
+import com.pbl6.hotelbookingapp.entity.*;
+import com.pbl6.hotelbookingapp.repository.*;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 @Service
 public class HotelService {
     private HotelRepository hotelRepository;
-    public HotelService(HotelRepository hotelRepository)
-    {
+    private UserRepository userRepository;
+    private HotelAmenityRepository amenityRepository;
+    private HotelImageRepository imageRepository;
+    private HotelRateRepository rateRepository;
+
+    public HotelService(HotelRepository hotelRepository, UserRepository userRepository, HotelAmenityRepository amenityRepository, HotelImageRepository imageRepository, HotelRateRepository rateRepository, ResourceLoader resourceLoader) {
         this.hotelRepository = hotelRepository;
+        this.userRepository = userRepository;
+        this.amenityRepository = amenityRepository;
+        this.imageRepository = imageRepository;
+        this.rateRepository = rateRepository;
     }
+
+
     public Optional<Hotel> findHotelByNameAndProvinceAndStreet(String hotelName, String province, String street) {
         return hotelRepository.findFirstByNameAndProvinceAndStreet(hotelName,province, street);
     }
@@ -41,7 +51,73 @@ public class HotelService {
 
         Long totalItems = (long) hotels.size();
         result.setTotalItems(totalItems);
+        String address = hotels.get(0).getAddress();
+        result.setLocation(address.substring(0,address.indexOf(',')));
         return result;
     }
+
+    public AddHotelResponse addHotel(AddHotelRequest addHotelRequest, Integer userId) throws IOException {
+        Optional<User> userOptional  = userRepository.findById(userId);
+        User user = userOptional.get();
+        Hotel hotel = new Hotel();
+        hotel.setUser(user);
+        hotel.setName(addHotelRequest.getName());
+        hotel.setDescription(addHotelRequest.getDescription());
+        hotel.setProvince(addHotelRequest.getProvince());
+        hotel.setDistrict(addHotelRequest.getDistrict());
+        hotel.setWard(addHotelRequest.getWard());
+        hotel.setStreet(addHotelRequest.getStreet());
+        hotel.setCheckInTime(addHotelRequest.getCheckInTime());
+        hotel.setCheckOutTime(addHotelRequest.getCheckOutTime());
+        for (String rule : addHotelRequest.getRules()) {
+            hotel.setRule(rule);
+        }
+
+        HotelRate rate = rateRepository.findById(addHotelRequest.getRate()).orElse(null);
+        hotel.setHotelRate(rate);
+
+        Set<HotelAmenity> amenities = new HashSet<>();
+        for (String amenityName : addHotelRequest.getAmenities()) {
+            HotelAmenity amenity = amenityRepository.findByName(amenityName).orElse(null);
+            if (amenity == null) {
+                amenity = new HotelAmenity();
+                amenity.setName(amenityName);
+                amenityRepository.save(amenity);
+            }
+            amenities.add(amenity);
+        }
+        hotel.setHotelAmenities(amenities);
+        hotelRepository.save(hotel);
+
+        List<String> imagePaths = saveImages(addHotelRequest.getImages());
+        for (String imagePath : imagePaths) {
+            HotelImage image = new HotelImage();
+            image.setHotel(hotel);
+            image.setImagePath(imagePath);
+            imageRepository.save(image);
+        }
+        AddHotelResponse responseDTO = new AddHotelResponse();
+        responseDTO.setMessage("Hotel added successfully");
+        return responseDTO;
+    }
+
+    public List<String> saveImages(List<MultipartFile> images) throws IOException {
+        List<String> imagePaths = new ArrayList<>();
+        String currentDirectory = new File("").getAbsolutePath();
+        String staticPath = currentDirectory + "/src/main/resources/static";
+        String uploadDir = staticPath + File.separator + "images";
+
+        File uploadDirFile = new File(uploadDir);
+        if (!uploadDirFile.exists()) {
+            uploadDirFile.mkdirs();
+        }
+        for (MultipartFile image : images) {
+            String imagePath = uploadDir + File.separator + image.getOriginalFilename();
+            image.transferTo(new File(imagePath));
+            imagePaths.add(imagePath);
+        }
+        return imagePaths;
+    }
 }
+
 
