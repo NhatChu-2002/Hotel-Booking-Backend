@@ -22,6 +22,7 @@ public class HotelSearchResult {
     private String hotelImgPath;
     private String amenity;
     private Double ratingTotal;
+    private Long reviews;
     private Double minPrice;
     private Double maxPrice;
 
@@ -30,6 +31,7 @@ public class HotelSearchResult {
             return new HashSet<>(Arrays.asList(amenity.split(",")));
         }
         return Collections.emptySet();
+
     }
 
 }

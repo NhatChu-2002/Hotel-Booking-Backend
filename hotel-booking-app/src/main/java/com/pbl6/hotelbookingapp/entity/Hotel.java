@@ -55,7 +55,7 @@ public class Hotel {
     @JsonIgnore
     private User user;
     @ManyToOne
-    @JoinColumn(name = "rate_id")
+    @JoinColumn(name = "hotel_rate_id")
     @JsonIgnore
     private HotelRate hotelRate;
     @Enumerated(EnumType.STRING)
@@ -63,10 +63,15 @@ public class Hotel {
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<ExtraService> extraServices = new HashSet<>();
-
-    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Set<HotelHotelAmenity> hotelHotelAmenities = new HashSet<>();
+//    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+//    @JsonIgnore
+//    private Set<HotelHotelAmenity> hotelHotelAmenities = new HashSet<>();
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE,
+            CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name="hotel_hotel_amenity",
+            joinColumns = @JoinColumn(name="hotel_id"),
+            inverseJoinColumns = @JoinColumn(name="hotel_amenity_id"))
+    private Set<HotelAmenity> hotelAmenities = new HashSet<>();
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<RoomType> roomTypes = new HashSet<>();
