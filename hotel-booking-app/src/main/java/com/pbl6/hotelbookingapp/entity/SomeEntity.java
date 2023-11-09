@@ -12,7 +12,8 @@ import jakarta.persistence.*;
                 "MIN(IFNULL(hi.image_path, '')) AS hotelImgPath, " +
                 "GROUP_CONCAT(DISTINCT ha.name) AS amenity, " +
                 "ROUND(COALESCE(AVG(r.rating_total), 0), 2) AS ratingTotal, " +
-                "MIN(rt.price) AS price " +
+                "MIN(rt.price) AS minPrice, " +
+                "MAX(rt.price) AS maxPrice " +
                 "FROM hotel h " +
                 "LEFT JOIN hotel_image hi ON h.id = hi.hotel_id " +
                 "LEFT JOIN ( " +
@@ -54,7 +55,9 @@ import jakarta.persistence.*;
                         @ColumnResult(name = "hotelImgPath", type = String.class),
                         @ColumnResult(name = "amenity", type = String.class),
                         @ColumnResult(name = "ratingTotal", type = Double.class),
-                        @ColumnResult(name = "price", type = Double.class)
+                        @ColumnResult(name = "minPrice", type = Double.class),
+                        @ColumnResult(name = "maxPrice", type = Double.class)
+
                 }
         )
 )

@@ -6,6 +6,7 @@ import java.util.List;
 
 @Data
 public class CustomSearchResult {
-    private List<HotelSearchResult> hotels;
+    private List<HotelFilterSearchResult> hotels;
     private Long totalItems;
+    private String location;
 }

@@ -19,7 +19,8 @@ public class HotelFilterSearchResult {
     private String address;
     private String hotelImgPath;
     private Set<String> amenities;
-    private Double ratingTotal;
+    private int reviews;
+    private Double rating;
     private Double minPrice;
     private Double maxPrice;
 
@@ -42,6 +43,8 @@ public class HotelFilterSearchResult {
         }
         result.setAmenities(amenities);
 
+
+
         Set<RoomType> roomTypes = hotel.getRoomTypes();
         if (roomTypes != null && !roomTypes.isEmpty()) {
             Optional<RoomType> minPriceRoomType = roomTypes.stream()
@@ -52,8 +55,9 @@ public class HotelFilterSearchResult {
                     .max(Comparator.comparing(RoomType::getPrice));
             result.setMaxPrice(maxPriceRoomType.map(RoomType::getPrice).orElse(null));
         }
-        result.setRatingTotal(hotel.getAverageRating());
-
+        result.setRating(hotel.getAverageRating());
+        int numReviews = hotel.getReviews().size();
+        result.setReviews(numReviews);
 
 
         return result;

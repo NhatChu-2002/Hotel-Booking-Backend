@@ -7,6 +7,7 @@ import com.pbl6.hotelbookingapp.repository.HotelRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -35,18 +36,49 @@ public class HotelService {
         }
 
         List<HotelSearchResult> hotels = hotelRepository.searchHotels(request.getProvince(), request.getCheckinDay(), request.getCheckoutDay(), request.getCount(), request.getAdultCount(), request.getChildrenCount());
-        result.setHotels(hotels);
 
-        Long totalItems = (long) hotels.size();
+        List<HotelFilterSearchResult> filteredHotels = new ArrayList<>();
+
+        for (HotelSearchResult hotel : hotels) {
+            HotelFilterSearchResult filteredHotel = new HotelFilterSearchResult();
+            filteredHotel.setId(hotel.getHotelId());
+            filteredHotel.setHotelName(hotel.getHotelName());
+            filteredHotel.setAddress(hotel.getAddress());
+            filteredHotel.setHotelImgPath(hotel.getHotelImgPath());
+
+            Optional<Hotel> tempHotel = hotelRepository.findFirstById(hotel.getHotelId());
+            Set<String> amenities = hotel.getAmenitiesSet();
+            filteredHotel.setAmenities(amenities);
+            filteredHotel.setMinPrice(hotel.getMinPrice());
+            filteredHotel.setMaxPrice(hotel.getMaxPrice());
+            filteredHotel.setReviews(tempHotel.get().getReviews().size());
+            filteredHotel.setRating(hotel.getRatingTotal());
+
+            filteredHotels.add(filteredHotel);
+        }
+        Optional<Hotel> tempHotel = hotelRepository.findFirstById(hotels.get(0).getHotelId());
+        Long totalItems = (long) filteredHotels.size();
+        result.setHotels(filteredHotels);
+        result.setLocation(tempHotel.get().getProvince());
         result.setTotalItems(totalItems);
         return result;
     }
-    public List<HotelFilterSearchResult> filterSearchHotel(FilterSearchRequest request){
+    public CustomSearchResult filterSearchHotel(FilterSearchRequest request){
+        CustomSearchResult result = new CustomSearchResult();
+
         List<Hotel> hotels = hotelRepository.findAll(HotelSpecifications.withFilters(request));
         List<HotelFilterSearchResult> searchResults = hotels.stream()
                 .map(HotelFilterSearchResult::fromHotel)
                 .collect(Collectors.toList());
-        return searchResults;
+        result.setHotels(searchResults);
+        result.setTotalItems((long) searchResults.size());
+        if(searchResults.isEmpty())
+        {
+            result.setLocation(null);
+        }
+        else result.setLocation(hotels.get(0).getProvince());
+
+        return result;
     }
 
 }
