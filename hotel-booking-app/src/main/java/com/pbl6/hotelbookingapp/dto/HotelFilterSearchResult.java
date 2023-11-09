@@ -19,7 +19,7 @@ public class HotelFilterSearchResult {
     private String address;
     private String hotelImgPath;
     private Set<String> amenities;
-    private int reviews;
+    private Long reviews;
     private Double rating;
     private Double minPrice;
     private Double maxPrice;
@@ -56,7 +56,7 @@ public class HotelFilterSearchResult {
             result.setMaxPrice(maxPriceRoomType.map(RoomType::getPrice).orElse(null));
         }
         result.setRating(hotel.getAverageRating());
-        int numReviews = hotel.getReviews().size();
+        Long numReviews = Long.valueOf(hotel.getReviews().size());
         result.setReviews(numReviews);
 
 

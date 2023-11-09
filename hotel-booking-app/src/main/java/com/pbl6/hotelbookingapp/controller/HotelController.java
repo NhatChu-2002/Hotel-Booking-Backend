@@ -35,6 +35,7 @@ public class HotelController {
         } catch (Exception e) {
             return new ResponseEntity<>(new AddHotelResponse("Error adding hotel"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
     @PostMapping("/search")
     public CustomSearchResult searchHotels(@RequestBody SearchRequest request) {
         return hotelService.searchHotels(request);

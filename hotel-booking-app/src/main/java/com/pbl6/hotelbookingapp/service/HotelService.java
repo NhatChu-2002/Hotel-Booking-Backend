@@ -43,17 +43,17 @@ public class HotelService {
 
 
     public Optional<Hotel> findHotelByNameAndProvinceAndStreet(String hotelName, String province, String street) {
-        return hotelRepository.findFirstByNameAndProvinceAndStreet(hotelName,province, street);
+        return hotelRepository.findFirstByNameAndProvinceAndStreet(hotelName, province, street);
     }
 
     public Set<HotelWithTopRating> getTop4HotelsWithFirstImage() {
         return hotelRepository.getTop4HotelsWithFirstImage();
     }
+
     public CustomSearchResult searchHotels(SearchRequest request) {
 
         CustomSearchResult result = new CustomSearchResult();
-        if(request.getCheckinDay().compareTo(request.getCheckoutDay()) >= 0)
-        {
+        if (request.getCheckinDay().compareTo(request.getCheckoutDay()) >= 0) {
             throw new ResponseException("Check-in date cannot be greater than or equal to check-out date! ");
         }
 
@@ -73,7 +73,7 @@ public class HotelService {
             filteredHotel.setAmenities(amenities);
             filteredHotel.setMinPrice(hotel.getMinPrice());
             filteredHotel.setMaxPrice(hotel.getMaxPrice());
-            filteredHotel.setReviews(tempHotel.get().getReviews().size());
+            filteredHotel.setReviews(hotel.getReviews());
             filteredHotel.setRating(hotel.getRatingTotal());
 
             filteredHotels.add(filteredHotel);
@@ -83,13 +83,13 @@ public class HotelService {
         result.setHotels(filteredHotels);
         result.setLocation(tempHotel.get().getProvince());
         result.setTotalItems(totalItems);
-        
+
         return result;
     }
 
 
     public AddHotelResponse addHotel(AddHotelRequest addHotelRequest, Integer userId) throws IOException {
-        Optional<User> userOptional  = userRepository.findById(userId);
+        Optional<User> userOptional = userRepository.findById(userId);
         User user = userOptional.get();
         Hotel hotel = new Hotel();
         hotel.setUser(user);
@@ -118,7 +118,7 @@ public class HotelService {
             }
             amenities.add(amenity);
         }
-        hotel.setHotelAmenities(amenities);
+//        hotel.setHotelAmenities(amenities);
         hotelRepository.save(hotel);
 
         List<String> imagePaths = saveImages(addHotelRequest.getImages());
@@ -151,7 +151,7 @@ public class HotelService {
         return imagePaths;
     }
 
-    public CustomSearchResult filterSearchHotel(FilterSearchRequest request){
+    public CustomSearchResult filterSearchHotel(FilterSearchRequest request) {
         CustomSearchResult result = new CustomSearchResult();
 
         List<Hotel> hotels = hotelRepository.findAll(HotelSpecifications.withFilters(request));
@@ -160,15 +160,13 @@ public class HotelService {
                 .collect(Collectors.toList());
         result.setHotels(searchResults);
         result.setTotalItems((long) searchResults.size());
-        if(searchResults.isEmpty())
-        {
+        if (searchResults.isEmpty()) {
             result.setLocation(null);
-        }
-        else result.setLocation(hotels.get(0).getProvince());
+        } else result.setLocation(hotels.get(0).getProvince());
 
         return result;
     }
-
+}
 
 
 
