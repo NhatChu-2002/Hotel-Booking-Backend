@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 @NamedNativeQuery(
         name = "searchHotels",
         query = "SELECT " +
+                "h.id AS hotelId, "+
                 "h.name AS hotelName, " +
                 "CONCAT(h.province, ', ', h.district, ', ', h.ward) AS address, " +
                 "MIN(IFNULL(hi.image_path, '')) AS hotelImgPath, " +
@@ -47,6 +48,7 @@ import jakarta.persistence.*;
         classes = @ConstructorResult(
                 targetClass = HotelSearchResult.class,
                 columns = {
+                        @ColumnResult(name = "hotelId", type = Integer.class),
                         @ColumnResult(name = "hotelName", type = String.class),
                         @ColumnResult(name = "address", type = String.class),
                         @ColumnResult(name = "hotelImgPath", type = String.class),

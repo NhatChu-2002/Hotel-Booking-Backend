@@ -117,12 +117,7 @@ VALUES(1, 'Menora Premium Da Nang - Sea Corner Boutique', 'Quay mặt ra bãi bi
       (4, 'Shara Hotel Da Nang', 'Tọa lạc tại thành phố Đà Nẵng, cách Bãi biển Mỹ Khê 600 m và Bãi biển Bắc Mỹ An 1,3 km, Shara Hotel Da Nang cung cấp chỗ nghỉ với sảnh khách chung và WiFi miễn phí cũng như chỗ đỗ xe riêng miễn phí...', 'Đà Nẵng', 'Ngũ Hành Sơn', 'Bắc Mỹ Phú', '53 Phan Liem', '123456789', 'ks4@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 4, 5),
       (5, 'Le House Boutique Hotel', 'Nằm trên khu vực Bãi biển Mỹ Khê ở thành phố Đà Nẵng, trong bán kính 2 km từ Cầu Sông Hàn, Le House Boutique Hotel cung cấp các phòng gắn máy điều hòa với Wi-Fi miễn phí toàn khuôn viên.', 'Đà Nẵng', 'Sơn Trà', 'Phước Mỹ', '87 Hà Bổng', '123456789', 'ks5@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 5, 6),
       (6, 'Seashore Hotel & Apartment', 'Seashore Hotel & Apartment cung cấp chỗ nghỉ 4 sao hướng biển ở thành phố Đà Nẵng. Chỗ nghỉ có xe đạp để khách sử dụng miễn phí, hồ bơi ngoài trời và trung tâm thể dục.', 'Đà Nẵng', 'Sơn Trà', 'Mân Thái', '16 Hoàng Sa', '123456789', 'ks6@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 4, 7);
---    (7, 'Menora Premium Da Nang - Sea Corner Boutique', 'Quay mặt ra bãi biển ở thành phố Đà Nẵng, Menora Premium Da Nang - Sea Corner Boutique cung cấp chỗ nghỉ 3 sao và có hồ bơi ngoài trời, sân hiên cũng như nhà hàng.', 'Đà Nẵng', 'Ngũ Hành Sơn', 'Mỹ An', '196 Trần Bạch Đằng', '123456789', 'ks7@gmail.com', '07:00:00', '21:00:00', 5, 8),
--- 	  (8, 'MANGO MANGO HOTEL & APARTMENT', 'MANGO MANGO HOTEL & APARTMENT has city views, free WiFi and free private parking, set in Da Nang, 400 metres from My Khe Beach.', 'Đà Nẵng', 'Ngũ Hành Sơn', 'Mỹ An', 'Mỹ Đa Đông 12', '123456789', 'ks8@gmail.com', '07:00:00', '21:00:00', 4, 9),
---    (9, 'Merry Land Hotel Da Nang', 'Merry Land Hotel Da Nang cung cấp các phòng nghỉ tại thành phố Đà Nẵng, cách Cầu Sông Hàn chỉ 2 phút lái xe. Khách sạn có hồ bơi ngoài trời mở cửa quanh năm, sân hiên tắm nắng và quầy bar tại chỗ.', 'Đà Nẵng', 'Sơn Trà', 'An Hải Bắc', '21 Phạm Văn Đồng', '123456789', 'ks9@gmail.com', '07:00:00', '21:00:00', 5, 10),
---    (10, 'Shara Hotel Da Nang', 'Tọa lạc tại thành phố Đà Nẵng, cách Bãi biển Mỹ Khê 600 m và Bãi biển Bắc Mỹ An 1,3 km, Shara Hotel Da Nang cung cấp chỗ nghỉ với sảnh khách chung và WiFi miễn phí cũng như chỗ đỗ xe riêng miễn phí...', 'Đà Nẵng', 'Ngũ Hành Sơn', 'Bắc Mỹ Phú', '53 Phan Liem', '123456789', 'ks10@gmail.com', '07:00:00', '21:00:00', 3, 11),
---    (11, 'Le House Boutique Hotel', 'Nằm trên khu vực Bãi biển Mỹ Khê ở thành phố Đà Nẵng, trong bán kính 2 km từ Cầu Sông Hàn, Le House Boutique Hotel cung cấp các phòng gắn máy điều hòa với Wi-Fi miễn phí toàn khuôn viên.', 'Đà Nẵng', 'Sơn Trà', 'Phước Mỹ', '87 Hà Bổng', '123456789', 'ks11@gmail.com', '07:00:00', '21:00:00', 2, 12),
---    (12, 'Seashore Hotel & Apartment', 'Seashore Hotel & Apartment cung cấp chỗ nghỉ 4 sao hướng biển ở thành phố Đà Nẵng. Chỗ nghỉ có xe đạp để khách sử dụng miễn phí, hồ bơi ngoài trời và trung tâm thể dục.', 'Đà Nẵng', 'Sơn Trà', 'Mân Thái', '16 Hoàng Sa', '123456789', 'ks12@gmail.com', '07:00:00', '21:00:00', 5, 13);
+
   
   
 INSERT INTO hotel_image(id, image_path, hotel_id)
@@ -301,33 +296,8 @@ VALUES(1, 'Phòng VIP', 3, 666.666, 1, 30, 2, 1, '', 1, 1),
 --       (18, 999.777, 1, 50, 2, 3, '', 6, 2, 1);
       
 
-INSERT INTO room(id, room_type_id)
-VALUES(1, 1),
-	  (2, 1),
-      (3, 1),
-      (4, 2),
-	  (5, 2),
-      (6, 2),
-      (7, 2),
-	  (8, 3),
-      (9, 3),
-      (10, 3),
-	  (11, 3),
-      (12, 3);
       
-      
-INSERT INTO reservation(id, email, `status`, user_id)
-VALUES(1, 'customer1@gmai.com', 'CONFIRMED', 22),
-	  (2, 'customer4@gmai.com', 'CONFIRMED', 25),
-      (3, 'customer7@gmai.com', 'CONFIRMED', 28),
-      (4, 'customer10@gmai.com', 'CONFIRMED', 31);
-      
-INSERT INTO room_reserved(id, start_day, end_day, reservation_id, room_id)
-VALUES(1, '2023-9-1', '2023-9-5', 1, 4),
-	  (2, '2023-9-6', '2023-9-10', 2, 5),
-	  (3, '2023-9-19', '2023-9-23', 3, 6),
-      (4, '2023-10-1', '2023-10-22', 4, 7);
-      
+
 -- 	  (4, '2023-10-7', '2023-10-18', 4, 10)
 --       (4, '2023-10-7', '2023-10-18', 4, 10),
 --       (4, '2023-10-7', '2023-10-18', 4, 10),
@@ -389,6 +359,112 @@ VALUES(1, 'Thẻ tín dụng');
 -- INSERT INTO invoice()
 -- VALUES();
 
+
+
+INSERT INTO hotel(id, `name`, `description`, province, district, ward, street, main_phone_number, main_email, check_in_time, check_out_time, `status`, rate_id, user_id)
+values
+  (7, 'Grand Sheraton', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An', 'Hội an', 'Ngũ Hành Sơn', 'Mỹ An', '196 Trần Bạch Đằng', '123456789', 'ks7@gmail.com', '07:00:00', '21:00:00','ACTIVE', 5, 8),
+  (8, 'Mia resort', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Sài gòn', 'Ngũ Hành Sơn', 'Mỹ An', 'Mỹ Đa Đông 12', '123456789', 'ks8@gmail.com', '07:00:00', '21:00:00','ACTIVE', 4, 9),
+  (9, 'TIA beach Hotel ', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Hà Nội', 'Sơn Trà', 'An Hải Bắc', '21 Phạm Văn Đồng', '123456789', 'ks9@gmail.com', '07:00:00', '21:00:00','ACTIVE', 5, 10),
+  (10, 'A LA CARTE', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Quảng Ngãi', 'Ngũ Hành Sơn', 'Bắc Mỹ Phú', '53 Phan Liem', '123456789', 'ks10@gmail.com', '07:00:00', '21:00:00','ACTIVE', 3, 11),
+  (11, 'Blue Sea', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Hà Nội', 'Sơn Trà', 'Phước Mỹ', '87 Hà Bổng', '123456789', 'ks11@gmail.com', '07:00:00', '21:00:00','ACTIVE', 2, 12),
+   (12, 'Vinpearl Melia', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Sài gòn', 'Sơn Trà', 'Mân Thái', '16 Hoàng Sa', '123456789', 'ks12@gmail.com', '07:00:00', '21:00:00','ACTIVE', 5, 13);
+   
+   
+INSERT INTO hotel_image(id, image_path, hotel_id)
+VALUES(19, 'hotel7-image1', 7),
+	  (20, 'hotel8-image2', 8),
+      (21, 'hotel9-image3', 9),
+      (22, 'hotel10-image1', 10),
+	  (23, 'hotel11-image2', 11),
+      (24, 'hotel11-image3', 11);
+      
+INSERT INTO hotel_hotel_amenity(hotel_id, hotel_amenity_id)
+VALUES(7, 1),
+	  (8, 2),
+	  (9, 3),
+	  (10, 4),
+	  (11, 5),
+	  (12, 6),
+	  (9, 7),
+	  (8, 6),
+	  (7, 7),
+	  (10, 8),
+	  (11, 9),
+	  (12, 10),
+	  (12, 11);
+INSERT INTO review(id, rating_total, `comment`, user_id, hotel_id)
+VALUES(19, 7.0, 'Vị trí thuận lợi, bạn Mạnh và bạn Đào lễ tân cực kỳ nhiệt tình, thân thiện với khách hàng', 22, 7),
+	  (20, 6.2, 'sạch sẽ, nhân viên và bác bảo vệ nhiệt tình', 23, 7),
+	  (21, 8.7, 'Tốt, mình đã ở 2 tuần rồi, và chắc sẽ ở thêm 2 tuần nữa', 24, 9),
+	  (22, 8.2, 'Cách bãi tắm 200m. Có nhiều tiệm và quán ăn lân cận. Nhân viên lịch sự. Giá phòng tốt, bao gồm ăn sáng ngon, nhưng ở trên 1 tuần thì ăn hơi ngán vì món ít thay đổi.', 25, 8),
+	  (23, 7.0, 'Địa điểm gần bãi biển, tiện nghi, phòng sạch sẽ và mới, nhân viên nhiệt tình thân thiện', 26, 5),
+	  (24, 7.0, 'Rất gần biển, có thể đi bộ được, 2 bác bảo vệ bảo vệ và lễ tân Uyên rất thân thiện', 27, 10),
+	  (25, 9.2, 'Cái điều hoà phòng mình lắp giữa giường nên nó vào người hơi khó chịu. Lắp xuống phía đuôi giường thì hay hơn', 28, 12),
+	  (26, 7.5, 'Phục vụ tốt , vị trí ngay trung tâm , giá hợp lí .', 29, 11),
+	  (27, 8.2, 'Gần biển, tiện lợi bắt xe', 30, 8),
+	  (28, 9.2, 'Gần biển. Phòng đủ tiện nghi, nhưng tối ngủ hơi ồn vì tiếng điều hoà và tủ lạnh', 31, 7),
+      (29, 9.6, 'Ăn sáng ngon. View góc biển đẹp. Giá cả hợp lí. Nhân viên nhiệt tình. Nhất là bạn Khánh lễ tân đẹp trai - niềm nở, xách đồ cho bạn tới tận xe về.', 32, 9),
+	  (30, 9.1, 'Nhân viên nhẹ nhàng, nhiệt tình. Chỗ nghỉ gần bờ biển. Giá cả phải chăng', 33, 10),
+	  (31, 9.8, 'Gần biển, giá hợp lý với dịch vụ', 34, 12),
+	  (32, 6.2, 'điều hoà hơi nóng, mùa này nhiệt độ hơi cao bên ngoài', 35, 11),
+	  (33, 7.5, 'Địa điểm thuận tiện, nhân viên nhiệt tình và lễ phép.', 36, 7),
+	  (34, 9.2, 'phòng ăn quá chật, bể bơi bẩn và quá nhỏ, các cửa kính không được vệ sinh', 37, 6),
+	  (35, 9.8, 'Khách sạn gần biển nhưng giá cả lại rẻ, phòng rộng rãi thoáng mát.', 38, 5),
+	  (36, 7.5, 'sạch sẽ , nhân viên nhiệt tình', 39, 8);	  
+      
+INSERT INTO room_type(id, `name`, count, price, bathroom_count, room_area, adult_count, children_count, `description`, hotel_id, view_id)
+VALUES(13, 'Phòng đơn', 2, 300.000, 1, 30, 1, 1, '', 7, 1),
+      (14, 'Phòng đôi', 2, 500.000, 2, 40, 2, 1, '', 7, 2),
+      (15, 'Phòng suite', 2, 900.000, 1, 100, 5, 2, '', 7, 1),
+      (16, 'Phòng đơn', 1, 400.000, 1, 35, 3, 2, '', 8, 1),
+      (17, 'Phòng đôi', 2, 566.777, 1, 40, 2, 1, '', 8, 2),
+      (18, 'Phòng suite', 2, 677.777, 1, 100, 2, 1, '',8, 2),
+      (19, 'Phòng đơn', 10, 678.777, 2, 40, 1, 0, '', 9, 1),
+      (20, 'Phòng đôi', 7, 900.777, 2, 60, 2, 1, '', 9, 1),
+	  (21, 'Phòng suite', 5, 1000.777, 1, 100, 2, 1, '', 9, 2),
+      (22, 'Phòng đơn', 3, 888.777, 1, 50, 3, 1, '', 10, 1),
+      (23, 'Phòng đôi', 4, 999.777, 2, 60, 2, 0, '', 10, 1),
+      (24, 'Phòng suite', 5, 1500.666, 1, 100, 2, 1, '', 10, 2),
+      (25, 'Phòng đơn', 3, 888.777, 1, 50, 3, 1, '', 11, 2),
+      (26, 'Phòng đôi', 4, 999.777, 2, 60, 2, 0, '', 11, 1),
+      (27, 'Phòng suite', 5, 1500.666, 1, 100, 2, 1, '', 11, 1),
+      (28, 'Phòng đơn', 3, 888.777, 1, 50, 3, 1, '', 12, 2),
+      (29, 'Phòng đôi', 4, 999.777, 2, 60, 2, 0, '', 12, 1),
+      (30, 'Phòng suite', 5, 1500.666, 1, 88, 2, 1, '', 12, 1);
+INSERT INTO room (room_type_id)
+SELECT 
+    rt.id
+FROM 
+    room_type rt
+JOIN (
+    SELECT 
+        1 AS n
+    UNION ALL SELECT 2
+    UNION ALL SELECT 3
+    UNION ALL SELECT 4
+    UNION ALL SELECT 5
+    UNION ALL SELECT 6
+    UNION ALL SELECT 7
+    UNION ALL SELECT 8
+    UNION ALL SELECT 9
+    UNION ALL SELECT 10
+    UNION ALL SELECT 11
+) numbers
+ON numbers.n <= rt.count;
+      
+INSERT INTO reservation(id, email, `status`, user_id)
+VALUES(1, 'customer1@gmai.com', 'CONFIRMED', 22),
+	  (2, 'customer4@gmai.com', 'CONFIRMED', 25),
+      (3, 'customer7@gmai.com', 'CONFIRMED', 28),
+      (4, 'customer10@gmai.com', 'CONFIRMED', 31);
+      
+INSERT INTO room_reserved(id, start_day, end_day, reservation_id, room_id)
+VALUES(1, '2023-9-1', '2023-9-5', 1, 4),
+	  (2, '2023-9-6', '2023-9-10', 2, 5),
+	  (3, '2023-9-19', '2023-9-23', 3, 6),
+      (4, '2023-10-1', '2023-10-22', 4, 7);
+      
 
       
 

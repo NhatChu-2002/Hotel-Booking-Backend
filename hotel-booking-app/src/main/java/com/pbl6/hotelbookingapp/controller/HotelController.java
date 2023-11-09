@@ -1,11 +1,10 @@
 package com.pbl6.hotelbookingapp.controller;
 
-import com.pbl6.hotelbookingapp.dto.CustomSearchResult;
-import com.pbl6.hotelbookingapp.dto.HotelWithTopRating;
-import com.pbl6.hotelbookingapp.dto.SearchRequest;
+import com.pbl6.hotelbookingapp.dto.*;
 import com.pbl6.hotelbookingapp.service.HotelService;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 
@@ -26,5 +25,9 @@ public class HotelController {
     @PostMapping("/search")
     public CustomSearchResult searchHotels(@RequestBody SearchRequest request) {
         return hotelService.searchHotels(request);
+    }
+    @PostMapping("/filter/search")
+    public List<HotelFilterSearchResult> filterSearchHotels(@RequestBody FilterSearchRequest request) {
+        return hotelService.filterSearchHotel(request);
     }
 }

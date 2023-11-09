@@ -1,10 +1,7 @@
 package com.pbl6.hotelbookingapp.service;
 
 import com.pbl6.hotelbookingapp.Exception.ResponseException;
-import com.pbl6.hotelbookingapp.dto.CustomSearchResult;
-import com.pbl6.hotelbookingapp.dto.HotelSearchResult;
-import com.pbl6.hotelbookingapp.dto.HotelWithTopRating;
-import com.pbl6.hotelbookingapp.dto.SearchRequest;
+import com.pbl6.hotelbookingapp.dto.*;
 import com.pbl6.hotelbookingapp.entity.Hotel;
 import com.pbl6.hotelbookingapp.repository.HotelRepository;
 import org.springframework.stereotype.Service;
@@ -13,6 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class HotelService {
@@ -43,5 +41,13 @@ public class HotelService {
         result.setTotalItems(totalItems);
         return result;
     }
+    public List<HotelFilterSearchResult> filterSearchHotel(FilterSearchRequest request){
+        List<Hotel> hotels = hotelRepository.findAll(HotelSpecifications.withFilters(request));
+        List<HotelFilterSearchResult> searchResults = hotels.stream()
+                .map(HotelFilterSearchResult::fromHotel)
+                .collect(Collectors.toList());
+        return searchResults;
+    }
+
 }
 

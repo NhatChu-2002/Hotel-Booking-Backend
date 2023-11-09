@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -75,5 +76,22 @@ public class Hotel {
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<HotelImage> hotelImages = new HashSet<>();
+    public Double getAverageRating() {
+        Set<Review> reviews = getReviews();
+        return calculateAverageRating(reviews);
+    }
+    public Double calculateAverageRating(Set<Review> reviews) {
+        if (reviews == null || reviews.isEmpty()) {
+            return null;
+        }
+
+        double totalRating = 0.0;
+        for (Review review : reviews) {
+            totalRating += review.getRatingTotal();
+        }
+
+        return Math.round((totalRating / reviews.size()) * 10) / 10.0;
+    }
+
 
 }
