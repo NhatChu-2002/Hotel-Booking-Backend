@@ -24,9 +24,6 @@ public class HotelAmenity {
     private String name;
     @Column(name="description")
     private String description;
-    @ManyToOne
-    @JoinColumn(name = "hotel_id")
-    private Hotel hotel;
     @Column(name="created_at")
     @CreationTimestamp
     private Date createdAt;
@@ -36,5 +33,4 @@ public class HotelAmenity {
     @OneToMany(mappedBy = "hotelAmenity", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<HotelHotelAmenity> hotelHotelAmenities = new HashSet<>();
-
 }

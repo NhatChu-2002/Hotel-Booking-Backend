@@ -32,4 +32,12 @@ public class RoomAmenity {
             joinColumns = @JoinColumn(name="room_amenity_id"),
             inverseJoinColumns = @JoinColumn(name="room_type_id"))
     private Set<RoomType> roomTypes = new HashSet<>();
+
+    public RoomAmenity(String name) {
+        this.name = name;
+    }
+
+    public RoomAmenity() {
+
+    }
 }

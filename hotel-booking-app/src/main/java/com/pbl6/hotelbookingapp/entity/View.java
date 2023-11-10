@@ -1,7 +1,9 @@
 package com.pbl6.hotelbookingapp.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -30,4 +32,10 @@ public class View {
     private Date modifiedAt;
     @OneToMany(mappedBy = "view", cascade = CascadeType.ALL)
     private Set<RoomType> roomTypes = new HashSet<>();
+    public View(String name) {
+        this.name = name;
+    }
+    public View() {
+
+    }
 }

@@ -56,7 +56,6 @@ public class RoomType {
     @OneToMany(mappedBy = "roomType", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<RoomImage> roomImages = new HashSet<>();
-
     @OneToMany(mappedBy = "roomType", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<RoomBedType> roomBedTypes = new HashSet<>();
