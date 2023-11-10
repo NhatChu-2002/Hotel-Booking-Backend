@@ -1,5 +1,6 @@
 package com.pbl6.hotelbookingapp.service;
 
+import com.pbl6.hotelbookingapp.Exception.HotelNotFoundException;
 import com.pbl6.hotelbookingapp.Exception.ResponseException;
 
 import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
@@ -33,14 +34,16 @@ public class HotelService {
     private HotelImageRepository imageRepository;
     private HotelRateRepository rateRepository;
 
-    public HotelService(HotelRepository hotelRepository, UserRepository userRepository, HotelAmenityRepository amenityRepository, HotelImageRepository imageRepository, HotelRateRepository rateRepository, ResourceLoader resourceLoader) {
+    private HotelHotelAmenityRepository hotelHotelAmenityRepository;
+
+    public HotelService(HotelRepository hotelRepository, UserRepository userRepository, HotelAmenityRepository amenityRepository, HotelImageRepository imageRepository, HotelRateRepository rateRepository, HotelHotelAmenityRepository hotelHotelAmenityRepository) {
         this.hotelRepository = hotelRepository;
         this.userRepository = userRepository;
         this.amenityRepository = amenityRepository;
         this.imageRepository = imageRepository;
         this.rateRepository = rateRepository;
+        this.hotelHotelAmenityRepository = hotelHotelAmenityRepository;
     }
-
 
     public Optional<Hotel> findHotelByNameAndProvinceAndStreet(String hotelName, String province, String street) {
         return hotelRepository.findFirstByNameAndProvinceAndStreet(hotelName, province, street);
@@ -89,55 +92,81 @@ public class HotelService {
 
 
     public AddHotelResponse addHotel(AddHotelRequest addHotelRequest, Integer userId) throws IOException {
-        Optional<User> userOptional = userRepository.findById(userId);
-        User user = userOptional.get();
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
+        Hotel hotel = createHotelFromRequest(addHotelRequest, user);
+
+        hotelRepository.save(hotel);
+        Set<HotelHotelAmenity> amenities = addOrUpdateHotelAmenities(hotel, addHotelRequest.getAmenities());
+        hotel.setHotelHotelAmenities(amenities);
+        hotelRepository.save(hotel);
+
+        saveHotelImages(hotel, addHotelRequest.getImages());
+
+        AddHotelResponse responseDTO = new AddHotelResponse();
+        responseDTO.setMessage("Hotel added successfully");
+        return responseDTO;
+    }
+
+    private Hotel createHotelFromRequest(AddHotelRequest addHotelRequest, User user) {
         Hotel hotel = new Hotel();
         hotel.setUser(user);
         hotel.setName(addHotelRequest.getName());
         hotel.setDescription(addHotelRequest.getDescription());
         hotel.setProvince(addHotelRequest.getProvince());
         hotel.setDistrict(addHotelRequest.getDistrict());
+        hotel.setMainPhoneNumber(addHotelRequest.getMainPhoneNumber());
+        hotel.setMainEmail(addHotelRequest.getMainEmail());
+        hotel.setStatus(addHotelRequest.getStatus());
         hotel.setWard(addHotelRequest.getWard());
         hotel.setStreet(addHotelRequest.getStreet());
         hotel.setCheckInTime(addHotelRequest.getCheckInTime());
         hotel.setCheckOutTime(addHotelRequest.getCheckOutTime());
+
         for (String rule : addHotelRequest.getRules()) {
             hotel.setRule(rule);
         }
 
         HotelRate rate = rateRepository.findById(addHotelRequest.getRate()).orElse(null);
         hotel.setHotelRate(rate);
+        rateRepository.save(rate);
 
-        Set<HotelAmenity> amenities = new HashSet<>();
-        for (String amenityName : addHotelRequest.getAmenities()) {
-            HotelAmenity amenity = amenityRepository.findByName(amenityName).orElse(null);
-            if (amenity == null) {
-                amenity = new HotelAmenity();
-                amenity.setName(amenityName);
-                amenityRepository.save(amenity);
-            }
-            amenities.add(amenity);
+        return hotel;
+    }
+
+    private Set<HotelHotelAmenity> addOrUpdateHotelAmenities(Hotel hotel, List<AmenityPriceDTO> amenityPrices) {
+        Set<HotelHotelAmenity> amenities = new HashSet<>();
+        for (AmenityPriceDTO amenityPrice : amenityPrices) {
+            HotelAmenity amenity = amenityRepository.findByName(amenityPrice.getName())
+                    .orElseGet(() -> {
+                        HotelAmenity newAmenity = new HotelAmenity();
+                        newAmenity.setName(amenityPrice.getName());
+                        return amenityRepository.save(newAmenity);
+                    });
+            HotelHotelAmenity hotelAmenity = new HotelHotelAmenity();
+            hotelAmenity.setHotel(hotel);
+            hotelAmenity.setHotelAmenity(amenity);
+            hotelAmenity.setPrice(amenityPrice.getPrice());
+            amenities.add(hotelAmenity);
         }
-//        hotel.setHotelAmenities(amenities);
-        hotelRepository.save(hotel);
+        hotelHotelAmenityRepository.saveAll(amenities);
+        return amenities;
+    }
 
-        List<String> imagePaths = saveImages(addHotelRequest.getImages());
+    private void saveHotelImages(Hotel hotel, List<MultipartFile> images) throws IOException {
+        List<String> imagePaths = saveImages(images);
         for (String imagePath : imagePaths) {
             HotelImage image = new HotelImage();
             image.setHotel(hotel);
             image.setImagePath(imagePath);
             imageRepository.save(image);
         }
-        AddHotelResponse responseDTO = new AddHotelResponse();
-        responseDTO.setMessage("Hotel added successfully");
-        return responseDTO;
     }
 
     public List<String> saveImages(List<MultipartFile> images) throws IOException {
         List<String> imagePaths = new ArrayList<>();
         String currentDirectory = new File("").getAbsolutePath();
         String staticPath = currentDirectory + "/src/main/resources/static";
-        String uploadDir = staticPath + File.separator + "images";
+        String uploadDir = staticPath + File.separator + "images/hotel";
 
         File uploadDirFile = new File(uploadDir);
         if (!uploadDirFile.exists()) {

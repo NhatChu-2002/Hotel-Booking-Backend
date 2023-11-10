@@ -6,6 +6,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name="room_bed_type")
+@IdClass(RoomBedTypeId.class)
 @Getter
 @Setter
 public class RoomBedType {
