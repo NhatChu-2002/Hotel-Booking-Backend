@@ -10,6 +10,7 @@ import com.pbl6.hotelbookingapp.repository.*;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,15 +36,25 @@ public class HotelService {
     private HotelRateRepository rateRepository;
 
     private HotelHotelAmenityRepository hotelHotelAmenityRepository;
+    private RoomTypeRepository roomTypeRepository;
+    private ReviewRepository reviewRepository;
+    private ExtraServiceRepository extraServiceRepository;
 
-    public HotelService(HotelRepository hotelRepository, UserRepository userRepository, HotelAmenityRepository amenityRepository, HotelImageRepository imageRepository, HotelRateRepository rateRepository, HotelHotelAmenityRepository hotelHotelAmenityRepository) {
+    public HotelService(HotelRepository hotelRepository, UserRepository userRepository, HotelAmenityRepository amenityRepository, HotelImageRepository imageRepository, HotelRateRepository rateRepository, HotelHotelAmenityRepository hotelHotelAmenityRepository, RoomTypeRepository roomTypeRepository, ReviewRepository reviewRepository, ExtraServiceRepository extraServiceRepository) {
         this.hotelRepository = hotelRepository;
         this.userRepository = userRepository;
         this.amenityRepository = amenityRepository;
         this.imageRepository = imageRepository;
         this.rateRepository = rateRepository;
         this.hotelHotelAmenityRepository = hotelHotelAmenityRepository;
+        this.roomTypeRepository = roomTypeRepository;
+        this.reviewRepository = reviewRepository;
+        this.extraServiceRepository = extraServiceRepository;
     }
+
+
+
+
 
     public Optional<Hotel> findHotelByNameAndProvinceAndStreet(String hotelName, String province, String street) {
         return hotelRepository.findFirstByNameAndProvinceAndStreet(hotelName, province, street);
@@ -193,6 +204,103 @@ public class HotelService {
         } else result.setLocation(hotels.get(0).getProvince());
 
         return result;
+    }
+
+    public HotelDetails getHotelDetails(Integer hotelId) {
+        Optional<Hotel> optionalHotel = hotelRepository.findById(hotelId);
+
+        if (optionalHotel.isPresent()) {
+            Hotel hotel = optionalHotel.get();
+
+            return HotelDetails.builder()
+                    .id(hotel.getId())
+                    .hotelName(hotel.getName())
+                    .address(buildAddress(hotel.getProvince(), hotel.getDistrict(), hotel.getWard(), hotel.getStreet()))
+                    .minPrice(getMinPriceByHotelId(hotel))
+                    .checkIn(hotel.getCheckInTime())
+                    .checkOut(hotel.getCheckOutTime())
+                    .description(hotel.getDescription())
+                    .hotelImages(getHotelImagePaths(hotel.getId()))
+                    .hotelAmenities(getAmenityNamesByHotelId(hotel.getId()))
+                    .extraServices(getExtraAmenitiesByHotelId(hotel.getId()))
+                    .roomList(getRoomTypeDetails(hotel.getRoomTypes().stream().toList()))
+                    .reviews(getReviews(hotel.getReviews().stream().toList()))
+                    .rules(getRules(hotel))
+                    .build();
+        } else {
+            throw new ResponseException("Hotel not found with id: " + hotelId);
+        }
+    }
+
+    private Double getMinPriceByHotelId(Hotel hotel) {
+        Optional<Double> minPrice = roomTypeRepository.findMinPriceByHotelId(hotel.getId());
+        return minPrice.orElse(0.0);
+
+    }
+
+    private List<RoomTypeDetails> getRoomTypeDetails(List<RoomType> roomList) {
+        return Optional.ofNullable(roomList)
+                .orElse(List.of())
+                .stream()
+                .map(room -> {
+
+                    return RoomTypeDetails.builder()
+                        .id(room.getId())
+                        .roomName(room.getName())
+                        .price(room.getPrice())
+                        .roomImage(getFirstImageByRoom(room.getId()))
+                        .quantity(room.getCount())
+                        .adult(room.getAdultCount())
+                        .children(room.getChildrenCount())
+                        .roomAmenities(getListAmenities(room))
+                        .build();
+                })
+                .collect(Collectors.toList());
+    }
+    private String buildAddress(String province,String district, String ward, String street) {
+
+        return province +", " + district + ", " + ward + ", " + street;
+    }
+    private List<String> getListAmenities(RoomType room) {
+        return roomTypeRepository.findAmenitiesByRoomTypeId(room.getId());
+    }
+    private String getFirstImageByRoom(Integer roomId) {
+        return roomTypeRepository.findFirstImageByRoomTypeId(roomId);
+
+    }
+    private List<ReviewDTO> getReviews(List<Review> reviews) {
+        return reviews.stream()
+                .map(review -> ReviewDTO.builder()
+                        .id(review.getId())
+                        .rate(review.getRatingTotal())
+                        .review(review.getComment())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    private List<String> getRules(Hotel hotel) {
+        return Arrays.asList(hotel.getRule().split("\\s*,\\s*"));
+    }
+    public List<String> getHotelImagePaths(Integer hotelId) {
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with id: " + hotelId));
+
+        return hotel.getHotelImages().stream()
+                .map(HotelImage::getImagePath)
+                .collect(Collectors.toList());
+    }
+    public List<String> getAmenityNamesByHotelId(Integer hotelId) {
+        Hotel hotel = new Hotel();
+        hotel.setId(hotelId);
+
+        List<HotelHotelAmenity> hotelHotelAmenities = hotelHotelAmenityRepository.findByHotel(hotel);
+
+        return hotelHotelAmenities.stream()
+                .map(hotelHotelAmenity -> hotelHotelAmenity.getHotelAmenity().getName())
+                .collect(Collectors.toList());
+    }
+    public List<ExtraService> getExtraAmenitiesByHotelId(Integer hotelId) {
+        return extraServiceRepository.findByHotelId(hotelId);
     }
 }
 

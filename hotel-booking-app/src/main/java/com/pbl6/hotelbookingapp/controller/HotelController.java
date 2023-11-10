@@ -45,5 +45,10 @@ public class HotelController {
         return hotelService.filterSearchHotel(request);
 
     }
+    @GetMapping("/{hotelId}")
+    public ResponseEntity<HotelDetails> getHotelDetails(@PathVariable Integer hotelId) {
+        HotelDetails hotelDetails = hotelService.getHotelDetails(hotelId);
+        return ResponseEntity.ok(hotelDetails);
+    }
 }
 
