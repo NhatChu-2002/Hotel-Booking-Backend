@@ -68,7 +68,6 @@ public class HotelService {
             filteredHotel.setAddress(hotel.getAddress());
             filteredHotel.setHotelImgPath(hotel.getHotelImgPath());
 
-            Optional<Hotel> tempHotel = hotelRepository.findFirstById(hotel.getHotelId());
             Set<String> amenities = hotel.getAmenitiesSet();
             filteredHotel.setAmenities(amenities);
             filteredHotel.setMinPrice(hotel.getMinPrice());
