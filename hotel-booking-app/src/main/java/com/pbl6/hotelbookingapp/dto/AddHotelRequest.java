@@ -1,5 +1,6 @@
 package com.pbl6.hotelbookingapp.dto;
 
+import com.pbl6.hotelbookingapp.entity.HotelStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,10 +20,13 @@ public class AddHotelRequest {
     private String district;
     private String ward;
     private String street;
+    private String mainPhoneNumber;
+    private String mainEmail;
     private LocalTime checkInTime;
     private LocalTime checkOutTime;
+    private HotelStatus status;
     private List<String> rules;
-    private List<String> amenities;
+    private List<AmenityPriceDTO> amenities;
     private Integer rate;
     private List<MultipartFile> images;
 }
