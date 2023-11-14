@@ -204,8 +204,8 @@ public class HotelService {
 
 
 
-    public PageSearchResult filterSearchHotel(FilterSearchRequest request) {
-        PageSearchResult result = new PageSearchResult();
+    public CustomSearchResult filterSearchHotel(FilterSearchRequest request) {
+        CustomSearchResult result = new CustomSearchResult();
         SearchRequest search = new SearchRequest();
         search.setProvince(request.getProvince());
         search.setCheckinDay(request.getCheckinDay());
@@ -216,6 +216,7 @@ public class HotelService {
         CustomSearchResult firstSearch = searchHotels(search);
         int pageIndex = request.getPageIndex();
         int pageSize = request.getPageSize();
+
         if(request.getCount() == 0 && request.getProvince() == null && request.getCheckinDay() == null && request.getCheckoutDay() == null && request.getChildrenCount()==0 && request.getAdultCount() == 0){
 
             Specification<Hotel> spec = HotelSpecifications.withSmallFilters( request);
@@ -232,14 +233,21 @@ public class HotelService {
         return result;
     }
 
-    private void handleSearchResult(PageSearchResult result, int pageIndex, int pageSize, Specification<Hotel> spec) {
+    private void handleSearchResult(CustomSearchResult result, int pageIndex, int pageSize, Specification<Hotel> spec) {
         List<Hotel> hotels = hotelRepository.findAll(spec);
-
+        int pageTotal = calculatePageTotal(hotels.size(),pageSize);
+        if(pageTotal-1 < pageIndex)
+        {
+            throw new ResponseException("Page index out of bound!");
+        }
         List<HotelFilterSearchResult> searchResults = hotels.stream()
                 .map(HotelFilterSearchResult::fromHotel)
                 .collect(Collectors.toList());
         List<HotelFilterSearchResult> filteredHotels = getFilteredHotels(searchResults, pageIndex, pageSize);
-
+        if(!hotels.isEmpty())
+        {
+            result.setLocation(hotels.get(0).getProvince());
+        }
         result.setHotels(filteredHotels);
         result.setTotalItems((long) filteredHotels.size());
         result.setPageTotal(calculatePageTotal(searchResults.size(), pageSize));

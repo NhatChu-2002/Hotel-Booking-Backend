@@ -16,5 +16,8 @@ public class CustomSearchResult {
     private List<HotelFilterSearchResult> hotels;
     private Long totalItems;
     private String location;
+    private int pageIndex;
+    private int pageSize;
+    private int pageTotal;
 
 }
