@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -15,4 +16,8 @@ public class CustomSearchResult {
     private List<HotelFilterSearchResult> hotels;
     private Long totalItems;
     private String location;
+    private int pageIndex;
+    private int pageSize;
+    private int pageTotal;
+
 }

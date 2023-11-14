@@ -1,5 +1,6 @@
 package com.pbl6.hotelbookingapp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,13 +22,18 @@ public class ExtraService {
     private String name;
     @Column(name="description")
     private String description;
+    @Column(name="price")
+    private Double price;
     @ManyToOne
     @JoinColumn(name = "hotel_id")
+    @JsonIgnore
     private Hotel hotel;
     @Column(name="created_at")
     @CreationTimestamp
+    @JsonIgnore
     private Date createdAt;
     @Column(name="modified_at")
     @UpdateTimestamp
+    @JsonIgnore
     private Date modifiedAt;
 }

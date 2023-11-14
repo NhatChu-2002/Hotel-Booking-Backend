@@ -13,9 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReservationRequest {
-    private String hotelName;
-    private String province;
-    private String address;
+    private Integer hotelId;
     private String roomType;
     private String email;
     private Integer count;

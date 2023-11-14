@@ -27,7 +27,7 @@ public class HotelController {
         return hotelService.getTop4HotelsWithFirstImage();
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST, consumes = {"multipart/form-data"})
+    @RequestMapping(value = "/add" , method = RequestMethod.POST, consumes = { "multipart/form-data" })
     public ResponseEntity<AddHotelResponse> addHotel(@ModelAttribute AddHotelRequest requestDTO, @RequestParam Integer userId) {
         try {
             AddHotelResponse responseDTO = hotelService.addHotel(requestDTO, userId);
@@ -36,17 +36,18 @@ public class HotelController {
             return new ResponseEntity<>(new AddHotelResponse("Error adding hotel"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
     @PostMapping("/search")
     public CustomSearchResult searchHotels(@RequestBody SearchRequest request) {
         return hotelService.searchHotels(request);
     }
-
     @PostMapping("/filter/search")
     public CustomSearchResult filterSearchHotels(@RequestBody FilterSearchRequest request) {
         return hotelService.filterSearchHotel(request);
 
     }
+    @GetMapping("/{hotelId}")
+    public ResponseEntity<HotelDetails> getHotelDetails(@PathVariable Integer hotelId) {
+        HotelDetails hotelDetails = hotelService.getHotelDetails(hotelId);
+        return ResponseEntity.ok(hotelDetails);
+    }
 }
-
-

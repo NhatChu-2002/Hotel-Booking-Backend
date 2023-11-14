@@ -3,6 +3,7 @@ package com.pbl6.hotelbookingapp.entity;
 public enum Role {
     ADMIN,
     HOST,
-    CUSTOMER
+    CUSTOMER,
+    NOT_REGISTERED_CUSTOMER
 
 }
