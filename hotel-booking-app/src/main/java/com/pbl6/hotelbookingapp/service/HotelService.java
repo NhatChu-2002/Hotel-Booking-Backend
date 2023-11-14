@@ -7,9 +7,13 @@ import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
 import com.pbl6.hotelbookingapp.dto.*;
 import com.pbl6.hotelbookingapp.entity.*;
 import com.pbl6.hotelbookingapp.repository.*;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
+import jakarta.persistence.EntityManager;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,8 +43,10 @@ public class HotelService {
     private RoomTypeRepository roomTypeRepository;
     private ReviewRepository reviewRepository;
     private ExtraServiceRepository extraServiceRepository;
+    private EntityManager entityManager;
 
-    public HotelService(HotelRepository hotelRepository, UserRepository userRepository, HotelAmenityRepository amenityRepository, HotelImageRepository imageRepository, HotelRateRepository rateRepository, HotelHotelAmenityRepository hotelHotelAmenityRepository, RoomTypeRepository roomTypeRepository, ReviewRepository reviewRepository, ExtraServiceRepository extraServiceRepository) {
+
+    public HotelService(HotelRepository hotelRepository, UserRepository userRepository, HotelAmenityRepository amenityRepository, HotelImageRepository imageRepository, HotelRateRepository rateRepository, HotelHotelAmenityRepository hotelHotelAmenityRepository, RoomTypeRepository roomTypeRepository, ReviewRepository reviewRepository, ExtraServiceRepository extraServiceRepository, EntityManager entityManager) {
         this.hotelRepository = hotelRepository;
         this.userRepository = userRepository;
         this.amenityRepository = amenityRepository;
@@ -50,11 +56,8 @@ public class HotelService {
         this.roomTypeRepository = roomTypeRepository;
         this.reviewRepository = reviewRepository;
         this.extraServiceRepository = extraServiceRepository;
+        this.entityManager = entityManager;
     }
-
-
-
-
 
     public Optional<Hotel> findHotelByNameAndProvinceAndStreet(String hotelName, String province, String street) {
         return hotelRepository.findFirstByNameAndProvinceAndStreet(hotelName, province, street);
@@ -67,37 +70,46 @@ public class HotelService {
     public CustomSearchResult searchHotels(SearchRequest request) {
 
         CustomSearchResult result = new CustomSearchResult();
-        if (request.getCheckinDay().compareTo(request.getCheckoutDay()) >= 0) {
+        if (request.getCheckoutDay()!= null && request.getCheckinDay()!=null && request.getCheckinDay().compareTo(request.getCheckoutDay()) >= 0) {
             throw new ResponseException("Check-in date cannot be greater than or equal to check-out date! ");
         }
 
         List<HotelSearchResult> hotels = hotelRepository.searchHotels(request.getProvince(), request.getCheckinDay(), request.getCheckoutDay(), request.getCount(), request.getAdultCount(), request.getChildrenCount());
 
         List<HotelFilterSearchResult> filteredHotels = new ArrayList<>();
-
-        for (HotelSearchResult hotel : hotels) {
-            HotelFilterSearchResult filteredHotel = new HotelFilterSearchResult();
-            filteredHotel.setId(hotel.getHotelId());
-            filteredHotel.setHotelName(hotel.getHotelName());
-            filteredHotel.setAddress(hotel.getAddress());
-            filteredHotel.setHotelImgPath(hotel.getHotelImgPath());
-
-            Set<String> amenities = hotel.getAmenitiesSet();
-            filteredHotel.setAmenities(amenities);
-            filteredHotel.setMinPrice(hotel.getMinPrice());
-            filteredHotel.setMaxPrice(hotel.getMaxPrice());
-            filteredHotel.setReviews(hotel.getReviews());
-            filteredHotel.setRating(hotel.getRatingTotal());
-
-            filteredHotels.add(filteredHotel);
+        if(hotels.isEmpty() || hotels == null)
+        {
+            Long totalItems = 0L;
+            result.setHotels(null);
+            result.setLocation(null);
+            result.setTotalItems(totalItems);
         }
-        Optional<Hotel> tempHotel = hotelRepository.findFirstById(hotels.get(0).getHotelId());
-        Long totalItems = (long) filteredHotels.size();
-        result.setHotels(filteredHotels);
-        result.setLocation(tempHotel.get().getProvince());
-        result.setTotalItems(totalItems);
+        else {
+            for (HotelSearchResult hotel : hotels) {
+                HotelFilterSearchResult filteredHotel = new HotelFilterSearchResult();
+                filteredHotel.setId(hotel.getHotelId());
+                filteredHotel.setHotelName(hotel.getHotelName());
+                filteredHotel.setAddress(hotel.getAddress());
+                filteredHotel.setHotelImgPath(hotel.getHotelImgPath());
 
+                Set<String> amenities = hotel.getAmenitiesSet();
+                filteredHotel.setAmenities(amenities);
+                filteredHotel.setMinPrice(hotel.getMinPrice());
+                filteredHotel.setMaxPrice(hotel.getMaxPrice());
+                filteredHotel.setReviews(hotel.getReviews());
+                filteredHotel.setRating(hotel.getRatingTotal());
+
+                filteredHotels.add(filteredHotel);
+            }
+            Optional<Hotel> tempHotel = hotelRepository.findFirstById(hotels.get(0).getHotelId());
+            Long totalItems = (long) filteredHotels.size();
+            result.setHotels(filteredHotels);
+            result.setLocation(tempHotel.get().getProvince());
+            result.setTotalItems(totalItems);
+
+        }
         return result;
+
     }
 
 
@@ -190,21 +202,60 @@ public class HotelService {
         return imagePaths;
     }
 
-    public CustomSearchResult filterSearchHotel(FilterSearchRequest request) {
-        CustomSearchResult result = new CustomSearchResult();
 
-        List<Hotel> hotels = hotelRepository.findAll(HotelSpecifications.withFilters(request));
-        List<HotelFilterSearchResult> searchResults = hotels.stream()
-                .map(HotelFilterSearchResult::fromHotel)
-                .collect(Collectors.toList());
-        result.setHotels(searchResults);
-        result.setTotalItems((long) searchResults.size());
-        if (searchResults.isEmpty()) {
-            result.setLocation(null);
-        } else result.setLocation(hotels.get(0).getProvince());
+
+    public PageSearchResult filterSearchHotel(FilterSearchRequest request) {
+        PageSearchResult result = new PageSearchResult();
+        SearchRequest search = new SearchRequest();
+        search.setProvince(request.getProvince());
+        search.setCheckinDay(request.getCheckinDay());
+        search.setCheckoutDay(request.getCheckoutDay());
+        search.setCount(request.getCount());
+        search.setAdultCount(request.getAdultCount());
+        search.setChildrenCount(request.getChildrenCount());
+        CustomSearchResult firstSearch = searchHotels(search);
+        int pageIndex = request.getPageIndex();
+        int pageSize = request.getPageSize();
+        if(request.getCount() == 0 && request.getProvince() == null && request.getCheckinDay() == null && request.getCheckoutDay() == null && request.getChildrenCount()==0 && request.getAdultCount() == 0){
+
+            Specification<Hotel> spec = HotelSpecifications.withSmallFilters( request);
+            handleSearchResult(result, pageIndex, pageSize, spec);
+
+        }else {
+            Specification<Hotel> spec = HotelSpecifications.withFilters(firstSearch, request);
+            handleSearchResult(result, pageIndex, pageSize, spec);
+
+        }
+        result.setPageIndex(pageIndex);
+        result.setPageSize(pageSize);
 
         return result;
     }
+
+    private void handleSearchResult(PageSearchResult result, int pageIndex, int pageSize, Specification<Hotel> spec) {
+        List<Hotel> hotels = hotelRepository.findAll(spec);
+
+        List<HotelFilterSearchResult> searchResults = hotels.stream()
+                .map(HotelFilterSearchResult::fromHotel)
+                .collect(Collectors.toList());
+        List<HotelFilterSearchResult> filteredHotels = getFilteredHotels(searchResults, pageIndex, pageSize);
+
+        result.setHotels(filteredHotels);
+        result.setTotalItems((long) filteredHotels.size());
+        result.setPageTotal(calculatePageTotal(searchResults.size(), pageSize));
+    }
+
+    private int calculatePageTotal(long totalItems, int pageSize) {
+        return (int) Math.ceil((double) totalItems / pageSize);
+    }
+    private List<HotelFilterSearchResult> getFilteredHotels(List<HotelFilterSearchResult> allHotels, int pageIndex, int pageSize) {
+
+        int start = pageIndex * pageSize;
+        int end = Math.min(start + pageSize, allHotels.size());
+
+        return allHotels.subList(start, end);
+    }
+
 
     public HotelDetails getHotelDetails(Integer hotelId) {
         Optional<Hotel> optionalHotel = hotelRepository.findById(hotelId);

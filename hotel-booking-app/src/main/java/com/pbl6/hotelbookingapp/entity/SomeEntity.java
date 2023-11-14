@@ -28,18 +28,14 @@ import jakarta.persistence.*;
                 "LEFT JOIN room ro ON rt.id = ro.room_type_id " +
                 "LEFT JOIN room_reserved rr ON ro.id = rr.room_id " +
                 "WHERE LOWER(REPLACE(h.province, ' ', '')) = LOWER(REPLACE(:province, ' ', '')) " +
-                "AND (NOT EXISTS ( " +
-                "    SELECT 1 " +
+                "AND rt.count >= :count " +
+                "AND (rt.count - COALESCE(( " +
+                "    SELECT SUM(IF(:checkin_day BETWEEN rr2.start_day AND rr2.end_day OR :checkout_day BETWEEN rr2.start_day AND rr2.end_day, 1, 0)) " +
                 "    FROM room_reserved rr2 " +
                 "    JOIN room ro2 ON rr2.room_id = ro2.id " +
                 "    JOIN room_type rt2 ON ro2.room_type_id = rt2.id " +
-                "    WHERE rt2.hotel_id = h.id " +
-                "    AND ( " +
-                "        :checkin_day BETWEEN rr2.start_day AND rr2.end_day " +
-                "        OR :checkout_day BETWEEN rr2.start_day AND rr2.end_day " +
-                "    ) " +
-                ") OR (rr.start_day >= :checkout_day OR rr.end_day <= :checkin_day)) " +
-                "AND rt.count >= :count " +
+                "    WHERE (rt2.hotel_id = h.id AND rt2.id = rt.id) " +
+                "), 0)) >= :count " +
                 "AND rt.adult_count >= :adult_count " +
                 "AND rt.children_count >= :children_count " +
                 "GROUP BY h.id",

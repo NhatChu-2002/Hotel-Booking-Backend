@@ -41,7 +41,7 @@ public class HotelController {
         return hotelService.searchHotels(request);
     }
     @PostMapping("/filter/search")
-    public CustomSearchResult filterSearchHotels(@RequestBody FilterSearchRequest request) {
+    public PageSearchResult filterSearchHotels(@RequestBody FilterSearchRequest request) {
         return hotelService.filterSearchHotel(request);
 
     }
