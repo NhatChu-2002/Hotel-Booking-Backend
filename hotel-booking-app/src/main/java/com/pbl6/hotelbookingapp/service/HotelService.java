@@ -236,6 +236,10 @@ public class HotelService {
     private void handleSearchResult(CustomSearchResult result, int pageIndex, int pageSize, Specification<Hotel> spec) {
         List<Hotel> hotels = hotelRepository.findAll(spec);
         int pageTotal = calculatePageTotal(hotels.size(),pageSize);
+        if(hotels.isEmpty())
+        {
+            throw new ResponseException("No hotel found!");
+        }
         if(pageTotal-1 < pageIndex)
         {
             throw new ResponseException("Page index out of bound!");

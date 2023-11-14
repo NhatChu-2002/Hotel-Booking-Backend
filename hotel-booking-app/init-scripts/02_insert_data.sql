@@ -464,6 +464,9 @@ VALUES(1, '2023-9-1', '2023-9-5', 1, 4),
 	  (2, '2023-9-6', '2023-9-10', 2, 5),
 	  (3, '2023-9-19', '2023-9-23', 3, 6),
       (4, '2023-10-1', '2023-10-22', 4, 7);
+ALTER TABLE `booking-app`.`room` 
+CHANGE COLUMN `description` `name` VARCHAR(255) NULL DEFAULT NULL ;
+
       
 
       
