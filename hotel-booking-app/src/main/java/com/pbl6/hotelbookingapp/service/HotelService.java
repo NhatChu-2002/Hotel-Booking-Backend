@@ -9,6 +9,7 @@ import com.pbl6.hotelbookingapp.entity.*;
 import com.pbl6.hotelbookingapp.repository.*;
 import jakarta.persistence.EntityManager;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -61,6 +62,9 @@ public class HotelService {
 
     public Optional<Hotel> findHotelByNameAndProvinceAndStreet(String hotelName, String province, String street) {
         return hotelRepository.findFirstByNameAndProvinceAndStreet(hotelName, province, street);
+    }
+    public Optional<Hotel> findHotelById(Integer id) {
+        return hotelRepository.findFirstById(id);
     }
 
     public Set<HotelWithTopRating> getTop4HotelsWithFirstImage() {

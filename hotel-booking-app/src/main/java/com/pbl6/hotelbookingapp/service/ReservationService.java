@@ -7,6 +7,7 @@ import com.pbl6.hotelbookingapp.dto.ReservationResponse;
 import com.pbl6.hotelbookingapp.entity.*;
 import com.pbl6.hotelbookingapp.repository.ReservationRepository;
 import com.pbl6.hotelbookingapp.repository.RoomReservedRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,23 +35,34 @@ public class ReservationService {
 
 
     public ReservationResponse makeReservation(ReservationRequest request) {
-        Optional<User> user = userService.findByEmail(request.getEmail());
-        if (!user.isPresent()){
-            throw new ResponseException("User not found!");
-        }
-        Optional<Hotel> hotel = hotelService.findHotelByNameAndProvinceAndStreet(request.getHotelName(), request.getProvince(), request.getAddress());
+
+        Optional<Hotel> hotel = hotelService.findHotelById(request.getHotelId());
         if (!hotel.isPresent()){
             throw new ResponseException("Hotel not found!");
         }
-        Optional<RoomType> roomType = roomTypeService.findRoomTypeByNameAndHotelId(request.getRoomType(), hotel.get().getId());
+        Optional<RoomType> roomType = roomTypeService.findRoomTypeByNameAndHotelId(request.getRoomType(), request.getHotelId());
         if (!roomType.isPresent()){
             throw new ResponseException("Room type not found!");
+        }
+        Optional<User> user = userService.findByEmail(request.getEmail());
+        User saveUser;
+        if (!user.isPresent()){
+            var newUser = User.builder()
+                    .fullName(null)
+                    .email(request.getEmail())
+                    .password(null)
+                    .role(Role.NOT_REGISTERED_CUSTOMER)
+                    .build();
+            userService.saveUser(newUser);
+            saveUser = newUser;
+        }
+        else {
+            saveUser = user.get();
         }
         List<Room> availableRooms = roomService.getAvailableRooms(roomType.get(),
                                                                     request.getStartDay(),
                                                                     request.getEndDay(),
                                                                     request.getCount());
-
 
         if (availableRooms.size() < request.getCount()) {
             throw new ResponseException("Room not found!");
@@ -59,14 +71,20 @@ public class ReservationService {
         try {
 
             Reservation reservation = new Reservation();
-            reservation.setUser(user.get());
-            reservation.setEmail(user.get().getEmail());
+
+            reservation.setUser(saveUser);
+            reservation.setEmail(saveUser.getEmail());
             reservation.setStatus(ReservationStatus.CONFIRMED);
-            Double siteFee = request.getPrice() *20/100;
-            Double tax = request.getPrice() *10/100;
+
+            Double price = roomType.get().getPrice();
+            Double siteFee = price* request.getCount() *20/100;
+            Double tax =  price* request.getCount() *10/100;
+            Double total =  price* request.getCount() + tax;
+
             reservation.setSiteFee(siteFee);
             reservation.setTaxPaid(tax);
-            reservation.setTotalPrice(request.getPrice() + tax);
+            reservation.setTotalPrice(total);
+
             reservationRepository.save(reservation);
 
 
@@ -80,12 +98,12 @@ public class ReservationService {
                 roomReservedRepository.save(roomReserved);
             }
             return ReservationResponse.builder()
-                    .hotelName(request.getHotelName())
-                    .province(request.getProvince())
-                    .address(request.getAddress())
+                    .hotelName(hotel.get().getName())
+                    .province(hotel.get().getProvince())
+                    .address(hotel.get().getStreet())
                     .roomType(request.getRoomType())
                     .count(request.getCount())
-                    .total(request.getPrice() + tax)
+                    .total(total)
                     .endDay(request.getEndDay())
                     .startDay(request.getStartDay()).build();
         } catch (ResponseException e) {
