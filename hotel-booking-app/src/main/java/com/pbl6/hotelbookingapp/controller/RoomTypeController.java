@@ -24,9 +24,9 @@ public class RoomTypeController {
     }
 
     @RequestMapping(value = "/add" , method = RequestMethod.POST, consumes = { "multipart/form-data" })
-    public ResponseEntity<AddRoomTypeResponse> addRoomType(@ModelAttribute AddRoomTypeRequest addRoomTypeRequest, @RequestParam Integer hotelId) {
+    public ResponseEntity<AddRoomTypeResponse> addRoomType(@ModelAttribute AddRoomTypeRequest addRoomTypeRequest) {
         try {
-            AddRoomTypeResponse response = roomTypeService.addRoomTypeResponse(addRoomTypeRequest, hotelId);
+            AddRoomTypeResponse response = roomTypeService.addRoomTypeResponse(addRoomTypeRequest);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(new AddRoomTypeResponse("Error adding room type"), HttpStatus.INTERNAL_SERVER_ERROR);

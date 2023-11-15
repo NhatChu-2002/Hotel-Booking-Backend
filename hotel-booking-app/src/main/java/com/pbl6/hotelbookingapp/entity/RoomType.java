@@ -21,7 +21,8 @@ public class RoomType {
     private Integer id;
     @Column(name="name")
     private String name;
-
+    @Column(name="room_name")
+    private String roomName;
     @Column(name = "count")
     private Integer count;
     @Column(name="price")
