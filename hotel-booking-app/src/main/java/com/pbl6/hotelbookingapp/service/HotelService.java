@@ -215,23 +215,34 @@ public class HotelService {
         search.setAdultCount(request.getAdultCount());
         search.setChildrenCount(request.getChildrenCount());
         CustomSearchResult firstSearch = searchHotels(search);
-        int pageIndex = request.getPageIndex();
-        int pageSize = request.getPageSize();
-
-        if(request.getCount() == 0 && request.getProvince() == null && request.getCheckinDay() == null && request.getCheckoutDay() == null && request.getChildrenCount()==0 && request.getAdultCount() == 0){
-
-            Specification<Hotel> spec = HotelSpecifications.withSmallFilters( request);
-            handleSearchResult(result, pageIndex, pageSize, spec);
-
-        }else {
-            Specification<Hotel> spec = HotelSpecifications.withFilters(firstSearch, request);
-            handleSearchResult(result, pageIndex, pageSize, spec);
-
+        if(request.getPageIndex() == 0 || request.getPageSize() == 0)
+        {
+            handleSearchRequest(request, result, firstSearch,0,6);
         }
-        result.setPageIndex(pageIndex);
-        result.setPageSize(pageSize);
+        else {
+
+            int pageIndex = request.getPageIndex()-1;
+            int pageSize = request.getPageSize();
+
+            handleSearchRequest(request, result, firstSearch,pageIndex,pageSize);
+        }
 
         return result;
+    }
+
+    private void handleSearchRequest(FilterSearchRequest request, CustomSearchResult result, CustomSearchResult firstSearch, int pageIndex, int pageSize) {
+        Specification<Hotel> spec;
+        if(request.getCount() == 0 && request.getProvince() == null && request.getCheckinDay() == null && request.getCheckoutDay() == null && request.getChildrenCount()==0 && request.getAdultCount() == 0){
+
+            spec = HotelSpecifications.withSmallFilters(request);
+
+        }else {
+            spec = HotelSpecifications.withFilters(firstSearch, request);
+
+        }
+        handleSearchResult(result, pageIndex, pageSize, spec);
+        result.setPageIndex(pageIndex + 1);
+        result.setPageSize(pageSize);
     }
 
     private void handleSearchResult(CustomSearchResult result, int pageIndex, int pageSize, Specification<Hotel> spec) {
@@ -241,7 +252,7 @@ public class HotelService {
         {
             throw new ResponseException("No hotel found!");
         }
-        if(pageTotal-1 < pageIndex)
+        if(pageTotal < pageIndex)
         {
             throw new ResponseException("Page index out of bound!");
         }
@@ -254,7 +265,7 @@ public class HotelService {
             result.setLocation(hotels.get(0).getProvince());
         }
         result.setHotels(filteredHotels);
-        result.setTotalItems((long) filteredHotels.size());
+        result.setTotalItems((long) hotels.size());
         result.setPageTotal(calculatePageTotal(searchResults.size(), pageSize));
     }
 
