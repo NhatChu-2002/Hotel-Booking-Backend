@@ -17,10 +17,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByEmail(String email);
 
     @Modifying
-    @Query("UPDATE User u SET u.fullName=:fullName, u.gender = :gender, u.email = :email, u.phoneNumber = :phoneNumber, u.dateOfBirth = :dateOfBirth WHERE u.id = :id")
+    @Query("UPDATE User u SET u.fullName=:fullName, u.gender = :gender, u.phoneNumber = :phoneNumber, u.dateOfBirth = :dateOfBirth WHERE u.id = :id")
     void updateUserDetails(@Param("id") Integer id,
                            @Param("fullName") String fullName,
-                           @Param("email") String email,
                            @Param("phoneNumber") String phoneNumber,
                            @Param("gender") Boolean gender,
                            @Param("dateOfBirth") @DateTimeFormat(pattern = "dd-MM-yyyy") Date dateOfBirth

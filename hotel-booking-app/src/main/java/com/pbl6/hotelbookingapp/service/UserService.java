@@ -4,6 +4,7 @@ import com.pbl6.hotelbookingapp.Exception.ResponseException;
 import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
 import com.pbl6.hotelbookingapp.dto.ChangePasswordRequest;
 import com.pbl6.hotelbookingapp.dto.EditUserRequest;
+import com.pbl6.hotelbookingapp.dto.UserDTO;
 import com.pbl6.hotelbookingapp.entity.Role;
 import com.pbl6.hotelbookingapp.entity.User;
 import com.pbl6.hotelbookingapp.repository.UserRepository;
@@ -53,7 +54,7 @@ public class UserService {
         // save the new password
         repository.save(user);
     }
-    public EditUserRequest getUserById(Integer id)
+    public UserDTO getUserById(Integer id)
     {
 
         var user = repository.findById(id);
@@ -61,7 +62,7 @@ public class UserService {
         {
             throw new ResponseException("User not found!");
         }
-        return EditUserRequest.builder()
+        return UserDTO.builder()
                 .fullName(user.get().getFullName())
                 .email(user.get().getEmail())
                 .dateOfBirth(user.get().getDateOfBirth())
@@ -85,10 +86,6 @@ public class UserService {
         Optional<User> optionalUser = repository.findById(id);
 
         if (optionalUser.isPresent()) {
-            if (repository.existsByEmailAndIdNot(updateUser.getEmail(), id))
-            {
-                throw new UserNotFoundException("Email already exists!");
-            }
             if(!updateUser.getPhoneNumber().isBlank()){
 
                 if (!Validator.validatePhoneNumber(updateUser.getPhoneNumber())){
@@ -96,7 +93,6 @@ public class UserService {
                 }
             }
             repository.updateUserDetails(id,updateUser.getFullName(),
-                                            updateUser.getEmail(),
                                             updateUser.getPhoneNumber(),
                                             updateUser.getGender(),
                                             updateUser.getDateOfBirth());
