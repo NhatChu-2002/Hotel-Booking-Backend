@@ -140,24 +140,19 @@ VALUES
   ('Amenity1234', 'Description3', 8, 12.75);
   
 INSERT INTO hotel_image(id, image_path, hotel_id)
-VALUES(1, 'hotel1-image1', 1),
-	  (2, 'hotel1-image2', 1),
-      (3, 'hotel1-image3', 1),
-      (4, 'hotel2-image1', 2),
-	  (5, 'hotel2-image2', 2),
-      (6, 'hotel2-image3', 2),
-      (7, 'hotel3-image1', 3),
-	  (8, 'hotel3-image2', 3),
-      (9, 'hotel3-image3', 3),
-      (10, 'hotel4-image1', 4),
-	  (11, 'hotel4-image2', 4),
-      (12, 'hotel4-image3', 4),
-      (13, 'hotel5-image1', 5),
-	  (14, 'hotel5-image2', 5),
-      (15, 'hotel5-image3', 5),
-      (16, 'hotel6-image1', 6),
-	  (17, 'hotel6-image2', 6),
-      (18, 'hotel6-image3', 6);
+VALUES(1, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/cf2ef2e4-0f0a-4d8a-802d-4ce28a65ebdc_download (1).jpeg', 1),
+ 	  (2, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/fc90fc9f-8ca1-4ec5-aa67-565449203a5a_download (2).jpeg', 1),
+	  (3, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/4e15a6be-a7d3-425b-8722-c03a4087569e_download (3).jpeg', 1),
+      (4, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/cf2ef2e4-0f0a-4d8a-802d-4ce28a65ebdc_download (1).jpeg', 2),
+ 	  (5, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/fc90fc9f-8ca1-4ec5-aa67-565449203a5a_download (2).jpeg', 2),
+	  (6, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/4e15a6be-a7d3-425b-8722-c03a4087569e_download (3).jpeg', 2),
+      (7, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/cf2ef2e4-0f0a-4d8a-802d-4ce28a65ebdc_download (1).jpeg', 3),
+ 	  (8, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/fc90fc9f-8ca1-4ec5-aa67-565449203a5a_download (2).jpeg', 3),
+	  (9, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/4e15a6be-a7d3-425b-8722-c03a4087569e_download (3).jpeg', 3),
+      (10, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/cf2ef2e4-0f0a-4d8a-802d-4ce28a65ebdc_download (1).jpeg', 4),
+ 	  (11, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/fc90fc9f-8ca1-4ec5-aa67-565449203a5a_download (2).jpeg', 4),
+	  (12, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/4e15a6be-a7d3-425b-8722-c03a4087569e_download (3).jpeg', 4);
+
 
 
 -- INSERT INTO extra_amenity(id, `name`, hotel_id)
@@ -378,13 +373,13 @@ VALUES(1, 'Thẻ tín dụng');
 -- INSERT INTO invoice()
 -- VALUES();
    
-INSERT INTO hotel_image(id, image_path, hotel_id)
-VALUES(19, 'hotel7-image1', 7),
-	  (20, 'hotel8-image2', 8),
-      (21, 'hotel9-image3', 9),
-      (22, 'hotel10-image1', 10),
-	  (23, 'hotel11-image2', 11),
-      (24, 'hotel11-image3', 11);
+-- INSERT INTO hotel_image(id, image_path, hotel_id)
+-- VALUES(19, 'hotel7-image1', 7),
+-- 	  (20, 'hotel8-image2', 8),
+--       (21, 'hotel9-image3', 9),
+--       (22, 'hotel10-image1', 10),
+-- 	  (23, 'hotel11-image2', 11),
+--       (24, 'hotel11-image3', 11);
       
 INSERT INTO hotel_hotel_amenity(hotel_id, hotel_amenity_id)
 VALUES(7, 1),
