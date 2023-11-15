@@ -3,6 +3,7 @@ package com.pbl6.hotelbookingapp.service;
 import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
 import com.pbl6.hotelbookingapp.dto.ChangePasswordRequest;
 import com.pbl6.hotelbookingapp.dto.EditUserRequest;
+import com.pbl6.hotelbookingapp.entity.Role;
 import com.pbl6.hotelbookingapp.entity.User;
 import com.pbl6.hotelbookingapp.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -57,6 +58,10 @@ public class UserService {
     }
     public List<User> getAllUsers() {
         return repository.findAll();
+    }
+    @Transactional
+    public void editNotRegisteredUser (Integer id, String name, String password, Role role){
+        repository.updateUserDetails(id, name, password, role);
     }
     @Transactional
     public void editUser (EditUserRequest updateUser, Integer id){

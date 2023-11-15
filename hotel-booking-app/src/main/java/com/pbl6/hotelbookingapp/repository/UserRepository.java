@@ -1,5 +1,6 @@
 package com.pbl6.hotelbookingapp.repository;
 
+import com.pbl6.hotelbookingapp.entity.Role;
 import com.pbl6.hotelbookingapp.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -23,6 +24,14 @@ public interface UserRepository extends JpaRepository<User, Integer> {
                            @Param("gender") Boolean gender,
                            @Param("dateOfBirth") @DateTimeFormat(pattern = "dd-MM-yyyy") Date dateOfBirth
                            );
+    @Modifying
+    @Query("UPDATE User u SET u.fullName = :fullName, u.password = :password, u.role = :role WHERE u.id = :id")
+    void updateUserDetails(@Param("id") Integer id,
+                           @Param("fullName") String fullName,
+                           @Param("password") String password,
+                           @Param("role") Role role);
+
+
     List<User> findAll();
     boolean existsByEmailAndIdNot(String email, Integer id);
 }
