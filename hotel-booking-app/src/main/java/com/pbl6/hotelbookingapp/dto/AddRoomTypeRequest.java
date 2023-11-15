@@ -13,13 +13,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddRoomTypeRequest {
+    private Integer hotelId;
     private String name;
+    private String roomName;
     private Integer count;
     private Double price;
-    private Integer bathroom_count;
-    private Integer room_area;
-    private Integer adult_count;
-    private Integer children_count;
+    private Integer bathroomCount;
+    private Integer roomArea;
+    private Integer adultCount;
+    private Integer childrenCount;
     private String description;
     private List<BedTypeDTO> bedTypes;
     private List<String> amenities;

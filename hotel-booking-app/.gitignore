@@ -18,6 +18,7 @@ target/
 *.iws
 *.iml
 *.ipr
+src/main/resources/serviceAccountKey.json
 
 ### NetBeans ###
 /nbproject/private/
@@ -35,3 +36,5 @@ build/
 
 /target/*
 !/target/*.jar
+
+
