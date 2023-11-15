@@ -23,6 +23,7 @@ public class HotelBookingAppApplication {
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping(basePath + "/**")
 						.allowedOrigins("http://localhost:3000")
+						.allowCredentials(true)
 						.allowedMethods("GET", "POST", "PUT", "DELETE","PATCH")
 						.allowedHeaders("*");
 			}
