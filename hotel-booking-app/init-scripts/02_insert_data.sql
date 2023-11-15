@@ -116,9 +116,28 @@ VALUES(1, 'Menora Premium Da Nang - Sea Corner Boutique', 'Quay mặt ra bãi bi
       (3, 'Merry Land Hotel Da Nang', 'Merry Land Hotel Da Nang cung cấp các phòng nghỉ tại thành phố Đà Nẵng, cách Cầu Sông Hàn chỉ 2 phút lái xe. Khách sạn có hồ bơi ngoài trời mở cửa quanh năm, sân hiên tắm nắng và quầy bar tại chỗ.', 'Đà Nẵng', 'Sơn Trà', 'An Hải Bắc', '21 Phạm Văn Đồng', '123456789', 'ks3@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 3, 4),
       (4, 'Shara Hotel Da Nang', 'Tọa lạc tại thành phố Đà Nẵng, cách Bãi biển Mỹ Khê 600 m và Bãi biển Bắc Mỹ An 1,3 km, Shara Hotel Da Nang cung cấp chỗ nghỉ với sảnh khách chung và WiFi miễn phí cũng như chỗ đỗ xe riêng miễn phí...', 'Đà Nẵng', 'Ngũ Hành Sơn', 'Bắc Mỹ Phú', '53 Phan Liem', '123456789', 'ks4@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 4, 5),
       (5, 'Le House Boutique Hotel', 'Nằm trên khu vực Bãi biển Mỹ Khê ở thành phố Đà Nẵng, trong bán kính 2 km từ Cầu Sông Hàn, Le House Boutique Hotel cung cấp các phòng gắn máy điều hòa với Wi-Fi miễn phí toàn khuôn viên.', 'Đà Nẵng', 'Sơn Trà', 'Phước Mỹ', '87 Hà Bổng', '123456789', 'ks5@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 5, 6),
-      (6, 'Seashore Hotel & Apartment', 'Seashore Hotel & Apartment cung cấp chỗ nghỉ 4 sao hướng biển ở thành phố Đà Nẵng. Chỗ nghỉ có xe đạp để khách sử dụng miễn phí, hồ bơi ngoài trời và trung tâm thể dục.', 'Đà Nẵng', 'Sơn Trà', 'Mân Thái', '16 Hoàng Sa', '123456789', 'ks6@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 4, 7);
+      (6, 'Seashore Hotel & Apartment', 'Seashore Hotel & Apartment cung cấp chỗ nghỉ 4 sao hướng biển ở thành phố Đà Nẵng. Chỗ nghỉ có xe đạp để khách sử dụng miễn phí, hồ bơi ngoài trời và trung tâm thể dục.', 'Đà Nẵng', 'Sơn Trà', 'Mân Thái', '16 Hoàng Sa', '123456789', 'ks6@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 4, 7),
+      (7, 'Grand Sheraton', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An', 'Hội an', 'Ngũ Hành Sơn', 'Mỹ An', '196 Trần Bạch Đằng', '123456789', 'ks7@gmail.com', '07:00:00', '21:00:00','ACTIVE', 5, 8),
+	  (8, 'Mia resort', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Sài gòn', 'Ngũ Hành Sơn', 'Mỹ An', 'Mỹ Đa Đông 12', '123456789', 'ks8@gmail.com', '07:00:00', '21:00:00','ACTIVE', 4, 9),
+	  (9, 'TIA beach Hotel ', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Hà Nội', 'Sơn Trà', 'An Hải Bắc', '21 Phạm Văn Đồng', '123456789', 'ks9@gmail.com', '07:00:00', '21:00:00','ACTIVE', 5, 10),
+	  (10, 'A LA CARTE', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Quảng Ngãi', 'Ngũ Hành Sơn', 'Bắc Mỹ Phú', '53 Phan Liem', '123456789', 'ks10@gmail.com', '07:00:00', '21:00:00','ACTIVE', 3, 11),
+	  (11, 'Blue Sea', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Hà Nội', 'Sơn Trà', 'Phước Mỹ', '87 Hà Bổng', '123456789', 'ks11@gmail.com', '07:00:00', '21:00:00','ACTIVE', 2, 12),
+	  (12, 'Vinpearl Melia', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Sài gòn', 'Sơn Trà', 'Mân Thái', '16 Hoàng Sa', '123456789', 'ks12@gmail.com', '07:00:00', '21:00:00','ACTIVE', 5, 13);
 
-  
+INSERT INTO extra_amenity (name, description, hotel_id, price)
+VALUES
+  ('Amenity1', 'Description1', 1, 10.5),
+  ('Amenity2', 'Description2', 1, 15.0),
+  ('Amenity3', 'Description3', 2, 12.75),
+  ('Amenity3', 'Description3', 2, 12.75),
+  ('Amenity3', 'Description3', 2, 12.75),
+  ('Amenity3', 'Description3', 3, 12.75),
+  ('Amenity3121', 'Description3', 4, 12.75),
+  ('Amenity123', 'Description3', 5, 12.75),
+  ('Amenity1234', 'Description3', 5, 12.75),
+  ('Amenity312132', 'Description3', 6, 12.75),
+  ('Amenity1234', 'Description3', 7, 12.75),
+  ('Amenity1234', 'Description3', 8, 12.75);
   
 INSERT INTO hotel_image(id, image_path, hotel_id)
 VALUES(1, 'hotel1-image1', 1),
@@ -358,18 +377,6 @@ VALUES(1, 'Thẻ tín dụng');
 
 -- INSERT INTO invoice()
 -- VALUES();
-
-
-
-INSERT INTO hotel(id, `name`, `description`, province, district, ward, street, main_phone_number, main_email, check_in_time, check_out_time, `status`, rate_id, user_id)
-values
-  (7, 'Grand Sheraton', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An', 'Hội an', 'Ngũ Hành Sơn', 'Mỹ An', '196 Trần Bạch Đằng', '123456789', 'ks7@gmail.com', '07:00:00', '21:00:00','ACTIVE', 5, 8),
-  (8, 'Mia resort', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Sài gòn', 'Ngũ Hành Sơn', 'Mỹ An', 'Mỹ Đa Đông 12', '123456789', 'ks8@gmail.com', '07:00:00', '21:00:00','ACTIVE', 4, 9),
-  (9, 'TIA beach Hotel ', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Hà Nội', 'Sơn Trà', 'An Hải Bắc', '21 Phạm Văn Đồng', '123456789', 'ks9@gmail.com', '07:00:00', '21:00:00','ACTIVE', 5, 10),
-  (10, 'A LA CARTE', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Quảng Ngãi', 'Ngũ Hành Sơn', 'Bắc Mỹ Phú', '53 Phan Liem', '123456789', 'ks10@gmail.com', '07:00:00', '21:00:00','ACTIVE', 3, 11),
-  (11, 'Blue Sea', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Hà Nội', 'Sơn Trà', 'Phước Mỹ', '87 Hà Bổng', '123456789', 'ks11@gmail.com', '07:00:00', '21:00:00','ACTIVE', 2, 12),
-   (12, 'Vinpearl Melia', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Sài gòn', 'Sơn Trà', 'Mân Thái', '16 Hoàng Sa', '123456789', 'ks12@gmail.com', '07:00:00', '21:00:00','ACTIVE', 5, 13);
-   
    
 INSERT INTO hotel_image(id, image_path, hotel_id)
 VALUES(19, 'hotel7-image1', 7),
@@ -464,8 +471,6 @@ VALUES(1, '2023-9-1', '2023-9-5', 1, 4),
 	  (2, '2023-9-6', '2023-9-10', 2, 5),
 	  (3, '2023-9-19', '2023-9-23', 3, 6),
       (4, '2023-10-1', '2023-10-22', 4, 7);
-ALTER TABLE `booking-app`.`room` 
-CHANGE COLUMN `description` `name` VARCHAR(255) NULL DEFAULT NULL ;
 
       
 

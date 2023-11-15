@@ -1,5 +1,6 @@
 package com.pbl6.hotelbookingapp.dto;
 
+import com.pbl6.hotelbookingapp.entity.ExtraService;
 import com.pbl6.hotelbookingapp.entity.HotelStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddHotelRequest {
+    private Integer userId;
     private String name;
     private String description;
     private String province;
@@ -27,6 +29,7 @@ public class AddHotelRequest {
     private HotelStatus status;
     private List<String> rules;
     private List<AmenityPriceDTO> amenities;
+    private List<ExtraService> extraServices;
     private Integer rate;
     private List<MultipartFile> images;
 }

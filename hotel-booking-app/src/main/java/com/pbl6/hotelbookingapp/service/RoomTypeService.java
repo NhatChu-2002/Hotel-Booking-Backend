@@ -29,7 +29,11 @@ public class RoomTypeService {
 
     private BedTypeRepository bedTypeRepository;
 
-    public RoomTypeService(RoomTypeRepository roomTypeRepository, HotelRepository hotelRepository, ViewRepository viewRepository, RoomAmenityRepository roomAmenityRepository, RoomImageRepository roomImageRepository, RoomBedTypeRepository roomBedTypeRepository, BedTypeRepository bedTypeRepository) {
+    private RoomRepository roomRepository;
+
+    private FirebaseStorageService firebaseStorageService;
+
+    public RoomTypeService(RoomTypeRepository roomTypeRepository, HotelRepository hotelRepository, ViewRepository viewRepository, RoomAmenityRepository roomAmenityRepository, RoomImageRepository roomImageRepository, RoomBedTypeRepository roomBedTypeRepository, BedTypeRepository bedTypeRepository, RoomRepository roomRepository, FirebaseStorageService firebaseStorageService) {
         this.roomTypeRepository = roomTypeRepository;
         this.hotelRepository = hotelRepository;
         this.viewRepository = viewRepository;
@@ -37,6 +41,8 @@ public class RoomTypeService {
         this.roomImageRepository = roomImageRepository;
         this.roomBedTypeRepository = roomBedTypeRepository;
         this.bedTypeRepository = bedTypeRepository;
+        this.roomRepository = roomRepository;
+        this.firebaseStorageService = firebaseStorageService;
     }
 
     public Optional<RoomType> findRoomTypeByNameAndHotelId(String name, Integer hotelId) {
@@ -44,8 +50,8 @@ public class RoomTypeService {
     }
 
 
-    public AddRoomTypeResponse addRoomTypeResponse(AddRoomTypeRequest addRoomTypeRequest, Integer hotelId) throws IOException {
-        Hotel hotel = hotelRepository.findById(hotelId)
+    public AddRoomTypeResponse addRoomTypeResponse(AddRoomTypeRequest addRoomTypeRequest) throws IOException {
+        Hotel hotel = hotelRepository.findById(addRoomTypeRequest.getHotelId())
                 .orElseThrow(() -> new HotelNotFoundException("Hotel not found"));
 
         RoomType roomType = createRoomType(addRoomTypeRequest, hotel);
@@ -56,8 +62,7 @@ public class RoomTypeService {
 
         addRoomBedTypes(roomType, addRoomTypeRequest.getBedTypes());
 
-        List<String> imagePaths = saveImages(addRoomTypeRequest.getImages());
-        addRoomImages(roomType, imagePaths);
+        addRoomImages(roomType, addRoomTypeRequest.getImages());
 
         AddRoomTypeResponse addRoomTypeResponse = new AddRoomTypeResponse();
         addRoomTypeResponse.setMessage("Roomtype added successfully");
@@ -68,18 +73,28 @@ public class RoomTypeService {
         RoomType roomType = new RoomType();
         roomType.setHotel(hotel);
         roomType.setName(addRoomTypeRequest.getName());
+        roomType.setRoomName(addRoomTypeRequest.getRoomName());
         roomType.setCount(addRoomTypeRequest.getCount());
         roomType.setDescription(addRoomTypeRequest.getDescription());
         roomType.setPrice(addRoomTypeRequest.getPrice());
-        roomType.setBathroomCount(addRoomTypeRequest.getBathroom_count());
-        roomType.setRoomArea(addRoomTypeRequest.getRoom_area());
-        roomType.setAdultCount(addRoomTypeRequest.getAdult_count());
-        roomType.setChildrenCount(addRoomTypeRequest.getChildren_count());
+        roomType.setBathroomCount(addRoomTypeRequest.getBathroomCount());
+        roomType.setRoomArea(addRoomTypeRequest.getRoomArea());
+        roomType.setAdultCount(addRoomTypeRequest.getAdultCount());
+        roomType.setChildrenCount(addRoomTypeRequest.getChildrenCount());
 
         View view = viewRepository.findByName(addRoomTypeRequest.getView())
                 .orElseGet(() -> viewRepository.save(new View(addRoomTypeRequest.getView())));
         roomType.setView(view);
+        roomTypeRepository.save(roomType);
 
+
+        for (int i = 0; i < roomType.getCount(); i++) {
+            Room room = new Room();
+            room.setRoomType(roomType);
+            String formattedNumber = String.format("%03d", i);
+            room.setName(roomType.getRoomName() + formattedNumber);
+            roomRepository.save(room);
+        }
         return roomType;
     }
 
@@ -104,31 +119,14 @@ public class RoomTypeService {
         });
     }
 
-    private void addRoomImages(RoomType roomType, List<String> imagePaths) {
-        imagePaths.forEach(imagePath -> {
+    private void addRoomImages(RoomType roomType, List<MultipartFile> images) throws IOException {
+        List<String> imageUrls = firebaseStorageService.saveImages(images);
+        for (String imageUrl : imageUrls) {
             RoomImage image = new RoomImage();
             image.setRoomType(roomType);
-            image.setImagePath(imagePath);
+            image.setImagePath(imageUrl);
             roomImageRepository.save(image);
-        });
-    }
-
-    public List<String> saveImages(List<MultipartFile> images) throws IOException {
-        List<String> imagePaths = new ArrayList<>();
-        String currentDirectory = new File("").getAbsolutePath();
-        String staticPath = currentDirectory + "/src/main/resources/static";
-        String uploadDir = staticPath + File.separator + "images/room";
-
-        File uploadDirFile = new File(uploadDir);
-        if (!uploadDirFile.exists()) {
-            uploadDirFile.mkdirs();
         }
-        for (MultipartFile image : images) {
-            String imagePath = uploadDir + File.separator + image.getOriginalFilename();
-            image.transferTo(new File(imagePath));
-            imagePaths.add(imagePath);
-        }
-        return imagePaths;
     }
 
 }

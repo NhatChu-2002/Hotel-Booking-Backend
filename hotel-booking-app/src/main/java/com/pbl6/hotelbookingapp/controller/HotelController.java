@@ -28,9 +28,9 @@ public class HotelController {
     }
 
     @RequestMapping(value = "/add" , method = RequestMethod.POST, consumes = { "multipart/form-data" })
-    public ResponseEntity<AddHotelResponse> addHotel(@ModelAttribute AddHotelRequest requestDTO, @RequestParam Integer userId) {
+    public ResponseEntity<AddHotelResponse> addHotel(@ModelAttribute AddHotelRequest requestDTO) {
         try {
-            AddHotelResponse responseDTO = hotelService.addHotel(requestDTO, userId);
+            AddHotelResponse responseDTO = hotelService.addHotel(requestDTO);
             return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(new AddHotelResponse("Error adding hotel"), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -51,4 +51,3 @@ public class HotelController {
         return ResponseEntity.ok(hotelDetails);
     }
 }
-
