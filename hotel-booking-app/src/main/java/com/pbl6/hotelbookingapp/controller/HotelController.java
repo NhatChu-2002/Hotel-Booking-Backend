@@ -8,6 +8,9 @@ import com.pbl6.hotelbookingapp.service.HotelService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +39,14 @@ public class HotelController {
             return new ResponseEntity<>(new AddHotelResponse("Error adding hotel"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/{hotelId}/images")
+    public void addHotelImages(
+            @PathVariable Integer hotelId,
+            @RequestParam("images") List<MultipartFile> images) throws IOException, IOException {
+        hotelService.saveHotelImages(hotelId, images);
+    }
+
     @PostMapping("/search")
     public CustomSearchResult searchHotels(@RequestBody SearchRequest request) {
         return hotelService.searchHotels(request);

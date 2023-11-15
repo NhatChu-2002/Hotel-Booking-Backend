@@ -10,6 +10,7 @@ import com.pbl6.hotelbookingapp.repository.*;
 import jakarta.persistence.EntityManager;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -119,7 +120,6 @@ public class HotelService {
 
     }
 
-
     public AddHotelResponse addHotel(AddHotelRequest addHotelRequest) throws IOException {
         User user = userRepository.findById(addHotelRequest.getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
         Hotel hotel = createHotelFromRequest(addHotelRequest, user);
@@ -198,6 +198,23 @@ public class HotelService {
     private void saveHotelImages(Hotel hotel, List<MultipartFile> images) throws IOException {
         List<String> imageUrls = firebaseStorageService.saveImages(images);
         for (String imageUrl : imageUrls) {
+            HotelImage image = new HotelImage();
+            image.setHotel(hotel);
+            image.setImagePath(imageUrl);
+            imageRepository.save(image);
+        }
+    }
+
+    @Transactional
+    public void saveHotelImages(Integer hotelId, List<MultipartFile> images) throws IOException {
+        // Find the hotel by ID
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(() -> new HotelNotFoundException("Hotel not found"));
+
+        // Save hotel images
+        List<String> imageUrls = firebaseStorageService.saveImages(images);
+        for (String imageUrl : imageUrls) {
+            // Save the image with the provided hotelId
             HotelImage image = new HotelImage();
             image.setHotel(hotel);
             image.setImagePath(imageUrl);
