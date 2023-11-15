@@ -467,7 +467,9 @@ VALUES(1, '2023-9-1', '2023-9-5', 1, 4),
 	  (3, '2023-9-19', '2023-9-23', 3, 6),
       (4, '2023-10-1', '2023-10-22', 4, 7);
 
-      
+UPDATE hotel
+SET rule = 'Không phù hợp cho trẻ vị thành niên, Không cho phép hút thuốc, Không cho phép các loại thú cưng, Hủy phòng trước 1 ngày sẽ không mất phí';
+
 
       
 

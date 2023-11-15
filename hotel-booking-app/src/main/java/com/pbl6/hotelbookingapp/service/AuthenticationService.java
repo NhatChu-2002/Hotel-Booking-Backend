@@ -29,31 +29,53 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final UserRepository repository;
+    private final UserService userService;
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+
+    private final UserRepository userRepository;
     public RegisterResponse register(RegisterRequest request) {
         Optional<User> checkUser = repository.findByEmail(request.getEmail());
-        if (checkUser.isPresent()){
-            throw new UserNotFoundException(
-                    "User with email "+request.getEmail() + " already exists");
+        var jwtToken = new String();
+        var refreshToken = new String();
+        if (checkUser.isPresent() ){
+            if(checkUser.get().getRole()== Role.CUSTOMER || checkUser.get().getRole()== Role.ADMIN || checkUser.get().getRole()== Role.HOST)
+            {
+                throw new UserNotFoundException(
+                        "User with email "+request.getEmail() + " already exists");
+            }else if (checkUser.get().getRole() == Role.NOT_REGISTERED_CUSTOMER){
+                userService.editNotRegisteredUser(checkUser.get().getId(),request.getFullName(), passwordEncoder.encode(request.getPassword()), Role.CUSTOMER);
+
+                jwtToken = jwtService.generateToken(checkUser.get());
+                refreshToken = jwtService.generateRefreshToken(checkUser.get());
+
+                saveUserToken(checkUser.get(), jwtToken);
+
+            }
+
         }
-        var user = User.builder()
-                .fullName(request.getFullName())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.CUSTOMER)
-                .build();
-        var savedUser = repository.save(user);
+        else {
+            var user = new User();
+            user = User.builder()
+                    .fullName(request.getFullName())
+                    .email(request.getEmail())
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .role(Role.CUSTOMER)
+                    .build();
+            var savedUser = repository.save(user);
 
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
+            jwtToken = jwtService.generateToken(user);
+            refreshToken = jwtService.generateRefreshToken(user);
 
-        saveUserToken(savedUser, jwtToken);
+            saveUserToken(savedUser, jwtToken);
 
+
+        }
         return RegisterResponse.builder().accessToken(jwtToken)
                 .refreshToken(refreshToken).build();
+
     }
 
 
@@ -92,6 +114,8 @@ public class AuthenticationService {
                         .refreshToken(refreshToken)
                         .id(id)
                         .role(String.valueOf(role))
+                        .name(user.getFullName())
+                        .email(user.getEmail())
                         .build();
             }
         }

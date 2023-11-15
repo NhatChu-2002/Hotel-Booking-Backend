@@ -23,7 +23,7 @@ public class UserController {
 
     private final UserService service;
 
-    @PatchMapping("/changePassword")
+    @PutMapping("/changePassword")
     public ResponseEntity<?> changePassword(
             @RequestBody ChangePasswordRequest request,
             Principal connectedUser
@@ -46,6 +46,11 @@ public class UserController {
         }
 
 
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Integer id) {
+        var user = service.getUserById(id);
+        return ResponseEntity.ok(user);
     }
     @GetMapping("/all")
     public ResponseEntity<List<User>> getAllUsers() {
