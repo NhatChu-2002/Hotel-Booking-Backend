@@ -111,18 +111,18 @@ VALUES(1, 'WiFi miễn phí'),
       
       
 INSERT INTO hotel(id, `name`, `description`, province, district, ward, street, main_phone_number, main_email, check_in_time, check_out_time, `status`, rate_id, user_id)
-VALUES(1, 'Menora Premium Da Nang - Sea Corner Boutique', 'Quay mặt ra bãi biển ở thành phố Đà Nẵng, Menora Premium Da Nang - Sea Corner Boutique cung cấp chỗ nghỉ 3 sao và có hồ bơi ngoài trời, sân hiên cũng như nhà hàng.', 'Thành phố Đà Nẵng', 'Ngũ Hành Sơn', 'Mỹ An', '196 Trần Bạch Đằng', '123456789', 'ks1@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 1, 2),
-	  (2, 'MANGO MANGO HOTEL & APARTMENT', 'MANGO MANGO HOTEL & APARTMENT has city views, free WiFi and free private parking, set in Da Nang, 400 metres from My Khe Beach.', 'Thành phố Đà Nẵng', 'Ngũ Hành Sơn', 'Mỹ An', 'Mỹ Đa Đông 12', '123456789', 'ks2@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 2, 3),
-      (3, 'Merry Land Hotel Da Nang', 'Merry Land Hotel Da Nang cung cấp các phòng nghỉ tại thành phố Đà Nẵng, cách Cầu Sông Hàn chỉ 2 phút lái xe. Khách sạn có hồ bơi ngoài trời mở cửa quanh năm, sân hiên tắm nắng và quầy bar tại chỗ.', 'Thành phố Đà Nẵng', 'Sơn Trà', 'An Hải Bắc', '21 Phạm Văn Đồng', '123456789', 'ks3@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 3, 4),
-      (4, 'Shara Hotel Da Nang', 'Tọa lạc tại thành phố Đà Nẵng, cách Bãi biển Mỹ Khê 600 m và Bãi biển Bắc Mỹ An 1,3 km, Shara Hotel Da Nang cung cấp chỗ nghỉ với sảnh khách chung và WiFi miễn phí cũng như chỗ đỗ xe riêng miễn phí...', 'Thành phố Đà Nẵng', 'Ngũ Hành Sơn', 'Bắc Mỹ Phú', '53 Phan Liem', '123456789', 'ks4@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 4, 5),
-      (5, 'Le House Boutique Hotel', 'Nằm trên khu vực Bãi biển Mỹ Khê ở thành phố Đà Nẵng, trong bán kính 2 km từ Cầu Sông Hàn, Le House Boutique Hotel cung cấp các phòng gắn máy điều hòa với Wi-Fi miễn phí toàn khuôn viên.', 'Thành phố Đà Nẵng', 'Sơn Trà', 'Phước Mỹ', '87 Hà Bổng', '123456789', 'ks5@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 5, 6),
-      (6, 'Seashore Hotel & Apartment', 'Seashore Hotel & Apartment cung cấp chỗ nghỉ 4 sao hướng biển ở thành phố Đà Nẵng. Chỗ nghỉ có xe đạp để khách sử dụng miễn phí, hồ bơi ngoài trời và trung tâm thể dục.', 'Thành phố Đà Nẵng', 'Sơn Trà', 'Mân Thái', '16 Hoàng Sa', '123456789', 'ks6@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 4, 7),
-      (7, 'Grand Sheraton', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An', 'Thành phố Hội an', 'Ngũ Hành Sơn', 'Mỹ An', '196 Trần Bạch Đằng', '123456789', 'ks7@gmail.com', '07:00:00', '21:00:00','ACTIVE', 5, 8),
-	  (8, 'Mia resort', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Thành phố Sài gòn', 'Ngũ Hành Sơn', 'Mỹ An', 'Mỹ Đa Đông 12', '123456789', 'ks8@gmail.com', '07:00:00', '21:00:00','ACTIVE', 4, 9),
-	  (9, 'TIA beach Hotel ', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Thành phố Hà Nội', 'Sơn Trà', 'An Hải Bắc', '21 Phạm Văn Đồng', '123456789', 'ks9@gmail.com', '07:00:00', '21:00:00','ACTIVE', 5, 10),
-	  (10, 'A LA CARTE', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Thành phố Quảng Ngãi', 'Ngũ Hành Sơn', 'Bắc Mỹ Phú', '53 Phan Liem', '123456789', 'ks10@gmail.com', '07:00:00', '21:00:00','ACTIVE', 3, 11),
-	  (11, 'Blue Sea', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Thành phố Hà Nội', 'Sơn Trà', 'Phước Mỹ', '87 Hà Bổng', '123456789', 'ks11@gmail.com', '07:00:00', '21:00:00','ACTIVE', 2, 12),
-	  (12, 'Vinpearl Melia', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Thành phố Sài gòn', 'Sơn Trà', 'Mân Thái', '16 Hoàng Sa', '123456789', 'ks12@gmail.com', '07:00:00', '21:00:00','ACTIVE', 5, 13);
+VALUES(1, 'Menora Premium Da Nang - Sea Corner Boutique', 'Quay mặt ra bãi biển ở thành phố Đà Nẵng, Menora Premium Da Nang - Sea Corner Boutique cung cấp chỗ nghỉ 3 sao và có hồ bơi ngoài trời, sân hiên cũng như nhà hàng.', 'Đà Nẵng', 'Ngũ Hành Sơn', 'Mỹ An', '196 Trần Bạch Đằng', '123456789', 'ks1@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 1, 2),
+	  (2, 'MANGO MANGO HOTEL & APARTMENT', 'MANGO MANGO HOTEL & APARTMENT has city views, free WiFi and free private parking, set in Da Nang, 400 metres from My Khe Beach.', 'Đà Nẵng', 'Ngũ Hành Sơn', 'Mỹ An', 'Mỹ Đa Đông 12', '123456789', 'ks2@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 2, 3),
+      (3, 'Merry Land Hotel Da Nang', 'Merry Land Hotel Da Nang cung cấp các phòng nghỉ tại thành phố Đà Nẵng, cách Cầu Sông Hàn chỉ 2 phút lái xe. Khách sạn có hồ bơi ngoài trời mở cửa quanh năm, sân hiên tắm nắng và quầy bar tại chỗ.', 'Đà Nẵng', 'Sơn Trà', 'An Hải Bắc', '21 Phạm Văn Đồng', '123456789', 'ks3@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 3, 4),
+      (4, 'Shara Hotel Da Nang', 'Tọa lạc tại thành phố Đà Nẵng, cách Bãi biển Mỹ Khê 600 m và Bãi biển Bắc Mỹ An 1,3 km, Shara Hotel Da Nang cung cấp chỗ nghỉ với sảnh khách chung và WiFi miễn phí cũng như chỗ đỗ xe riêng miễn phí...', 'Đà Nẵng', 'Ngũ Hành Sơn', 'Bắc Mỹ Phú', '53 Phan Liem', '123456789', 'ks4@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 4, 5),
+      (5, 'Le House Boutique Hotel', 'Nằm trên khu vực Bãi biển Mỹ Khê ở thành phố Đà Nẵng, trong bán kính 2 km từ Cầu Sông Hàn, Le House Boutique Hotel cung cấp các phòng gắn máy điều hòa với Wi-Fi miễn phí toàn khuôn viên.', 'Đà Nẵng', 'Sơn Trà', 'Phước Mỹ', '87 Hà Bổng', '123456789', 'ks5@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 5, 6),
+      (6, 'Seashore Hotel & Apartment', 'Seashore Hotel & Apartment cung cấp chỗ nghỉ 4 sao hướng biển ở thành phố Đà Nẵng. Chỗ nghỉ có xe đạp để khách sử dụng miễn phí, hồ bơi ngoài trời và trung tâm thể dục.', 'Đà Nẵng', 'Sơn Trà', 'Mân Thái', '16 Hoàng Sa', '123456789', 'ks6@gmail.com', '07:00:00', '23:00:00', 'ACTIVE', 4, 7),
+      (7, 'Grand Sheraton', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An', 'Hội an', 'Ngũ Hành Sơn', 'Mỹ An', '196 Trần Bạch Đằng', '123456789', 'ks7@gmail.com', '07:00:00', '21:00:00','ACTIVE', 5, 8),
+	  (8, 'Mia resort', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Sài gòn', 'Ngũ Hành Sơn', 'Mỹ An', 'Mỹ Đa Đông 12', '123456789', 'ks8@gmail.com', '07:00:00', '21:00:00','ACTIVE', 4, 9),
+	  (9, 'TIA beach Hotel ', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Hà Nội', 'Sơn Trà', 'An Hải Bắc', '21 Phạm Văn Đồng', '123456789', 'ks9@gmail.com', '07:00:00', '21:00:00','ACTIVE', 5, 10),
+	  (10, 'A LA CARTE', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Quảng Ngãi', 'Ngũ Hành Sơn', 'Bắc Mỹ Phú', '53 Phan Liem', '123456789', 'ks10@gmail.com', '07:00:00', '21:00:00','ACTIVE', 3, 11),
+	  (11, 'Blue Sea', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Hà Nội', 'Sơn Trà', 'Phước Mỹ', '87 Hà Bổng', '123456789', 'ks11@gmail.com', '07:00:00', '21:00:00','ACTIVE', 2, 12),
+	  (12, 'Vinpearl Melia', 'Tọa lạc trên cung đường biển tuyệt đẹp chạy thẳng từ thành phố Đà Nẵng đến Hội An,', 'Sài gòn', 'Sơn Trà', 'Mân Thái', '16 Hoàng Sa', '123456789', 'ks12@gmail.com', '07:00:00', '21:00:00','ACTIVE', 5, 13);
 
 INSERT INTO extra_amenity (name, description, hotel_id, price)
 VALUES
@@ -140,24 +140,19 @@ VALUES
   ('Amenity1234', 'Description3', 8, 12.75);
   
 INSERT INTO hotel_image(id, image_path, hotel_id)
-VALUES(1, 'hotel1-image1', 1),
-	  (2, 'hotel1-image2', 1),
-      (3, 'hotel1-image3', 1),
-      (4, 'hotel2-image1', 2),
-	  (5, 'hotel2-image2', 2),
-      (6, 'hotel2-image3', 2),
-      (7, 'hotel3-image1', 3),
-	  (8, 'hotel3-image2', 3),
-      (9, 'hotel3-image3', 3),
-      (10, 'hotel4-image1', 4),
-	  (11, 'hotel4-image2', 4),
-      (12, 'hotel4-image3', 4),
-      (13, 'hotel5-image1', 5),
-	  (14, 'hotel5-image2', 5),
-      (15, 'hotel5-image3', 5),
-      (16, 'hotel6-image1', 6),
-	  (17, 'hotel6-image2', 6),
-      (18, 'hotel6-image3', 6);
+VALUES(1, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/cf2ef2e4-0f0a-4d8a-802d-4ce28a65ebdc_download (1).jpeg', 1),
+ 	  (2, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/fc90fc9f-8ca1-4ec5-aa67-565449203a5a_download (2).jpeg', 1),
+	  (3, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/4e15a6be-a7d3-425b-8722-c03a4087569e_download (3).jpeg', 1),
+      (4, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/cf2ef2e4-0f0a-4d8a-802d-4ce28a65ebdc_download (1).jpeg', 2),
+ 	  (5, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/fc90fc9f-8ca1-4ec5-aa67-565449203a5a_download (2).jpeg', 2),
+	  (6, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/4e15a6be-a7d3-425b-8722-c03a4087569e_download (3).jpeg', 2),
+      (7, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/cf2ef2e4-0f0a-4d8a-802d-4ce28a65ebdc_download (1).jpeg', 3),
+ 	  (8, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/fc90fc9f-8ca1-4ec5-aa67-565449203a5a_download (2).jpeg', 3),
+	  (9, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/4e15a6be-a7d3-425b-8722-c03a4087569e_download (3).jpeg', 3),
+      (10, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/cf2ef2e4-0f0a-4d8a-802d-4ce28a65ebdc_download (1).jpeg', 4),
+ 	  (11, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/fc90fc9f-8ca1-4ec5-aa67-565449203a5a_download (2).jpeg', 4),
+	  (12, 'https://storage.googleapis.com/hotel-booking-cb28a.appspot.com/images/4e15a6be-a7d3-425b-8722-c03a4087569e_download (3).jpeg', 4);
+
 
 
 -- INSERT INTO extra_amenity(id, `name`, hotel_id)
@@ -378,13 +373,13 @@ VALUES(1, 'Thẻ tín dụng');
 -- INSERT INTO invoice()
 -- VALUES();
    
-INSERT INTO hotel_image(id, image_path, hotel_id)
-VALUES(19, 'hotel7-image1', 7),
-	  (20, 'hotel8-image2', 8),
-      (21, 'hotel9-image3', 9),
-      (22, 'hotel10-image1', 10),
-	  (23, 'hotel11-image2', 11),
-      (24, 'hotel11-image3', 11);
+-- INSERT INTO hotel_image(id, image_path, hotel_id)
+-- VALUES(19, 'hotel7-image1', 7),
+-- 	  (20, 'hotel8-image2', 8),
+--       (21, 'hotel9-image3', 9),
+--       (22, 'hotel10-image1', 10),
+-- 	  (23, 'hotel11-image2', 11),
+--       (24, 'hotel11-image3', 11);
       
 INSERT INTO hotel_hotel_amenity(hotel_id, hotel_amenity_id)
 VALUES(7, 1),
@@ -471,10 +466,10 @@ VALUES(1, '2023-9-1', '2023-9-5', 1, 4),
 	  (2, '2023-9-6', '2023-9-10', 2, 5),
 	  (3, '2023-9-19', '2023-9-23', 3, 6),
       (4, '2023-10-1', '2023-10-22', 4, 7);
+
 UPDATE hotel
 SET rule = 'Không phù hợp cho trẻ vị thành niên, Không cho phép hút thuốc, Không cho phép các loại thú cưng, Hủy phòng trước 1 ngày sẽ không mất phí';
 
-      
 
       
 

@@ -114,6 +114,8 @@ public class AuthenticationService {
                         .refreshToken(refreshToken)
                         .id(id)
                         .role(String.valueOf(role))
+                        .name(user.getFullName())
+                        .email(user.getEmail())
                         .build();
             }
         }

@@ -1,5 +1,6 @@
 package com.pbl6.hotelbookingapp.service;
 
+import com.pbl6.hotelbookingapp.Exception.ResponseException;
 import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
 import com.pbl6.hotelbookingapp.dto.ChangePasswordRequest;
 import com.pbl6.hotelbookingapp.dto.EditUserRequest;
@@ -51,6 +52,22 @@ public class UserService {
 
         // save the new password
         repository.save(user);
+    }
+    public EditUserRequest getUserById(Integer id)
+    {
+
+        var user = repository.findById(id);
+        if(!user.isPresent())
+        {
+            throw new ResponseException("User not found!");
+        }
+        return EditUserRequest.builder()
+                .fullName(user.get().getFullName())
+                .email(user.get().getEmail())
+                .dateOfBirth(user.get().getDateOfBirth())
+                .phoneNumber(user.get().getPhoneNumber())
+                .gender(user.get().getGender())
+                .build();
     }
     public void saveUser(User user)
     {
