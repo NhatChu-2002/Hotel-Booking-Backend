@@ -414,6 +414,10 @@ VALUES(1, '2023-9-1', '2023-9-5', 1, 4),
 
 UPDATE hotel
 SET rule = 'Không phù hợp cho trẻ vị thành niên, Không cho phép hút thuốc, Không cho phép các loại thú cưng, Hủy phòng trước 1 ngày sẽ không mất phí';
+ALTER TABLE reservation
+ADD COLUMN reservation_code VARCHAR(255);
+
+
 
 
       

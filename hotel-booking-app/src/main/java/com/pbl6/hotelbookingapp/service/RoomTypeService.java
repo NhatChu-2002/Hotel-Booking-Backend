@@ -45,8 +45,8 @@ public class RoomTypeService {
         this.firebaseStorageService = firebaseStorageService;
     }
 
-    public Optional<RoomType> findRoomTypeByNameAndHotelId(String name, Integer hotelId) {
-        return roomTypeRepository.findFirstByNameAndHotelId(name, hotelId);
+    public Optional<RoomType> findRoomTypeByIdAndHotelId(Integer id, Integer hotelId) {
+        return roomTypeRepository.findFirstByIdAndHotelId(id, hotelId);
     }
 
 

@@ -6,6 +6,7 @@ import com.pbl6.hotelbookingapp.dto.AuthenticationRequest;
 import com.pbl6.hotelbookingapp.dto.AuthenticationResponse;
 import com.pbl6.hotelbookingapp.dto.RegisterRequest;
 import com.pbl6.hotelbookingapp.dto.RegisterResponse;
+import com.pbl6.hotelbookingapp.email.EmailService;
 import com.pbl6.hotelbookingapp.entity.Role;
 import com.pbl6.hotelbookingapp.entity.Token;
 import com.pbl6.hotelbookingapp.entity.TokenType;
@@ -36,6 +37,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     private final UserRepository userRepository;
+    private final EmailService emailService;
     public RegisterResponse register(RegisterRequest request) {
         Optional<User> checkUser = repository.findByEmail(request.getEmail());
         var jwtToken = new String();
@@ -46,12 +48,13 @@ public class AuthenticationService {
                 throw new UserNotFoundException(
                         "User with email "+request.getEmail() + " already exists");
             }else if (checkUser.get().getRole() == Role.NOT_REGISTERED_CUSTOMER){
-                userService.editNotRegisteredUser(checkUser.get().getId(),request.getFullName(), passwordEncoder.encode(request.getPassword()), Role.CUSTOMER);
+                userService.editNotRegisteredUser(checkUser.get().getId(),request.getFullName(), passwordEncoder.encode(request.getPassword()),Role.CUSTOMER);
 
                 jwtToken = jwtService.generateToken(checkUser.get());
                 refreshToken = jwtService.generateRefreshToken(checkUser.get());
 
                 saveUserToken(checkUser.get(), jwtToken);
+//                emailService.sendHtmlEmail(checkUser.get().getFullName(), checkUser.get().getEmail(), jwtToken);
 
             }
 
@@ -70,9 +73,11 @@ public class AuthenticationService {
             refreshToken = jwtService.generateRefreshToken(user);
 
             saveUserToken(savedUser, jwtToken);
+//            emailService.sendHtmlEmail(savedUser.getFullName(), savedUser.getEmail(), jwtToken);
 
 
         }
+
         return RegisterResponse.builder().accessToken(jwtToken)
                 .refreshToken(refreshToken).build();
 
@@ -86,6 +91,10 @@ public class AuthenticationService {
         if (!checkUser.isPresent()){
             throw new UserNotFoundException(
                     "User not found:  "+request.getEmail());
+        }
+        else if(checkUser.get().getRole() == Role.NOT_REGISTERED_CUSTOMER){
+            throw new UserNotFoundException(
+                    "Email not registered or not verified!:  "+request.getEmail());
         }
         else{
             User user = checkUser.get();
@@ -121,7 +130,7 @@ public class AuthenticationService {
         }
 
     }
-    private void revokeAllUserTokens(User user)
+    public void revokeAllUserTokens(User user)
     {
         var validUserTokens = tokenRepository.findAllValidTokensByUser(user.getId());
         if(validUserTokens.isEmpty())

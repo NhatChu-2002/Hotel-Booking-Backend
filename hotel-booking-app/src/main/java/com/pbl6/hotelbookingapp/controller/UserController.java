@@ -4,6 +4,7 @@ import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
 import com.pbl6.hotelbookingapp.dto.ChangePasswordRequest;
 import com.pbl6.hotelbookingapp.dto.EditUserRequest;
 import com.pbl6.hotelbookingapp.dto.ErrorResponse;
+import com.pbl6.hotelbookingapp.dto.HttpResponse;
 import com.pbl6.hotelbookingapp.entity.User;
 import com.pbl6.hotelbookingapp.service.UserService;
 import jakarta.validation.Valid;
@@ -13,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -31,7 +34,34 @@ public class UserController {
         service.changePassword(request, connectedUser);
         return ResponseEntity.ok().build();
     }
+    @GetMapping
+    public ResponseEntity<HttpResponse> confirmUserAccount(@RequestParam("token") String token) {
+        Boolean isSuccess = service.verifyToken(token);
+        if(isSuccess)
+        {
+            return ResponseEntity.ok().body(
+                    HttpResponse.builder()
+                            .timeStamp(LocalDateTime.now().toString())
+                            .data(Map.of("Success", isSuccess))
+                            .message("Account Verified")
+                            .status(HttpStatus.OK)
+                            .statusCode(HttpStatus.OK.value())
+                            .build()
+            );
+        }
+        else {
+            return ResponseEntity.ok().body(
+                    HttpResponse.builder()
+                            .timeStamp(LocalDateTime.now().toString())
+                            .data(Map.of("Success", Boolean.TRUE))
+                            .message("Account already been verified")
+                            .status(HttpStatus.OK)
+                            .statusCode(HttpStatus.OK.value())
+                            .build()
+            );
+        }
 
+    }
     @PutMapping("/{id}")
     public ResponseEntity<?> editUser(@PathVariable Integer id, @RequestBody @Valid EditUserRequest updatedUser) {
         try{
