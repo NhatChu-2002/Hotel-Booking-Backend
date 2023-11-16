@@ -18,7 +18,7 @@ public class RegisterRequest {
     private String fullName;
     @Email(message = "invalid email address")
     private String email;
-    @NotNull(message = "username shouldn't be null")
+    @NotNull(message = "password shouldn't be null")
     private String password;
     private Role role;
 }

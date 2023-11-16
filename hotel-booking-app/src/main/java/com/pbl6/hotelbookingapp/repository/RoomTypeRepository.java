@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RoomTypeRepository extends JpaRepository<RoomType,Integer> {
-    Optional<RoomType> findFirstByNameAndHotelId(String name, Integer id);
+    Optional<RoomType> findFirstByIdAndHotelId(Integer roomTypeId, Integer hotelId);
 
     @Query("SELECT ri.imagePath FROM RoomType r JOIN r.roomImages ri WHERE r.id = :roomTypeId")
     String findFirstImageByRoomTypeId(@Param("roomTypeId") Integer roomTypeId);

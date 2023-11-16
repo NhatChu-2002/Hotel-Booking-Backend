@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Xác nhận đặt phòng từ Innsight-App</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f6f6f6;
+            color: #333;
+        }
+
+        h1 {
+            color: #38414a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f5f5f5;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        ul li {
+            margin-bottom: 5px;
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        .note {
+            font-style: italic;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+<h1>Xác nhận đặt phòng</h1>
+<p><strong>Mã đặt phòng:</strong> [[${reservationResponse.reservationCode}]]</p>
+<p><strong>Tên khách sạn:</strong> [[${reservationResponse.hotelName}]]</p>
+<p><strong>Tỉnh/thành phố:</strong> [[${reservationResponse.province}]]</p>
+<!-- Thêm các thông tin khác tương tự ở đây -->
+
+<h2>Loại phòng:</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Tên</th>
+        <th>Tên phòng</th>
+        <th>Số trẻ em</th>
+        <th>Số người lớn</th>
+        <th>Số đêm</th>
+        <th>Số lượng</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="roomType : ${reservationResponse.roomList}">
+        <td th:text="${roomType.name}"></td>
+        <td>
+            <ul>
+                <li th:each="roomName : ${roomType.roomName}" th:text="${roomName}"></li>
+            </ul>
+        </td>
+        <td th:text="${roomType.childrenCount}"></td>
+        <td th:text="${roomType.adultCount}"></td>
+        <td th:text="${roomType.nightCount}"></td>
+        <td th:text="${roomType.count}"></td>
+    </tr>
+    </tbody>
+</table>
+<p><strong>Thời gian check-in:</strong> [[${reservationResponse.checkInTime}]]</p>
+<p><strong>Thời gian check-out:</strong> [[${reservationResponse.checkOutTime}]]</p>
+<p><strong>Tổng cộng:</strong> [[${reservationResponse.total}]]</p>
+<p><strong>Ngày check-in:</strong> [[${reservationResponse.startDay}]]</p>
+<p><strong>Ngày check-out:</strong> [[${reservationResponse.endDay}]]</p>
+<p><strong>Mô tả:</strong> [[${reservationResponse.description}]]</p>
+
+
+
+
+<p class="note">Lưu ý: Quý khách vui lòng nhận chìa khóa phòng ở quầy lễ tân lúc check-in!</p>
+</body>
+</html>
