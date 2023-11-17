@@ -1,6 +1,7 @@
 package com.pbl6.hotelbookingapp.controller;
 
 
+import com.pbl6.hotelbookingapp.Exception.ResponseException;
 import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
 import com.pbl6.hotelbookingapp.dto.*;
 import com.pbl6.hotelbookingapp.entity.User;
@@ -37,17 +38,47 @@ public class HotelController {
         }
     }
     @PostMapping("/search")
-    public CustomSearchResult searchHotels(@RequestBody SearchRequest request) {
-        return hotelService.searchHotels(request);
+    public ResponseEntity<?> searchHotels(@RequestBody SearchRequest request) {
+
+        try{
+            CustomSearchResult response = hotelService.searchHotels(request);
+
+            return ResponseEntity.ok().body(response);
+        }
+        catch(ResponseException e)
+        {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
     }
     @PostMapping("/filter/search")
-    public CustomSearchResult filterSearchHotels(@RequestBody FilterSearchRequest request) {
-        return hotelService.filterSearchHotel(request);
+    public ResponseEntity<?> filterSearchHotels(@RequestBody FilterSearchRequest request) {
+        try{
+            CustomSearchResult response = hotelService.filterSearchHotel(request);
+
+            return ResponseEntity.ok().body(response);
+        }
+        catch(ResponseException e)
+        {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
 
     }
     @GetMapping("/{hotelId}")
-    public ResponseEntity<HotelDetails> getHotelDetails(@PathVariable Integer hotelId) {
-        HotelDetails hotelDetails = hotelService.getHotelDetails(hotelId);
-        return ResponseEntity.ok(hotelDetails);
+    public ResponseEntity<?> getHotelDetails(@PathVariable Integer hotelId) {
+        try{
+            HotelDetails hotelDetails = hotelService.getHotelDetails(hotelId);
+            return ResponseEntity.ok(hotelDetails);
+        }
+        catch(ResponseException e)
+        {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+
     }
 }

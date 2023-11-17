@@ -1,5 +1,6 @@
 package com.pbl6.hotelbookingapp.repository;
 
+import com.pbl6.hotelbookingapp.entity.Reservation;
 import com.pbl6.hotelbookingapp.entity.RoomReserved;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,4 +18,5 @@ public interface RoomReservedRepository extends JpaRepository<RoomReserved,Integ
     List<RoomReserved> checkAvailability(@Param("roomId") Integer roomId,
                                          @Param("startDay") LocalDate startDay,
                                          @Param("endDay") LocalDate endDay);
+    List<RoomReserved> findAllByReservation(Reservation reservation);
 }
