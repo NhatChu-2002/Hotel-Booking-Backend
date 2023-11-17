@@ -2,7 +2,6 @@ package com.pbl6.hotelbookingapp.controller;
 
 import com.pbl6.hotelbookingapp.dto.HotelDTO;
 import com.pbl6.hotelbookingapp.service.ImageService;
-import com.pbl6.hotelbookingapp.service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

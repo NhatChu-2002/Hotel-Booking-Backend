@@ -15,8 +15,6 @@ import java.util.Date;
 @AllArgsConstructor
 public class EditUserRequest {
     private String fullName;
-    @Email(message = "invalid email address")
-    private String email;
 
     private String phoneNumber;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")

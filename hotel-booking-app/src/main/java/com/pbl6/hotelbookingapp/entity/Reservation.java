@@ -23,6 +23,8 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    @Column(name = "reservation_code")
+    private String reservationCode;
     @Column(name = "email")
     private String email;
     @Column(name = "site_fees")

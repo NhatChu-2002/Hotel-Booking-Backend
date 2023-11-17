@@ -1,24 +1,25 @@
 package com.pbl6.hotelbookingapp.dto;
 
-import com.pbl6.hotelbookingapp.entity.Role;
-import jakarta.annotation.Nonnull;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterRequest {
-
+public class UserDTO {
     private String fullName;
     @Email(message = "invalid email address")
     private String email;
-    @NotNull(message = "password shouldn't be null")
-    private String password;
-    private Role role;
+
+    private String phoneNumber;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private Date dateOfBirth;
+    private Boolean gender;
 }

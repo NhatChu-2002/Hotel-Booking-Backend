@@ -23,8 +23,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RoomService {
     private final RoomRepository roomRepository;
-    private final RoomTypeService roomTypeService;
-    private final HotelService hotelService;
     private final RoomReservedRepository roomReservedRepository;
 
     public List<Room> getAvailableRooms(RoomType roomType, LocalDate startDay, LocalDate endDay, int count) {
