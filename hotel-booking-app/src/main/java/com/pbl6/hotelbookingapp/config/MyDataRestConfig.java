@@ -26,9 +26,9 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
     @Override
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
 
-
-
-        cors.addMapping(basePath + "/**").allowedOrigins(theAllowedOrigins);
+        cors.addMapping(basePath + "/**").allowedOrigins(theAllowedOrigins).allowCredentials(true)
+                .allowedMethods("GET", "POST", "PUT", "DELETE","PATCH")
+                .allowedHeaders("*");
 
     }
 }
