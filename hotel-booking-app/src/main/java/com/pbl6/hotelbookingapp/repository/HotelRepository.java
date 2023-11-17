@@ -18,6 +18,7 @@ import java.util.Set;
 public interface HotelRepository extends JpaRepository<Hotel, Integer>, JpaSpecificationExecutor<Hotel> {
     Optional<Hotel> findFirstByNameAndProvinceAndStreet(String name, String province, String street);
     Optional<Hotel> findFirstById(Integer id);
+    Optional<Hotel> findByIdAndUserId(Integer hotelId, Integer userId);
     @Query("SELECT NEW com.pbl6.hotelbookingapp.dto.HotelWithTopRating(MIN(hi.imagePath), h.name, CONCAT(h.province, ', ', h.district, ', ', h.ward), AVG(r.ratingTotal), count(r)) " +
             "FROM Hotel h " +
             "JOIN HotelImage hi ON h.id = hi.hotel.id " +
@@ -37,4 +38,6 @@ public interface HotelRepository extends JpaRepository<Hotel, Integer>, JpaSpeci
             @Param("adult_count") int adultCount,
             @Param("children_count") int childrenCount
     );
+
+    Optional<Hotel> findByUserIdAndId(Integer userId, Integer hotelId);
 }

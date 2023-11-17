@@ -11,11 +11,13 @@ import lombok.Setter;
 @Setter
 public class RoomBedType {
     @Id
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE,
+            CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "room_type_id")
     private RoomType roomType;
     @Id
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE,
+            CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "bed_type_id")
     private BedType bedType;
     @Column(name="count")

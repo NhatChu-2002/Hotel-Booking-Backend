@@ -10,7 +10,6 @@ import java.util.Optional;
 
 public interface RoomTypeRepository extends JpaRepository<RoomType,Integer> {
     Optional<RoomType> findFirstByNameAndHotelId(String name, Integer id);
-
     @Query("SELECT ri.imagePath FROM RoomType r JOIN r.roomImages ri WHERE r.id = :roomTypeId")
     String findFirstImageByRoomTypeId(@Param("roomTypeId") Integer roomTypeId);
     @Query("SELECT a.name FROM  RoomType r JOIN  r.amenities a WHERE r.id = :roomTypeId")
@@ -19,4 +18,5 @@ public interface RoomTypeRepository extends JpaRepository<RoomType,Integer> {
     @Query("SELECT MIN(rt.price) FROM RoomType rt WHERE rt.hotel.id = :hotelId")
     Optional<Double> findMinPriceByHotelId(@Param("hotelId") Integer hotelId);
 
+    RoomType findByHotelIdAndId(Integer hotelId, Integer roomTypeId);
 }

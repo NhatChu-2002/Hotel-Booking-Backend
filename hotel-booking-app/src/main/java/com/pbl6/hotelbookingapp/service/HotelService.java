@@ -9,24 +9,16 @@ import com.pbl6.hotelbookingapp.entity.*;
 import com.pbl6.hotelbookingapp.repository.*;
 import jakarta.persistence.EntityManager;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -120,25 +112,34 @@ public class HotelService {
 
     }
 
-    public AddHotelResponse addHotel(AddHotelRequest addHotelRequest) throws IOException {
-        User user = userRepository.findById(addHotelRequest.getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
-        Hotel hotel = createHotelFromRequest(addHotelRequest, user);
+    @Transactional
+    public void addHotel(Integer userId, HotelDTO request) throws IOException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        hotelRepository.save(hotel);
-        Set<HotelHotelAmenity> amenities = addOrUpdateHotelAmenities(hotel, addHotelRequest.getAmenities());
-        hotel.setHotelHotelAmenities(amenities);
-        hotelRepository.save(hotel);
-
-        addExtraAmenities(hotel, addHotelRequest.getExtraServices());
-
-        saveHotelImages(hotel, addHotelRequest.getImages());
-
-        AddHotelResponse responseDTO = new AddHotelResponse();
-        responseDTO.setMessage("Hotel added successfully");
-        return responseDTO;
+        Hotel newHotel = new Hotel();
+        newHotel.setUser(user);
+        updateHotel(newHotel, request);
+        hotelRepository.save(newHotel);
+        updateHotelAmenities(newHotel, request.getAmenities());
+        updateExtraAmenities(newHotel, request.getExtraServices());
+        updateHotelImages(newHotel, request.getImages());
     }
 
-    private void addExtraAmenities(Hotel hotel, List<ExtraService> extraServices) {
+    @Transactional
+    public void updateHotel(Integer userId, Integer hotelId, HotelDTO request) throws IOException {
+        Hotel hotel = hotelRepository.findByIdAndUserId(hotelId, userId)
+                .orElseThrow(() -> new HotelNotFoundException("Hotel not found for the given user"));
+        updateHotel(hotel, request);
+        hotelRepository.save(hotel);
+        updateHotelAmenities(hotel, request.getAmenities());
+        updateExtraAmenities(hotel, request.getExtraServices());
+        updateHotelImages(hotel, request.getImages());
+    }
+
+    private void updateExtraAmenities(Hotel hotel, List<ExtraService> extraServices) {
+        extraServiceRepository.deleteByHotel(hotel);
+
         for (ExtraService service : extraServices) {
             ExtraService extraService = new ExtraService();
             extraService.setHotel(hotel);
@@ -150,34 +151,9 @@ public class HotelService {
     }
 
 
-    private Hotel createHotelFromRequest(AddHotelRequest addHotelRequest, User user) {
-        Hotel hotel = new Hotel();
-        hotel.setUser(user);
-        hotel.setName(addHotelRequest.getName());
-        hotel.setDescription(addHotelRequest.getDescription());
-        hotel.setProvince(addHotelRequest.getProvince());
-        hotel.setDistrict(addHotelRequest.getDistrict());
-        hotel.setMainPhoneNumber(addHotelRequest.getMainPhoneNumber());
-        hotel.setMainEmail(addHotelRequest.getMainEmail());
-        hotel.setStatus(addHotelRequest.getStatus());
-        hotel.setWard(addHotelRequest.getWard());
-        hotel.setStreet(addHotelRequest.getStreet());
-        hotel.setCheckInTime(addHotelRequest.getCheckInTime());
-        hotel.setCheckOutTime(addHotelRequest.getCheckOutTime());
+    private void updateHotelAmenities(Hotel hotel, List<AmenityPriceDTO> amenityPrices) {
+        Set<HotelHotelAmenity> existingAmenities = hotel.getHotelHotelAmenities();
 
-        for (String rule : addHotelRequest.getRules()) {
-            hotel.setRule(rule);
-        }
-
-        HotelRate rate = rateRepository.findById(addHotelRequest.getRate()).orElse(null);
-        hotel.setHotelRate(rate);
-        rateRepository.save(rate);
-
-        return hotel;
-    }
-
-    private Set<HotelHotelAmenity> addOrUpdateHotelAmenities(Hotel hotel, List<AmenityPriceDTO> amenityPrices) {
-        Set<HotelHotelAmenity> amenities = new HashSet<>();
         for (AmenityPriceDTO amenityPrice : amenityPrices) {
             HotelAmenity amenity = amenityRepository.findByName(amenityPrice.getName())
                     .orElseGet(() -> {
@@ -185,17 +161,27 @@ public class HotelService {
                         newAmenity.setName(amenityPrice.getName());
                         return amenityRepository.save(newAmenity);
                     });
-            HotelHotelAmenity hotelAmenity = new HotelHotelAmenity();
-            hotelAmenity.setHotel(hotel);
-            hotelAmenity.setHotelAmenity(amenity);
-            hotelAmenity.setPrice(amenityPrice.getPrice());
-            amenities.add(hotelAmenity);
+
+            Optional<HotelHotelAmenity> existingAmenity = existingAmenities.stream()
+                    .filter(hotelAmenity -> hotelAmenity.getHotelAmenity().equals(amenity))
+                    .findFirst();
+
+            if (existingAmenity.isPresent()) {
+                existingAmenity.get().setPrice(amenityPrice.getPrice());
+            } else {
+                HotelHotelAmenity hotelAmenity = new HotelHotelAmenity();
+                hotelAmenity.setHotel(hotel);
+                hotelAmenity.setHotelAmenity(amenity);
+                hotelAmenity.setPrice(amenityPrice.getPrice());
+                hotelHotelAmenityRepository.save(hotelAmenity);
+            }
         }
-        hotelHotelAmenityRepository.saveAll(amenities);
-        return amenities;
     }
 
-    private void saveHotelImages(Hotel hotel, List<MultipartFile> images) throws IOException {
+
+    private void updateHotelImages(Hotel hotel, List<MultipartFile> images) throws IOException {
+        imageRepository.deleteByHotel(hotel);
+
         List<String> imageUrls = firebaseStorageService.saveImages(images);
         for (String imageUrl : imageUrls) {
             HotelImage image = new HotelImage();
@@ -203,24 +189,75 @@ public class HotelService {
             image.setImagePath(imageUrl);
             imageRepository.save(image);
         }
+    }
+
+
+    private void updateHotel(Hotel hotel, HotelDTO request) {
+        hotel.setName(request.getName());
+        hotel.setDescription(request.getDescription());
+        hotel.setProvince(request.getProvince());
+        hotel.setDistrict(request.getDistrict());
+        hotel.setWard(request.getWard());
+        hotel.setStreet(request.getStreet());
+        hotel.setMainPhoneNumber(request.getMainPhoneNumber());
+        hotel.setMainEmail(request.getMainEmail());
+        hotel.setStatus(request.getStatus());
+        hotel.setCheckInTime(request.getCheckInTime());
+        hotel.setCheckOutTime(request.getCheckOutTime());
+        updateRules(hotel, request.getRules());
+        rateRepository.findById(request.getRate()).ifPresent(rate -> {
+            hotel.setHotelRate(rate);
+            rateRepository.save(rate);
+        });
+    }
+
+    private void updateRules(Hotel hotel, List<String> rules) {
+        if (rules != null && !rules.isEmpty()) {
+            String concatenatedRules = String.join(", ", rules);
+            hotel.setRule(concatenatedRules);
+        } else {
+            hotel.setRule("");
+        }
+    }
+
+
+    @Transactional
+    public void deleteHotelById(Integer userId, Integer hotelId) {
+        Hotel hotel = hotelRepository.findByUserIdAndId(userId, hotelId)
+                .orElseThrow(() -> new HotelNotFoundException("Hotel not found"));
+
+        List<HotelHotelAmenity> hotelAmenities = hotelHotelAmenityRepository.findByHotelId(hotelId);
+
+        if (!hotelAmenities.isEmpty()) {
+            hotelHotelAmenityRepository.deleteByHotelId(hotelId);
+            for (HotelHotelAmenity hotelAmenity : hotelAmenities) {
+                Integer amenityId = hotelAmenity.getHotelAmenity().getId();
+                if (!hotelHotelAmenityRepository.existsByHotelAmenityId(amenityId)) {
+                    amenityRepository.deleteById(amenityId);
+                }
+            }
+        }
+
+        hotelRepository.delete(hotel);
     }
 
     @Transactional
-    public void saveHotelImages(Integer hotelId, List<MultipartFile> images) throws IOException {
-        // Find the hotel by ID
-        Hotel hotel = hotelRepository.findById(hotelId)
-                .orElseThrow(() -> new HotelNotFoundException("Hotel not found"));
+    public void deleteHotelAmenity(Integer hotelId, Integer amenityId) {
+        Optional<HotelHotelAmenity> hotelAmenityOptional = hotelHotelAmenityRepository.findByHotelIdAndHotelAmenityId(hotelId, amenityId);
 
-        // Save hotel images
-        List<String> imageUrls = firebaseStorageService.saveImages(images);
-        for (String imageUrl : imageUrls) {
-            // Save the image with the provided hotelId
-            HotelImage image = new HotelImage();
-            image.setHotel(hotel);
-            image.setImagePath(imageUrl);
-            imageRepository.save(image);
-        }
+        hotelAmenityOptional.ifPresent(hotelHotelAmenity -> {
+            HotelAmenity amenity = hotelHotelAmenity.getHotelAmenity();
+            List<HotelHotelAmenity> hotelsUsingAmenity = hotelHotelAmenityRepository.findByHotelAmenityId(amenityId);
+
+            if (hotelsUsingAmenity.size() > 1) {
+                hotelHotelAmenityRepository.delete(hotelHotelAmenity);
+            } else {
+                hotelHotelAmenityRepository.delete(hotelHotelAmenity);
+                amenityRepository.delete(amenity);
+            }
+        });
     }
+
 
     public CustomSearchResult filterSearchHotel(FilterSearchRequest request) {
         CustomSearchResult result = new CustomSearchResult();
@@ -382,6 +419,15 @@ public class HotelService {
     }
     public List<ExtraService> getExtraAmenitiesByHotelId(Integer hotelId) {
         return extraServiceRepository.findByHotelId(hotelId);
+    }
+
+    public Hotel getHotelById(Integer hotelId) {
+        Optional<Hotel> optionalHotel = hotelRepository.findById(hotelId);
+        if (optionalHotel.isPresent()) {
+            return optionalHotel.get();
+        } else {
+            throw new HotelNotFoundException("Hotel not found with ID: " + hotelId);
+        }
     }
 }
 

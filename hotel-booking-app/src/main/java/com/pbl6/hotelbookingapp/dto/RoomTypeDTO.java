@@ -5,15 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
 import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddRoomTypeRequest {
-    private Integer hotelId;
+public class RoomTypeDTO {
     private String name;
     private String roomName;
     private Integer count;

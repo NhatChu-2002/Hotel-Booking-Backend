@@ -2,10 +2,7 @@ package com.pbl6.hotelbookingapp.dto;
 
 import com.pbl6.hotelbookingapp.entity.ExtraService;
 import com.pbl6.hotelbookingapp.entity.HotelStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalTime;
@@ -14,8 +11,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddHotelRequest {
-    private Integer userId;
+public class HotelDTO {
     private String name;
     private String description;
     private String province;

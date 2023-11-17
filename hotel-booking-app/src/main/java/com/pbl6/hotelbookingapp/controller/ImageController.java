@@ -1,5 +1,7 @@
 package com.pbl6.hotelbookingapp.controller;
 
+import com.pbl6.hotelbookingapp.dto.HotelDTO;
+import com.pbl6.hotelbookingapp.service.ImageService;
 import com.pbl6.hotelbookingapp.service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,45 +11,35 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/image")
 public class ImageController {
 
-    private StorageService service;
-    public ImageController(StorageService theService)
-    {
-        this.service = theService;
+    private ImageService imageService;
+
+    public ImageController(ImageService imageService) {
+        this.imageService = imageService;
     }
 
-    @PostMapping
-    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
-        String uploadImage = service.uploadImage(file);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(uploadImage);
+    @PostMapping(value = "/hotel/{hotelId}", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> uploadHotelImage(@PathVariable Integer hotelId, @ModelAttribute List<MultipartFile> images) {
+        try {
+            imageService.uploadHotelImage(hotelId, images);
+            return new ResponseEntity<>("Images uploaded successfully", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error uploaded images", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    @GetMapping("/{fileName}")
-    public ResponseEntity<?> downloadImage(@PathVariable String fileName){
-        byte[] imageData=service.downloadImage(fileName);
-        return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.valueOf("image/png"))
-                .body(imageData);
-
-    }
-    @PostMapping("/resources")
-    public ResponseEntity<?> uploadImageToResource(@RequestParam("image")MultipartFile file) throws IOException {
-        String uploadImage = service.uploadImageToResource(file);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(uploadImage);
-    }
-
-    @GetMapping("/resources/{fileName}")
-    public ResponseEntity<?> downloadImageFromResource(@PathVariable String fileName) throws IOException {
-        byte[] imageData=service.downloadImageFromResource(fileName);
-        return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.valueOf("image/png"))
-                .body(imageData);
-
+    @PostMapping(value = "/roomType/{roomTypeId}", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> uploadRoomTypeImage(@PathVariable Integer roomTypeId, @ModelAttribute List<MultipartFile> images) {
+        try {
+            imageService.uploadRoomTypeImage(roomTypeId, images);
+            return new ResponseEntity<>("Images uploaded successfully", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error uploaded images", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
