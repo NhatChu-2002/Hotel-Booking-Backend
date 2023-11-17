@@ -22,7 +22,19 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
-
+    @GetMapping("/history")
+    public ResponseEntity<?> getHistory(@RequestParam Integer userId) {
+        try{
+            ReservedHistoryResponse response= reservationService.getHistory(userId);
+            return ResponseEntity.ok().body(response);
+        }
+        catch(ResponseException e)
+        {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+    }
 
     @PostMapping("/booking")
     public ResponseEntity<?> makingReservation(@RequestBody ReservationRequest request) {

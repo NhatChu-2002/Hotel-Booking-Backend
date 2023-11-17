@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationResponse {
+public class ReservationDto {
     private String reservationCode;
     private String hotelName;
     private String province;
@@ -28,4 +28,5 @@ public class ReservationResponse {
     private LocalTime checkOutTime;
     private String description;
     private ReservationStatus status;
+    private String imagePath;
 }

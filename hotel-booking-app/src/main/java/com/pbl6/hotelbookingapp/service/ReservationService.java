@@ -5,40 +5,31 @@ import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
 import com.pbl6.hotelbookingapp.dto.*;
 import com.pbl6.hotelbookingapp.email.EmailService;
 import com.pbl6.hotelbookingapp.entity.*;
-import com.pbl6.hotelbookingapp.repository.InvoiceRepository;
-import com.pbl6.hotelbookingapp.repository.ReservationRepository;
-import com.pbl6.hotelbookingapp.repository.RoomReservedRepository;
+import com.pbl6.hotelbookingapp.repository.*;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class ReservationService {
-    private RoomService roomService;
-    private RoomTypeService roomTypeService;
-    private HotelService hotelService;
-    private UserService userService;
-    private ReservationRepository reservationRepository;
-    private RoomReservedRepository roomReservedRepository;
-    private EmailService emailService;
-    private InvoiceRepository invoiceRepository;
+    private final RoomService roomService;
+    private final RoomTypeService roomTypeService;
+    private final HotelService hotelService;
+    private final UserService userService;
+    private final ReservationRepository reservationRepository;
+    private final RoomReservedRepository roomReservedRepository;
+    private final EmailService emailService;
+    private final InvoiceRepository invoiceRepository;
 
-    public ReservationService(RoomService roomService, RoomTypeService roomTypeService, HotelService hotelService, UserService userService, ReservationRepository reservationRepository, RoomReservedRepository roomReservedRepository, EmailService emailService, InvoiceRepository invoiceRepository) {
-        this.roomService = roomService;
-        this.roomTypeService = roomTypeService;
-        this.hotelService = hotelService;
-        this.userService = userService;
-        this.reservationRepository = reservationRepository;
-        this.roomReservedRepository = roomReservedRepository;
-        this.emailService = emailService;
-        this.invoiceRepository = invoiceRepository;
-    }
+    private final RoomRepository roomRepository;
+
+    private final HotelImageRepository hotelImageRepository;
 
     public boolean checkReservation(ReservationRequest request)
     {
@@ -152,6 +143,7 @@ public class ReservationService {
             reservation.setTotalPrice(request.getVat());
             String reservationCode = ReservationCodeGenerator.generateReservationCode();
             reservation.setReservationCode(reservationCode);
+            reservation.setStatus(ReservationStatus.CONFIRMED);
 
 
             ReservationResponse reservationResponse = ReservationResponse.builder()
@@ -186,5 +178,82 @@ public class ReservationService {
         } catch (ResponseException e) {
             throw new ResponseException(e.getMessage());
         }
+    }
+    public ReservedHistoryResponse getHistory(Integer id)
+    {
+        ReservedHistoryResponse response = new ReservedHistoryResponse();
+        List<Reservation> reservationList = reservationRepository.findAllByUserId(id);
+        if(!reservationList.isEmpty())
+        {
+            List<ReservationDto> reservationDtoList = new ArrayList<>();
+            for (Reservation reservation: reservationList) {
+                ReservationDto reservationDto = new ReservationDto();
+                List<RoomReserved> reservedList = roomReservedRepository.findAllByReservation(reservation);
+                Hotel hotel = new Hotel();
+                Map<RoomType, List<String>> roomTypeRoomNamesMap = new HashMap<>();
+                boolean hotelSet = false;
+                boolean daySet = false;
+                int numberOfNights = 0;
+                for (RoomReserved roomReserved : reservedList) {
+                    if(!daySet)
+                    {
+                        reservationDto.setStartDay(roomReserved.getStartDay());
+                        reservationDto.setEndDay(roomReserved.getEndDay());
+                        numberOfNights = (int) ChronoUnit.DAYS.between(roomReserved.getStartDay(), roomReserved.getEndDay());
+                        daySet = true;
+                    }
+                    if (!hotelSet) {
+                        hotel = roomRepository.findHotelByRoomId(roomReserved.getRoom().getId());
+                        if (hotel != null) {
+                            hotelSet = true;
+                        }
+                    }
+                    RoomType roomType = roomRepository.findRoomTypeByRoomId(roomReserved.getRoom().getId());
+                    if (roomType != null) {
+                        List<String> roomNames = roomTypeRoomNamesMap.getOrDefault(roomType, new ArrayList<>());
+                        roomNames.add(roomReserved.getRoom().getName());
+                        roomTypeRoomNamesMap.put(roomType, roomNames);
+
+                    }
+                }
+                Set<RoomType> uniqueRoomTypes = roomTypeRoomNamesMap.keySet();
+
+
+                List<RoomTypesResponse> roomTypesResponses = new ArrayList<>();
+
+                for (RoomType roomType : uniqueRoomTypes) {
+                    RoomTypesResponse roomTypesResponse = new RoomTypesResponse();
+                    roomTypesResponse.setName(roomType.getName());
+
+                    List<String> roomNames = roomTypeRoomNamesMap.get(roomType);
+                    roomTypesResponse.setRoomName(roomNames);
+                    roomTypesResponse.setCount(roomNames.size());
+                    roomTypesResponse.setChildrenCount(roomType.getChildrenCount());
+                    roomTypesResponse.setAdultCount(roomType.getAdultCount());
+                    roomTypesResponse.setNightCount(numberOfNights);
+                    roomTypesResponses.add(roomTypesResponse);
+                }
+                reservationDto.setRoomList(roomTypesResponses);
+                reservationDto.setReservationCode(reservation.getReservationCode());
+                reservationDto.setStatus(reservation.getStatus());
+                reservationDto.setDescription(hotel.getDescription());
+                reservationDto.setAddress(hotel.getStreet() +", " + hotel.getWard() + ", " + hotel.getDistrict() + ", " +hotel.getProvince());
+                reservationDto.setProvince(hotel.getProvince());
+                reservationDto.setImagePath(hotelImageRepository.findFirstImagePathByHotelId(hotel.getId()));
+                reservationDto.setCheckInTime(hotel.getCheckInTime());
+                reservationDto.setCheckOutTime(hotel.getCheckOutTime());
+                reservationDto.setTotal(reservation.getTotalPrice());
+                reservationDtoList.add(reservationDto);
+            }
+            response.setReservationList(reservationDtoList);
+            response.setTotalItems(reservationDtoList.size());
+        }
+        else {
+            response.setReservationList(null);
+            response.setTotalItems(0);
+        }
+
+
+        return response;
     }
 }
