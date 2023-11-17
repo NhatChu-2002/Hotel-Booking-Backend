@@ -18,19 +18,19 @@ public class HotelBookingAppApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HotelBookingAppApplication.class, args);
 	}
-//	@Bean
-//	public WebMvcConfigurer corsConfigurer() {
-//		return new WebMvcConfigurer() {
-//			@Override
-//			public void addCorsMappings(CorsRegistry registry) {
-//				registry.addMapping(basePath + "/**")
-//						.allowedOrigins("http://localhost:3000")
-//						.allowCredentials(true)
-//						.allowedMethods("GET", "POST", "PUT", "DELETE","PATCH")
-//						.allowedHeaders("*");
-//			}
-//		};
-//	}
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping(basePath + "/**")
+						.allowedOrigins("http://localhost:3000")
+						.allowCredentials(true)
+						.allowedMethods("GET", "POST", "PUT", "DELETE","PATCH")
+						.allowedHeaders("*");
+			}
+		};
+	}
 
 }
 
