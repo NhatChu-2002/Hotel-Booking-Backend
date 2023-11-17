@@ -21,14 +21,14 @@ public class FirebaseConfig {
 
         InputStream serviceAccount = resource.getInputStream();
 
-        // Cấu hình Firebase
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .setStorageBucket("hotel-booking-cb28a.appspot.com")
                 .build();
 
-        // Khởi tạo FirebaseApp
-        FirebaseApp.initializeApp(options);
+        if (FirebaseApp.getApps().isEmpty()) {
+            FirebaseApp.initializeApp(options);
+        }
     }
 }
 

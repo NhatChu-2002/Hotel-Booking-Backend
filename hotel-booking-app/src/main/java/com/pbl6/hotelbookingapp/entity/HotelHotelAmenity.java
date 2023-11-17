@@ -11,11 +11,13 @@ import lombok.Setter;
 @Setter
 public class HotelHotelAmenity {
     @Id
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE,
+            CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
     @Id
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE,
+            CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "hotel_amenity_id")
     private HotelAmenity hotelAmenity;
     @Column(name="price")
