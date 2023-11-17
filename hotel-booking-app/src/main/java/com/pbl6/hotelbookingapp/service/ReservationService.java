@@ -158,6 +158,7 @@ public class ReservationService {
                     .endDay(request.getEndDay())
                     .startDay(request.getStartDay())
                     .reservationCode(reservationCode)
+                    .status(ReservationStatus.CONFIRMED)
                     .build();
             emailService.sendReservationConfirmationEmail(reservationResponse,saveUser.getEmail());
             reservationRepository.save(reservation);
