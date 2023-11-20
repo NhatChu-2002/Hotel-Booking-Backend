@@ -1,16 +1,11 @@
 package com.pbl6.hotelbookingapp.controller;
 
-import com.pbl6.hotelbookingapp.dto.AddHotelRequest;
-import com.pbl6.hotelbookingapp.dto.AddHotelResponse;
-import com.pbl6.hotelbookingapp.dto.AddRoomTypeRequest;
-import com.pbl6.hotelbookingapp.dto.AddRoomTypeResponse;
+import com.pbl6.hotelbookingapp.dto.RoomTypeDTO;
 import com.pbl6.hotelbookingapp.service.RoomTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/room-types")
@@ -23,13 +18,23 @@ public class RoomTypeController {
         this.roomTypeService = roomTypeService;
     }
 
-    @RequestMapping(value = "/add" , method = RequestMethod.POST, consumes = { "multipart/form-data" })
-    public ResponseEntity<AddRoomTypeResponse> addRoomType(@ModelAttribute AddRoomTypeRequest addRoomTypeRequest) {
+    @PostMapping(value = "/{hotelId}", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> addRoomType(@PathVariable Integer hotelId, @ModelAttribute RoomTypeDTO roomTypeDTO) {
         try {
-            AddRoomTypeResponse response = roomTypeService.addRoomTypeResponse(addRoomTypeRequest);
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+            roomTypeService.addRoomType(hotelId, roomTypeDTO);
+            return new ResponseEntity<>("Room Type added successfully", HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(new AddRoomTypeResponse("Error adding room type"), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error adding Room Type", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping (value = "/{hotelId}/{roomTypeId}", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> updateRoomType(@PathVariable Integer hotelId, @PathVariable Integer roomTypeId, @ModelAttribute RoomTypeDTO roomTypeDTO) {
+        try {
+            roomTypeService.updateRoomType(hotelId, roomTypeId, roomTypeDTO);
+            return new ResponseEntity<>("Room Type updated successfully", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error updating Room Type", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
