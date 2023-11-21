@@ -1,5 +1,6 @@
 package com.pbl6.hotelbookingapp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,12 +20,12 @@ public class Invoice {
     private Integer id;
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
-
     @Column(name = "invoice_amount")
     private Double invoiceAmount;
     @Column(name = "refund_amount")
-    private Double refundAmount;
+    private long refundAmount;
     @Column(name = "time_created")
     @CreationTimestamp
     private Date timeCreated;
@@ -32,11 +33,16 @@ public class Invoice {
     private Date timePaid;
     @Column(name = "time_canceled")
     private Date timeCanceled;
-    @ManyToOne
-    @JoinColumn(name = "payment_types_id")
+    @Column(name = "vnp_txnref")
+    private String vnpRef;
+    @Column(name = "vnp_transdate")
+    private String vnpTransdate;
+    @Column(name = "payment_type")
+    @Enumerated(EnumType.STRING)
     private PaymentType paymentType;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name= "reservation_id", referencedColumnName = "id")
+    @JsonIgnore
     private Reservation reservation;
 
 }

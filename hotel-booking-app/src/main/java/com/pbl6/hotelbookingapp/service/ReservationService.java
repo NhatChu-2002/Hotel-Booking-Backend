@@ -22,6 +22,7 @@ public class ReservationService {
     private final RoomTypeService roomTypeService;
     private final HotelService hotelService;
     private final UserService userService;
+    private final UserRepository userRepository;
     private final ReservationRepository reservationRepository;
     private final RoomReservedRepository roomReservedRepository;
     private final EmailService emailService;
@@ -180,6 +181,79 @@ public class ReservationService {
             throw new ResponseException(e.getMessage());
         }
     }
+    public ReservationDto getReservationByCode(String reservationCode)
+    {
+        try {
+            ReservationDto reservationDto = new ReservationDto();
+            Reservation reservation = reservationRepository.findFirstByReservationCode(reservationCode).get();
+            getReservationDetails(reservationDto, reservation);
+            return reservationDto;
+        }
+        catch (ResponseException e)
+        {
+            throw new ResponseException(e.getMessage());
+        }
+
+    }
+
+    private void getReservationDetails(ReservationDto reservationDto, Reservation reservation) {
+        List<RoomReserved> reservedList = roomReservedRepository.findAllByReservation(reservation);
+        Hotel hotel = new Hotel();
+        Map<RoomType, List<String>> roomTypeRoomNamesMap = new HashMap<>();
+        boolean hotelSet = false;
+        boolean daySet = false;
+        int numberOfNights = 0;
+        for (RoomReserved roomReserved : reservedList) {
+            if(!daySet)
+            {
+                reservationDto.setStartDay(roomReserved.getStartDay());
+                reservationDto.setEndDay(roomReserved.getEndDay());
+                numberOfNights = (int) ChronoUnit.DAYS.between(roomReserved.getStartDay(), roomReserved.getEndDay());
+                daySet = true;
+            }
+            if (!hotelSet) {
+                hotel = roomRepository.findHotelByRoomId(roomReserved.getRoom().getId());
+                if (hotel != null) {
+                    hotelSet = true;
+                }
+            }
+            RoomType roomType = roomRepository.findRoomTypeByRoomId(roomReserved.getRoom().getId());
+            if (roomType != null) {
+                List<String> roomNames = roomTypeRoomNamesMap.getOrDefault(roomType, new ArrayList<>());
+                roomNames.add(roomReserved.getRoom().getName());
+                roomTypeRoomNamesMap.put(roomType, roomNames);
+
+            }
+
+        }
+        Set<RoomType> uniqueRoomTypes = roomTypeRoomNamesMap.keySet();
+
+        List<RoomTypesResponse> roomTypesResponses = new ArrayList<>();
+
+        for (RoomType roomType : uniqueRoomTypes) {
+            RoomTypesResponse roomTypesResponse = new RoomTypesResponse();
+            roomTypesResponse.setName(roomType.getName());
+            List<String> roomNames = roomTypeRoomNamesMap.get(roomType);
+            roomTypesResponse.setRoomName(roomNames);
+            roomTypesResponse.setCount(roomNames.size());
+            roomTypesResponse.setChildrenCount(roomType.getChildrenCount());
+            roomTypesResponse.setAdultCount(roomType.getAdultCount());
+            roomTypesResponse.setNightCount(numberOfNights);
+            roomTypesResponses.add(roomTypesResponse);
+        }
+        reservationDto.setHotelName(hotel.getName());
+        reservationDto.setRoomList(roomTypesResponses);
+        reservationDto.setReservationCode(reservation.getReservationCode());
+        reservationDto.setStatus(reservation.getStatus());
+        reservationDto.setDescription(hotel.getDescription());
+        reservationDto.setAddress(hotel.getStreet() +", " + hotel.getWard() + ", " + hotel.getDistrict() + ", " +hotel.getProvince());
+        reservationDto.setProvince(hotel.getProvince());
+        reservationDto.setImagePath(hotelImageRepository.findFirstImagePathByHotelId(hotel.getId()));
+        reservationDto.setCheckInTime(hotel.getCheckInTime());
+        reservationDto.setCheckOutTime(hotel.getCheckOutTime());
+        reservationDto.setTotal(reservation.getTotalPrice());
+    }
+
     public ReservedHistoryResponse getHistory(Integer id)
     {
         ReservedHistoryResponse response = new ReservedHistoryResponse();
@@ -189,62 +263,7 @@ public class ReservationService {
             List<ReservationDto> reservationDtoList = new ArrayList<>();
             for (Reservation reservation: reservationList) {
                 ReservationDto reservationDto = new ReservationDto();
-                List<RoomReserved> reservedList = roomReservedRepository.findAllByReservation(reservation);
-                Hotel hotel = new Hotel();
-                Map<RoomType, List<String>> roomTypeRoomNamesMap = new HashMap<>();
-                boolean hotelSet = false;
-                boolean daySet = false;
-                int numberOfNights = 0;
-                for (RoomReserved roomReserved : reservedList) {
-                    if(!daySet)
-                    {
-                        reservationDto.setStartDay(roomReserved.getStartDay());
-                        reservationDto.setEndDay(roomReserved.getEndDay());
-                        numberOfNights = (int) ChronoUnit.DAYS.between(roomReserved.getStartDay(), roomReserved.getEndDay());
-                        daySet = true;
-                    }
-                    if (!hotelSet) {
-                        hotel = roomRepository.findHotelByRoomId(roomReserved.getRoom().getId());
-                        if (hotel != null) {
-                            hotelSet = true;
-                        }
-                    }
-                    RoomType roomType = roomRepository.findRoomTypeByRoomId(roomReserved.getRoom().getId());
-                    if (roomType != null) {
-                        List<String> roomNames = roomTypeRoomNamesMap.getOrDefault(roomType, new ArrayList<>());
-                        roomNames.add(roomReserved.getRoom().getName());
-                        roomTypeRoomNamesMap.put(roomType, roomNames);
-
-                    }
-                }
-                Set<RoomType> uniqueRoomTypes = roomTypeRoomNamesMap.keySet();
-
-
-                List<RoomTypesResponse> roomTypesResponses = new ArrayList<>();
-
-                for (RoomType roomType : uniqueRoomTypes) {
-                    RoomTypesResponse roomTypesResponse = new RoomTypesResponse();
-                    roomTypesResponse.setName(roomType.getName());
-
-                    List<String> roomNames = roomTypeRoomNamesMap.get(roomType);
-                    roomTypesResponse.setRoomName(roomNames);
-                    roomTypesResponse.setCount(roomNames.size());
-                    roomTypesResponse.setChildrenCount(roomType.getChildrenCount());
-                    roomTypesResponse.setAdultCount(roomType.getAdultCount());
-                    roomTypesResponse.setNightCount(numberOfNights);
-                    roomTypesResponses.add(roomTypesResponse);
-                }
-                reservationDto.setHotelName(hotel.getName());
-                reservationDto.setRoomList(roomTypesResponses);
-                reservationDto.setReservationCode(reservation.getReservationCode());
-                reservationDto.setStatus(reservation.getStatus());
-                reservationDto.setDescription(hotel.getDescription());
-                reservationDto.setAddress(hotel.getStreet() +", " + hotel.getWard() + ", " + hotel.getDistrict() + ", " +hotel.getProvince());
-                reservationDto.setProvince(hotel.getProvince());
-                reservationDto.setImagePath(hotelImageRepository.findFirstImagePathByHotelId(hotel.getId()));
-                reservationDto.setCheckInTime(hotel.getCheckInTime());
-                reservationDto.setCheckOutTime(hotel.getCheckOutTime());
-                reservationDto.setTotal(reservation.getTotalPrice());
+                getReservationDetails(reservationDto, reservation);
                 reservationDtoList.add(reservationDto);
             }
             response.setReservationList(reservationDtoList);
@@ -258,4 +277,30 @@ public class ReservationService {
 
         return response;
     }
+    public Invoice saveInvoice(SaveInvoiceRequest request)
+    {
+        try{
+            Invoice newInvoice = new Invoice();
+
+            User user = userRepository.findById(request.getUserId()).get();
+            Reservation reservation = reservationRepository.findFirstById(request.getReservationId()).get();
+            newInvoice.setUser(user);
+            newInvoice.setInvoiceAmount(request.getPrice());
+
+
+            newInvoice.setTimePaid(new Date());
+            newInvoice.setVnpRef(request.getOrderId());
+            newInvoice.setVnpTransdate(request.getTransDate());
+            newInvoice.setPaymentType(PaymentType.CREDIT_CARD);
+            newInvoice.setReservation(reservation);
+
+
+            return invoiceRepository.save(newInvoice);
+        }catch (ResponseException e)
+        {
+            throw new ResponseException(e.getMessage());
+        }
+
+    }
+
 }

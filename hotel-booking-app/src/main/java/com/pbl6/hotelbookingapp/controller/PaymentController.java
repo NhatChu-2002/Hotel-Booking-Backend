@@ -1,10 +1,8 @@
 package com.pbl6.hotelbookingapp.controller;
 
 import com.pbl6.hotelbookingapp.Exception.ResponseException;
-import com.pbl6.hotelbookingapp.dto.ErrorResponse;
-import com.pbl6.hotelbookingapp.dto.RefundRequest;
-import com.pbl6.hotelbookingapp.dto.RefundResponse;
-import com.pbl6.hotelbookingapp.dto.ReservationRequest;
+import com.pbl6.hotelbookingapp.dto.*;
+import com.pbl6.hotelbookingapp.entity.Invoice;
 import com.pbl6.hotelbookingapp.service.PaymentService;
 import com.pbl6.hotelbookingapp.service.ReservationService;
 import com.pbl6.hotelbookingapp.vnpay.Config;
@@ -48,6 +46,23 @@ public class PaymentController {
         {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+
+
+    }
+    @PostMapping("/invoices")
+    public ResponseEntity<?> saveInvoice(@RequestBody SaveInvoiceRequest request)  {
+        try {
+            Invoice invoice = reservationService.saveInvoice(request);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(invoice);
+        }
+        catch (ResponseException e)
+        {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse(e.getMessage()));
         }
 
