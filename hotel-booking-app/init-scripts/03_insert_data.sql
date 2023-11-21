@@ -311,10 +311,6 @@ VALUES(1, 1, 1),
 
 
 
-INSERT INTO payment_type(id, payment_type_name)
-VALUES(1, 'Thẻ tín dụng');
-
-
 -- INSERT INTO invoice()
 -- VALUES();
    

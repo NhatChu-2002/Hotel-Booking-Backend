@@ -39,6 +39,7 @@ public class Reservation {
     @Column(name = "modified_at")
     @UpdateTimestamp
     private Date modifiedAt;
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
     @OneToOne
