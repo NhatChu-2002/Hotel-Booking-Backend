@@ -234,6 +234,7 @@ public class ReservationService {
                     roomTypesResponse.setNightCount(numberOfNights);
                     roomTypesResponses.add(roomTypesResponse);
                 }
+                reservationDto.setHotelName(hotel.getName());
                 reservationDto.setRoomList(roomTypesResponses);
                 reservationDto.setReservationCode(reservation.getReservationCode());
                 reservationDto.setStatus(reservation.getStatus());

@@ -15,8 +15,7 @@ public class HotelSpecifications {
     public static Specification<Hotel> withSmallFilters( FilterSearchRequest filters) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-
-
+            predicates.add(criteriaBuilder.equal(root.get("status"), HotelStatus.ACTIVE));
             if (filters.getRate() != null && !filters.getRate().isEmpty()) {
                 Join<Hotel, HotelRate> hotelRateJoin = root.join("hotelRate");
                 predicates.add(criteriaBuilder.equal(hotelRateJoin.get("name"), filters.getRate()));
@@ -40,6 +39,7 @@ public class HotelSpecifications {
 
             }
 
+
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
@@ -48,6 +48,7 @@ public class HotelSpecifications {
             List<Predicate> predicates = new ArrayList<>();
 
             List<HotelFilterSearchResult> hotels = customSearchResult.getHotels();
+
             if (hotels == null) {
                 throw new ResponseException("No hotel found!");
             }
@@ -59,7 +60,7 @@ public class HotelSpecifications {
                 predicates.add(root.get("id").in(hotelIds));
             }
 
-
+            predicates.add(criteriaBuilder.equal(root.get("status"), HotelStatus.ACTIVE));
 
             if (filters.getRate() != null && !filters.getRate().isEmpty()) {
                 Join<Hotel, HotelRate> hotelRateJoin = root.join("hotelRate");

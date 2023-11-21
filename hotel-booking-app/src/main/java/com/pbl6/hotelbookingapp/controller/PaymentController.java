@@ -2,6 +2,8 @@ package com.pbl6.hotelbookingapp.controller;
 
 import com.pbl6.hotelbookingapp.Exception.ResponseException;
 import com.pbl6.hotelbookingapp.dto.ErrorResponse;
+import com.pbl6.hotelbookingapp.dto.RefundRequest;
+import com.pbl6.hotelbookingapp.dto.RefundResponse;
 import com.pbl6.hotelbookingapp.dto.ReservationRequest;
 import com.pbl6.hotelbookingapp.service.PaymentService;
 import com.pbl6.hotelbookingapp.service.ReservationService;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -23,6 +26,12 @@ import java.util.*;
 public class PaymentController {
     private final PaymentService paymentService;
     private final ReservationService reservationService;
+    @PostMapping("/refund")
+    public ResponseEntity<?> getRefund(@RequestBody RefundRequest request) throws IOException {
+
+        RefundResponse refundResponse = paymentService.refund(request.getTranType(), request.getOrderId(), request.getPrice(), request.getTransDate(), request.getUser());
+        return ResponseEntity.ok().body(refundResponse);
+    }
     @PostMapping("/pay")
     public ResponseEntity<?> getPay(@RequestBody ReservationRequest request) throws UnsupportedEncodingException {
         try {
