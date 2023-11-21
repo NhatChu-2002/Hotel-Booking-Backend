@@ -28,7 +28,7 @@ public class HotelController {
         return hotelService.getTop4HotelsWithFirstImage();
     }
 
-    @PostMapping(value = "/{userId}", consumes = {"multipart/form-data"})
+    @RequestMapping(value = "/{userId}" , method = RequestMethod.POST, consumes = {"multipart/form-data"})
     public ResponseEntity<String> addHotel(@PathVariable Integer userId, @ModelAttribute HotelDTO requestDTO) {
         try {
             hotelService.addHotel(userId, requestDTO);
@@ -38,7 +38,7 @@ public class HotelController {
         }
     }
 
-    @PutMapping (value = "/{userId}/{hotelId}", consumes = {"multipart/form-data"})
+    @RequestMapping (value = "/{userId}/{hotelId}", method = RequestMethod.PUT, consumes = {"multipart/form-data"})
     public ResponseEntity<String> updateHotel(@PathVariable Integer userId, @PathVariable Integer hotelId, @ModelAttribute HotelDTO requestDTO) {
         try {
             hotelService.updateHotel(userId, hotelId, requestDTO);
