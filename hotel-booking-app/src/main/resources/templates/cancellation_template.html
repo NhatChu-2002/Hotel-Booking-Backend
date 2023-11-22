@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<head>
+    <title>Thông Báo Hủy Đặt Phòng</title>
+    <meta charset="UTF-8">
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            color: #333;
+        }
+        strong {
+            font-weight: bold;
+        }
+        p {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h2>Thông Tin Hủy Đặt Phòng</h2>
+    <p>Chúng tôi xin thông báo rằng đặt phòng của bạn đã được hủy. Dưới đây là chi tiết:</p>
+    <p>
+        <strong>Mã Đặt Phòng:</strong> <span th:text="${cancelResponse.reservationCode}"></span>
+    </p>
+    <p>
+        <strong>Tên Khách Sạn:</strong> <span th:text="${cancelResponse.hotelName}"></span>
+    </p>
+    <p>
+        <strong>Ngày Hủy:</strong> <span th:text="${cancelResponse.cancelDate}"></span>
+    </p>
+    <p>
+        <strong>Đã thanh toán:</strong> <span th:text="${cancelResponse.amount}"></span> VND
+    </p>
+    <p>
+        <strong>Mã giao dịch:</strong> <span th:text="${cancelResponse.orderId}"></span> VND
+    </p>
+    <p>
+        <strong>Số Tiền Được Hoàn Lại:</strong> <span th:text="${cancelResponse.refundAmount}"></span> VND
+    </p>
+    <hr>
+    <p>
+        Đặt phòng có mã số <span th:text="${cancelResponse.reservationCode}"></span> tại khách sạn <span th:text="${cancelResponse.hotelName}"></span> đã được hủy vào ngày <span th:text="${cancelResponse.cancelDate}"></span>.
+        Số tiền <span th:text="${cancelResponse.refundAmount}"></span> VND đã được hoàn lại vào tài khoàn của bạn.
+    </p>
+    <p>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.</p>
+    <p>Trân trọng,</p>
+    <p>Innsight team</p>
+</div>
+</body>
+</html>
