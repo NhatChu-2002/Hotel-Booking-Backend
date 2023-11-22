@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SaveInvoiceRequest {
         Integer userId;
-        Integer reservationId;
+        String reservationCode;
         String orderId;
         Double price;
         String transDate;
