@@ -100,10 +100,10 @@ public class HotelController {
 
     }
 
-    @GetMapping("/{hotelId}")
-    public ResponseEntity<?> getHotelDetails(@PathVariable Integer hotelId) {
+    @PostMapping ("/rooms")
+    public ResponseEntity<?> getHotelDetails(@RequestBody HotelDetailsRequest request) {
         try{
-            HotelDetails hotelDetails = hotelService.getHotelDetails(hotelId);
+            HotelDetails hotelDetails = hotelService.getHotelDetails(request);
             return ResponseEntity.ok(hotelDetails);
         }
         catch(ResponseException e)
