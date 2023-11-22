@@ -25,7 +25,7 @@ public class PaymentService {
         String vnp_TmnCode = Config.vnp_TmnCode;
         String vnp_TransactionType = tranType;
         String vnp_TxnRef = orderId;
-        long amount = price.longValue()*10000;
+        long amount = price.longValue()*100;
         String vnp_Amount = String.valueOf(amount);
         String vnp_OrderInfo = "Hoan tien GD OrderId:" + vnp_TxnRef;
         String vnp_TransactionNo = "";
@@ -97,7 +97,7 @@ public class PaymentService {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
-        long amount =  price.longValue()*10000;
+        long amount =  price.longValue()*100;
         String bankCode = "NCB";
 
         String vnp_TxnRef = Config.getRandomNumber(8);
@@ -126,7 +126,7 @@ public class PaymentService {
         String vnp_CreateDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
 
-        cld.add(Calendar.DAY_OF_YEAR, 2);
+        cld.add(Calendar.DAY_OF_YEAR, 1);
         String vnp_ExpireDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
 

@@ -283,7 +283,7 @@ public class ReservationService {
             Invoice newInvoice = new Invoice();
 
             User user = userRepository.findById(request.getUserId()).get();
-            Reservation reservation = reservationRepository.findFirstById(request.getReservationId()).get();
+            Reservation reservation = reservationRepository.findFirstByReservationCode(request.getReservationCode()).get();
             newInvoice.setUser(user);
             newInvoice.setInvoiceAmount(request.getPrice());
 
