@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -30,9 +30,9 @@ public class Invoice {
     @CreationTimestamp
     private Date timeCreated;
     @Column(name = "time_paid")
-    private Date timePaid;
+    private LocalDateTime timePaid;
     @Column(name = "time_canceled")
-    private Date timeCanceled;
+    private LocalDateTime timeCanceled;
     @Column(name = "vnp_txnref")
     private String vnpRef;
     @Column(name = "vnp_transdate")

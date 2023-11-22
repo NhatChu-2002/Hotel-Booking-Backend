@@ -7,11 +7,16 @@ import com.pbl6.hotelbookingapp.email.EmailService;
 import com.pbl6.hotelbookingapp.entity.*;
 import com.pbl6.hotelbookingapp.repository.*;
 
+import io.jsonwebtoken.io.IOException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -31,6 +36,7 @@ public class ReservationService {
     private final RoomRepository roomRepository;
 
     private final HotelImageRepository hotelImageRepository;
+    private final PaymentService paymentService;
 
     public boolean checkReservation(ReservationRequest request)
     {
@@ -287,8 +293,8 @@ public class ReservationService {
             newInvoice.setUser(user);
             newInvoice.setInvoiceAmount(request.getPrice());
 
-
-            newInvoice.setTimePaid(new Date());
+            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+            newInvoice.setTimePaid(localDateTime);
             newInvoice.setVnpRef(request.getOrderId());
             newInvoice.setVnpTransdate(request.getTransDate());
             newInvoice.setPaymentType(PaymentType.CREDIT_CARD);
@@ -302,5 +308,88 @@ public class ReservationService {
         }
 
     }
+    @Transactional
+    public RefundResponse cancelReservation(CancelRequest request) throws IOException
+    {
+        try {
+            Optional<Reservation> reservation = reservationRepository.findFirstByReservationCode(request.getReservationCode());
+            if(!reservation.isPresent())
+            {
+                throw new ResponseException("no reservation found!");
+            }
+            Reservation foundReservation = reservation.get();
+            Optional<Invoice> findInvoice = invoiceRepository.findByReservation(reservation.get());
 
+            if(!findInvoice.isPresent())
+            {
+                throw new ResponseException("no invoice found!");
+            }
+            List<RoomReserved> reservedList =  roomReservedRepository.findAllByReservation(reservation.get());
+            if(reservedList.isEmpty())
+            {
+                throw new ResponseException("no room found!");
+            }
+            foundReservation.setStatus(ReservationStatus.CANCELLED);
+            RoomReserved firstRoomReserved = reservedList.get(0);
+            String hotelName = roomRepository.findHotelByRoomId(firstRoomReserved.getRoom().getId()).getName();
+            LocalDate checkInDate = firstRoomReserved.getStartDay();
+            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+            LocalDate cancellationDate = localDateTime.toLocalDate();
+
+            long daysUntilCheckIn = ChronoUnit.DAYS.between(cancellationDate, checkInDate);
+
+            double refundPercentage = 0.0;
+            String tranType = new String();
+            if (daysUntilCheckIn >= 2) {
+                refundPercentage = 1.0;
+                tranType = "02";
+            } else if (daysUntilCheckIn > 0) {
+                refundPercentage = 0.9;
+                tranType = "03";
+            }
+            if (refundPercentage == 0.0)
+            {
+                throw new ResponseException("Cannot cancelled!");
+            }
+            Invoice invoice = findInvoice.get();
+
+            RefundResponse refundResponse = paymentService.refund(tranType,
+                                                                invoice.getVnpRef(),
+                                                                invoice.getInvoiceAmount()*refundPercentage,
+                                                                invoice.getVnpTransdate(),
+                                                                foundReservation.getEmail());
+            if(refundResponse.getVnp_Message().equals("Refund success"))
+            {
+                invoice.setTimeCanceled(localDateTime);
+                invoice.setRefundAmount((long) (invoice.getInvoiceAmount()*refundPercentage));
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                String formattedCancellationDate = cancellationDate.format(formatter);
+
+                CancelResponse cancelResponse = CancelResponse.builder()
+                        .hotelName(hotelName)
+                        .reservationCode(foundReservation.getReservationCode())
+                        .orderId(invoice.getVnpRef())
+                        .cancelDate(formattedCancellationDate)
+                        .amount(invoice.getInvoiceAmount().toString())
+                        .refundAmount(invoice.getInvoiceAmount()*refundPercentage)
+                        .build();
+                emailService.sendCancellationEmail(cancelResponse, foundReservation.getEmail());
+
+                invoiceRepository.save(invoice);
+                roomReservedRepository.deleteAllByReservation(foundReservation);
+                reservationRepository.save(foundReservation);
+            }
+
+
+            return refundResponse;
+        }
+        catch (ResponseException e)
+        {
+            throw new ResponseException(e.getMessage());
+        } catch (java.io.IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }

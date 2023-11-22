@@ -35,6 +35,7 @@ public class ReservationController {
                     .body(new ErrorResponse(e.getMessage()));
         }
     }
+
     @PostMapping("/details")
     public ResponseEntity<?> getReservationDetails(@RequestBody GenericRequest<String> request) {
         try{
@@ -54,6 +55,19 @@ public class ReservationController {
         try{
             ReservationResponse reservationResponse= reservationService.makeReservation(request);
             return ResponseEntity.ok().body(reservationResponse);
+        }
+        catch(ResponseException e)
+        {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+    }
+    @PostMapping("/cancel")
+    public ResponseEntity<?> cancelReservation(@RequestBody  CancelRequest request) {
+        try{
+            RefundResponse response= reservationService.cancelReservation(request);
+            return ResponseEntity.ok().body(response);
         }
         catch(ResponseException e)
         {
