@@ -40,4 +40,5 @@ public interface HotelRepository extends JpaRepository<Hotel, Integer>, JpaSpeci
     );
 
     Optional<Hotel> findByUserIdAndId(Integer userId, Integer hotelId);
+    List<Hotel> findAllByUserId(Integer hostId);
 }

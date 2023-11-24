@@ -1,10 +1,8 @@
 package com.pbl6.hotelbookingapp.controller;
 
+import com.pbl6.hotelbookingapp.Exception.ResponseException;
 import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
-import com.pbl6.hotelbookingapp.dto.ChangePasswordRequest;
-import com.pbl6.hotelbookingapp.dto.EditUserRequest;
-import com.pbl6.hotelbookingapp.dto.ErrorResponse;
-import com.pbl6.hotelbookingapp.dto.HttpResponse;
+import com.pbl6.hotelbookingapp.dto.*;
 import com.pbl6.hotelbookingapp.entity.User;
 import com.pbl6.hotelbookingapp.service.UserService;
 import jakarta.validation.Valid;
@@ -22,6 +20,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("api/user")
 @RequiredArgsConstructor
+@CrossOrigin
 public class UserController {
 
     private final UserService service;
@@ -79,12 +78,36 @@ public class UserController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Integer id) {
-        var user = service.getUserById(id);
-        return ResponseEntity.ok(user);
+        try {
+            var user = service.getUserById(id);
+            return ResponseEntity.ok(user);
+        }catch (ResponseException e)
+        {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+
     }
-    @GetMapping("/all")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = service.getAllUsers();
-        return ResponseEntity.ok(users);
+    @GetMapping("/list")
+    public ResponseEntity<UserListResponse> getAllUsers(
+            @RequestParam(defaultValue = "1") int pageIndex,
+            @RequestParam(defaultValue = "10") int pageSize) {
+
+        UserListResponse usersResult = service.getAllUsers(pageIndex, pageSize);
+        return ResponseEntity.ok(usersResult);
+    }
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable Integer userId) {
+        try {
+            service.deleteUser(userId);
+            return ResponseEntity.ok("User with ID " + userId + " has been deleted.");
+        }catch (ResponseException e)
+        {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+
     }
 }

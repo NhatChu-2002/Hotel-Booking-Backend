@@ -75,6 +75,9 @@ public class Hotel {
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<HotelImage> hotelImages = new HashSet<>();
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Reservation> reservations;
     public Double getAverageRating() {
         Set<Review> reviews = getReviews();
         return calculateAverageRating(reviews);

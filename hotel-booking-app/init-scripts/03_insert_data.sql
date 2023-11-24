@@ -487,6 +487,9 @@ UPDATE `booking-app`.`room` SET `name` = '12312' WHERE (`id` = '74');
 UPDATE `booking-app`.`room` SET `name` = '31312' WHERE (`id` = '71');
 UPDATE `booking-app`.`room` SET `name` = '313213' WHERE (`id` = '73');
 UPDATE `booking-app`.`room` SET `name` = '1312' WHERE (`id` = '72');
+ALTER TABLE user
+ADD COLUMN is_deleted TINYINT(1) NOT NULL DEFAULT 0;
+
 
 
       

@@ -15,6 +15,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("api/reservation")
+@CrossOrigin
 public class ReservationController {
     private ReservationService reservationService;
 
