@@ -1,6 +1,7 @@
 package com.pbl6.hotelbookingapp.email;
 
 
+import com.pbl6.hotelbookingapp.dto.CancelResponse;
 import com.pbl6.hotelbookingapp.dto.ReservationResponse;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
@@ -72,6 +73,28 @@ public class EmailServiceImpl implements EmailService {
             context.setVariable("reservationResponse", reservationResponse);
 
             String emailContent = templateEngine.process("reservation_template", context);
+            helper.setText(emailContent, true);
+
+            emailSender.send(message);
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+            throw new RuntimeException(exception.getMessage());
+        }
+    }
+    @Override
+    @Async
+    public void sendCancellationEmail(CancelResponse cancelResponse, String to) {
+        MimeMessage message = emailSender.createMimeMessage();
+
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, UTF_8_ENCODING);
+            helper.setTo(to);
+            helper.setSubject("Innsight-app Reservation Cancellation");
+            helper.setPriority(1);
+            Context context = new Context();
+            context.setVariable("cancelResponse", cancelResponse);
+
+            String emailContent = templateEngine.process("cancellation_template", context);
             helper.setText(emailContent, true);
 
             emailSender.send(message);

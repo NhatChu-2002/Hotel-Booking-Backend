@@ -10,6 +10,7 @@ import com.pbl6.hotelbookingapp.repository.*;
 import jakarta.persistence.EntityManager;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
 
 import java.util.ArrayList;
@@ -27,34 +29,23 @@ import java.util.stream.Collectors;
 
 
 @Service
+@RequiredArgsConstructor
 public class HotelService {
-    private HotelRepository hotelRepository;
-    private UserRepository userRepository;
-    private HotelAmenityRepository amenityRepository;
-    private HotelImageRepository imageRepository;
-    private HotelRateRepository rateRepository;
+    private final HotelRepository hotelRepository;
+    private final UserRepository userRepository;
+    private final HotelAmenityRepository amenityRepository;
+    private final HotelImageRepository imageRepository;
+    private final HotelRateRepository rateRepository;
+    private final HotelHotelAmenityRepository hotelHotelAmenityRepository;
+    private final RoomTypeRepository roomTypeRepository;
+    private final ReviewRepository reviewRepository;
+    private final ExtraServiceRepository extraServiceRepository;
+    private final EntityManager entityManager;
+    private final RoomService roomService;
 
-    private HotelHotelAmenityRepository hotelHotelAmenityRepository;
-    private RoomTypeRepository roomTypeRepository;
-    private ReviewRepository reviewRepository;
-    private ExtraServiceRepository extraServiceRepository;
-    private EntityManager entityManager;
+    private final FirebaseStorageService firebaseStorageService;
 
-    private FirebaseStorageService firebaseStorageService;
 
-    public HotelService(HotelRepository hotelRepository, UserRepository userRepository, HotelAmenityRepository amenityRepository, HotelImageRepository imageRepository, HotelRateRepository rateRepository, HotelHotelAmenityRepository hotelHotelAmenityRepository, RoomTypeRepository roomTypeRepository, ReviewRepository reviewRepository, ExtraServiceRepository extraServiceRepository, EntityManager entityManager, FirebaseStorageService firebaseStorageService) {
-        this.hotelRepository = hotelRepository;
-        this.userRepository = userRepository;
-        this.amenityRepository = amenityRepository;
-        this.imageRepository = imageRepository;
-        this.rateRepository = rateRepository;
-        this.hotelHotelAmenityRepository = hotelHotelAmenityRepository;
-        this.roomTypeRepository = roomTypeRepository;
-        this.reviewRepository = reviewRepository;
-        this.extraServiceRepository = extraServiceRepository;
-        this.entityManager = entityManager;
-        this.firebaseStorageService = firebaseStorageService;
-    }
 
     public Optional<Hotel> findHotelByNameAndProvinceAndStreet(String hotelName, String province, String street) {
         return hotelRepository.findFirstByNameAndProvinceAndStreet(hotelName, province, street);
@@ -304,8 +295,8 @@ public class HotelService {
     }
 
 
-    public HotelDetails getHotelDetails(Integer hotelId) {
-        Optional<Hotel> optionalHotel = hotelRepository.findById(hotelId);
+    public HotelDetails getHotelDetails(HotelDetailsRequest request) {
+        Optional<Hotel> optionalHotel = hotelRepository.findById(request.getHotelId());
 
         if (optionalHotel.isPresent()) {
             Hotel hotel = optionalHotel.get();
@@ -321,12 +312,12 @@ public class HotelService {
                     .hotelImages(getHotelImagePaths(hotel.getId()))
                     .hotelAmenities(getAmenityNamesByHotelId(hotel.getId()))
                     .extraServices(getExtraAmenitiesByHotelId(hotel.getId()))
-                    .roomList(getRoomTypeDetails(hotel.getRoomTypes().stream().toList()))
+                    .roomList(getRoomTypeDetails(hotel.getRoomTypes().stream().toList(), request.getCheckInDay(), request.getCheckOutDay()))
                     .reviews(getReviews(hotel.getReviews().stream().toList()))
                     .rules(getRules(hotel))
                     .build();
         } else {
-            throw new ResponseException("Hotel not found with id: " + hotelId);
+            throw new ResponseException("Hotel not found with id: " + request.getHotelId());
         }
     }
 
@@ -336,24 +327,48 @@ public class HotelService {
 
     }
 
-    private List<RoomTypeDetails> getRoomTypeDetails(List<RoomType> roomList) {
-        return Optional.ofNullable(roomList)
-                .orElse(List.of())
-                .stream()
-                .map(room -> {
+    private List<RoomTypeDetails> getRoomTypeDetails(List<RoomType> roomList, LocalDate checkIn, LocalDate checkOut) {
+        if(checkIn == null || checkOut == null)
+        {
+            return Optional.ofNullable(roomList)
+                    .orElse(List.of())
+                    .stream()
+                    .map(room -> {
 
-                    return RoomTypeDetails.builder()
-                            .id(room.getId())
-                            .roomName(room.getName())
-                            .price(room.getPrice())
-                            .roomImage(getFirstImageByRoom(room.getId()))
-                            .quantity(room.getCount())
-                            .adult(room.getAdultCount())
-                            .children(room.getChildrenCount())
-                            .roomAmenities(getListAmenities(room))
-                            .build();
-                })
-                .collect(Collectors.toList());
+                        return RoomTypeDetails.builder()
+                                .id(room.getId())
+                                .roomName(room.getName())
+                                .price(room.getPrice())
+                                .roomImage(getFirstImageByRoom(room.getId()))
+                                .quantity(room.getCount())
+                                .adult(room.getAdultCount())
+                                .children(room.getChildrenCount())
+                                .roomAmenities(getListAmenities(room))
+                                .build();
+                    })
+                    .collect(Collectors.toList());
+        }
+        List<RoomTypeDetails> availableRoomTypes = new ArrayList<>();
+
+        for (RoomType roomType : roomList) {
+
+            List<Room> availableRooms = roomService.getAvailableRooms(roomType, checkIn, checkOut, 100000);
+
+            RoomTypeDetails roomTypeDetails = RoomTypeDetails.builder()
+                    .id(roomType.getId())
+                    .roomName(roomType.getName())
+                    .price(roomType.getPrice())
+                    .roomImage(roomTypeRepository.findFirstImageByRoomTypeId(roomType.getId()))
+                    .quantity(availableRooms.size())
+                    .adult(roomType.getAdultCount())
+                    .children(roomType.getChildrenCount())
+                    .roomAmenities(getListAmenities(roomType))
+                    .build();
+
+            availableRoomTypes.add(roomTypeDetails);
+        }
+
+        return availableRoomTypes;
     }
     private String buildAddress(String province,String district, String ward, String street) {
 

@@ -7,11 +7,16 @@ import com.pbl6.hotelbookingapp.email.EmailService;
 import com.pbl6.hotelbookingapp.entity.*;
 import com.pbl6.hotelbookingapp.repository.*;
 
+import io.jsonwebtoken.io.IOException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -22,6 +27,7 @@ public class ReservationService {
     private final RoomTypeService roomTypeService;
     private final HotelService hotelService;
     private final UserService userService;
+    private final UserRepository userRepository;
     private final ReservationRepository reservationRepository;
     private final RoomReservedRepository roomReservedRepository;
     private final EmailService emailService;
@@ -30,6 +36,7 @@ public class ReservationService {
     private final RoomRepository roomRepository;
 
     private final HotelImageRepository hotelImageRepository;
+    private final PaymentService paymentService;
 
     public boolean checkReservation(ReservationRequest request)
     {
@@ -180,6 +187,79 @@ public class ReservationService {
             throw new ResponseException(e.getMessage());
         }
     }
+    public ReservationDto getReservationByCode(String reservationCode)
+    {
+        try {
+            ReservationDto reservationDto = new ReservationDto();
+            Reservation reservation = reservationRepository.findFirstByReservationCode(reservationCode).get();
+            getReservationDetails(reservationDto, reservation);
+            return reservationDto;
+        }
+        catch (ResponseException e)
+        {
+            throw new ResponseException(e.getMessage());
+        }
+
+    }
+
+    private void getReservationDetails(ReservationDto reservationDto, Reservation reservation) {
+        List<RoomReserved> reservedList = roomReservedRepository.findAllByReservation(reservation);
+        Hotel hotel = new Hotel();
+        Map<RoomType, List<String>> roomTypeRoomNamesMap = new HashMap<>();
+        boolean hotelSet = false;
+        boolean daySet = false;
+        int numberOfNights = 0;
+        for (RoomReserved roomReserved : reservedList) {
+            if(!daySet)
+            {
+                reservationDto.setStartDay(roomReserved.getStartDay());
+                reservationDto.setEndDay(roomReserved.getEndDay());
+                numberOfNights = (int) ChronoUnit.DAYS.between(roomReserved.getStartDay(), roomReserved.getEndDay());
+                daySet = true;
+            }
+            if (!hotelSet) {
+                hotel = roomRepository.findHotelByRoomId(roomReserved.getRoom().getId());
+                if (hotel != null) {
+                    hotelSet = true;
+                }
+            }
+            RoomType roomType = roomRepository.findRoomTypeByRoomId(roomReserved.getRoom().getId());
+            if (roomType != null) {
+                List<String> roomNames = roomTypeRoomNamesMap.getOrDefault(roomType, new ArrayList<>());
+                roomNames.add(roomReserved.getRoom().getName());
+                roomTypeRoomNamesMap.put(roomType, roomNames);
+
+            }
+
+        }
+        Set<RoomType> uniqueRoomTypes = roomTypeRoomNamesMap.keySet();
+
+        List<RoomTypesResponse> roomTypesResponses = new ArrayList<>();
+
+        for (RoomType roomType : uniqueRoomTypes) {
+            RoomTypesResponse roomTypesResponse = new RoomTypesResponse();
+            roomTypesResponse.setName(roomType.getName());
+            List<String> roomNames = roomTypeRoomNamesMap.get(roomType);
+            roomTypesResponse.setRoomName(roomNames);
+            roomTypesResponse.setCount(roomNames.size());
+            roomTypesResponse.setChildrenCount(roomType.getChildrenCount());
+            roomTypesResponse.setAdultCount(roomType.getAdultCount());
+            roomTypesResponse.setNightCount(numberOfNights);
+            roomTypesResponses.add(roomTypesResponse);
+        }
+        reservationDto.setHotelName(hotel.getName());
+        reservationDto.setRoomList(roomTypesResponses);
+        reservationDto.setReservationCode(reservation.getReservationCode());
+        reservationDto.setStatus(reservation.getStatus());
+        reservationDto.setDescription(hotel.getDescription());
+        reservationDto.setAddress(hotel.getStreet() +", " + hotel.getWard() + ", " + hotel.getDistrict() + ", " +hotel.getProvince());
+        reservationDto.setProvince(hotel.getProvince());
+        reservationDto.setImagePath(hotelImageRepository.findFirstImagePathByHotelId(hotel.getId()));
+        reservationDto.setCheckInTime(hotel.getCheckInTime());
+        reservationDto.setCheckOutTime(hotel.getCheckOutTime());
+        reservationDto.setTotal(reservation.getTotalPrice());
+    }
+
     public ReservedHistoryResponse getHistory(Integer id)
     {
         ReservedHistoryResponse response = new ReservedHistoryResponse();
@@ -189,61 +269,7 @@ public class ReservationService {
             List<ReservationDto> reservationDtoList = new ArrayList<>();
             for (Reservation reservation: reservationList) {
                 ReservationDto reservationDto = new ReservationDto();
-                List<RoomReserved> reservedList = roomReservedRepository.findAllByReservation(reservation);
-                Hotel hotel = new Hotel();
-                Map<RoomType, List<String>> roomTypeRoomNamesMap = new HashMap<>();
-                boolean hotelSet = false;
-                boolean daySet = false;
-                int numberOfNights = 0;
-                for (RoomReserved roomReserved : reservedList) {
-                    if(!daySet)
-                    {
-                        reservationDto.setStartDay(roomReserved.getStartDay());
-                        reservationDto.setEndDay(roomReserved.getEndDay());
-                        numberOfNights = (int) ChronoUnit.DAYS.between(roomReserved.getStartDay(), roomReserved.getEndDay());
-                        daySet = true;
-                    }
-                    if (!hotelSet) {
-                        hotel = roomRepository.findHotelByRoomId(roomReserved.getRoom().getId());
-                        if (hotel != null) {
-                            hotelSet = true;
-                        }
-                    }
-                    RoomType roomType = roomRepository.findRoomTypeByRoomId(roomReserved.getRoom().getId());
-                    if (roomType != null) {
-                        List<String> roomNames = roomTypeRoomNamesMap.getOrDefault(roomType, new ArrayList<>());
-                        roomNames.add(roomReserved.getRoom().getName());
-                        roomTypeRoomNamesMap.put(roomType, roomNames);
-
-                    }
-                }
-                Set<RoomType> uniqueRoomTypes = roomTypeRoomNamesMap.keySet();
-
-
-                List<RoomTypesResponse> roomTypesResponses = new ArrayList<>();
-
-                for (RoomType roomType : uniqueRoomTypes) {
-                    RoomTypesResponse roomTypesResponse = new RoomTypesResponse();
-                    roomTypesResponse.setName(roomType.getName());
-
-                    List<String> roomNames = roomTypeRoomNamesMap.get(roomType);
-                    roomTypesResponse.setRoomName(roomNames);
-                    roomTypesResponse.setCount(roomNames.size());
-                    roomTypesResponse.setChildrenCount(roomType.getChildrenCount());
-                    roomTypesResponse.setAdultCount(roomType.getAdultCount());
-                    roomTypesResponse.setNightCount(numberOfNights);
-                    roomTypesResponses.add(roomTypesResponse);
-                }
-                reservationDto.setRoomList(roomTypesResponses);
-                reservationDto.setReservationCode(reservation.getReservationCode());
-                reservationDto.setStatus(reservation.getStatus());
-                reservationDto.setDescription(hotel.getDescription());
-                reservationDto.setAddress(hotel.getStreet() +", " + hotel.getWard() + ", " + hotel.getDistrict() + ", " +hotel.getProvince());
-                reservationDto.setProvince(hotel.getProvince());
-                reservationDto.setImagePath(hotelImageRepository.findFirstImagePathByHotelId(hotel.getId()));
-                reservationDto.setCheckInTime(hotel.getCheckInTime());
-                reservationDto.setCheckOutTime(hotel.getCheckOutTime());
-                reservationDto.setTotal(reservation.getTotalPrice());
+                getReservationDetails(reservationDto, reservation);
                 reservationDtoList.add(reservationDto);
             }
             response.setReservationList(reservationDtoList);
@@ -256,5 +282,114 @@ public class ReservationService {
 
 
         return response;
+    }
+    public Invoice saveInvoice(SaveInvoiceRequest request)
+    {
+        try{
+            Invoice newInvoice = new Invoice();
+
+            User user = userRepository.findById(request.getUserId()).get();
+            Reservation reservation = reservationRepository.findFirstByReservationCode(request.getReservationCode()).get();
+            newInvoice.setUser(user);
+            newInvoice.setInvoiceAmount(request.getPrice());
+
+            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+            newInvoice.setTimePaid(localDateTime);
+            newInvoice.setVnpRef(request.getOrderId());
+            newInvoice.setVnpTransdate(request.getTransDate());
+            newInvoice.setPaymentType(PaymentType.CREDIT_CARD);
+            newInvoice.setReservation(reservation);
+
+
+            return invoiceRepository.save(newInvoice);
+        }catch (ResponseException e)
+        {
+            throw new ResponseException(e.getMessage());
+        }
+
+    }
+    @Transactional
+    public RefundResponse cancelReservation(CancelRequest request) throws IOException
+    {
+        try {
+            Optional<Reservation> reservation = reservationRepository.findFirstByReservationCode(request.getReservationCode());
+            if(!reservation.isPresent())
+            {
+                throw new ResponseException("no reservation found!");
+            }
+            Reservation foundReservation = reservation.get();
+            Optional<Invoice> findInvoice = invoiceRepository.findByReservation(reservation.get());
+
+            if(!findInvoice.isPresent())
+            {
+                throw new ResponseException("no invoice found!");
+            }
+            List<RoomReserved> reservedList =  roomReservedRepository.findAllByReservation(reservation.get());
+            if(reservedList.isEmpty())
+            {
+                throw new ResponseException("no room found!");
+            }
+            foundReservation.setStatus(ReservationStatus.CANCELLED);
+            RoomReserved firstRoomReserved = reservedList.get(0);
+            String hotelName = roomRepository.findHotelByRoomId(firstRoomReserved.getRoom().getId()).getName();
+            LocalDate checkInDate = firstRoomReserved.getStartDay();
+            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+            LocalDate cancellationDate = localDateTime.toLocalDate();
+
+            long daysUntilCheckIn = ChronoUnit.DAYS.between(cancellationDate, checkInDate);
+
+            double refundPercentage = 0.0;
+            String tranType = new String();
+            if (daysUntilCheckIn >= 2) {
+                refundPercentage = 1.0;
+                tranType = "02";
+            } else if (daysUntilCheckIn > 0) {
+                refundPercentage = 0.9;
+                tranType = "03";
+            }
+            if (refundPercentage == 0.0)
+            {
+                throw new ResponseException("Cannot cancelled!");
+            }
+            Invoice invoice = findInvoice.get();
+
+            RefundResponse refundResponse = paymentService.refund(tranType,
+                                                                invoice.getVnpRef(),
+                                                                invoice.getInvoiceAmount()*refundPercentage,
+                                                                invoice.getVnpTransdate(),
+                                                                foundReservation.getEmail());
+            if(refundResponse.getVnp_Message().equals("Refund success"))
+            {
+                invoice.setTimeCanceled(localDateTime);
+                invoice.setRefundAmount((long) (invoice.getInvoiceAmount()*refundPercentage));
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                String formattedCancellationDate = cancellationDate.format(formatter);
+
+                CancelResponse cancelResponse = CancelResponse.builder()
+                        .hotelName(hotelName)
+                        .reservationCode(foundReservation.getReservationCode())
+                        .orderId(invoice.getVnpRef())
+                        .cancelDate(formattedCancellationDate)
+                        .amount(invoice.getInvoiceAmount().toString())
+                        .refundAmount(invoice.getInvoiceAmount()*refundPercentage)
+                        .build();
+                emailService.sendCancellationEmail(cancelResponse, foundReservation.getEmail());
+
+                invoiceRepository.save(invoice);
+                roomReservedRepository.deleteAllByReservation(foundReservation);
+                reservationRepository.save(foundReservation);
+            }
+
+
+            return refundResponse;
+        }
+        catch (ResponseException e)
+        {
+            throw new ResponseException(e.getMessage());
+        } catch (java.io.IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
