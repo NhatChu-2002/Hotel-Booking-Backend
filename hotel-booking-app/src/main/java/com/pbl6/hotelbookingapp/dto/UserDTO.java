@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -22,4 +23,9 @@ public class UserDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Date dateOfBirth;
     private Boolean gender;
+    private Date dateCreated;
+    private List<HotelAdminResponse> hotelList;
+    private List<String> reservationList;
+    private long hotelCount;
+    private long reservationCount;
 }

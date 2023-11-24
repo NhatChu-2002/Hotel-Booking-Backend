@@ -28,3 +28,9 @@ DROP INDEX `FKcsvxwv08k19l5xddv7wwn7rlp` ;
 ;
 DROP TABLE IF EXISTS `booking-app`.`payment_type` ;
 
+ALTER TABLE reservation
+ADD COLUMN hotel_id INT,
+ADD CONSTRAINT fk_hotel
+    FOREIGN KEY (hotel_id)
+    REFERENCES hotel(id);
+

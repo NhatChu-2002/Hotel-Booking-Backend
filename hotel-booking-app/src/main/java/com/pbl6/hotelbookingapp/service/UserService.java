@@ -2,17 +2,17 @@ package com.pbl6.hotelbookingapp.service;
 
 import com.pbl6.hotelbookingapp.Exception.ResponseException;
 import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
-import com.pbl6.hotelbookingapp.dto.ChangePasswordRequest;
-import com.pbl6.hotelbookingapp.dto.EditUserRequest;
-import com.pbl6.hotelbookingapp.dto.UserDTO;
-import com.pbl6.hotelbookingapp.entity.Role;
-import com.pbl6.hotelbookingapp.entity.Token;
-import com.pbl6.hotelbookingapp.entity.TokenType;
-import com.pbl6.hotelbookingapp.entity.User;
+import com.pbl6.hotelbookingapp.dto.*;
+import com.pbl6.hotelbookingapp.entity.*;
+import com.pbl6.hotelbookingapp.repository.HotelRepository;
+import com.pbl6.hotelbookingapp.repository.ReservationRepository;
 import com.pbl6.hotelbookingapp.repository.TokenRepository;
 import com.pbl6.hotelbookingapp.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +31,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository repository;
     private final JwtService jwtService;
+    private final HotelRepository hotelRepository;
+    private final ReservationRepository reservationRepository;
 
     private void saveUserToken(User user, String jwtToken) {
         var token = Token.builder()
@@ -77,40 +80,92 @@ public class UserService {
 
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
-        // check if the current password is correct
+
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             throw new IllegalStateException("Wrong password");
         }
-        // check if the two new passwords are the same
+
         if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
             throw new IllegalStateException("Password are not the same");
         }
 
-        // update the password
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
 
-        // save the new password
         repository.save(user);
     }
-    public UserDTO getUserById(Integer id)
-    {
+    public UserDTO getUserById(Integer id) {
 
         var user = repository.findById(id);
-        if(!user.isPresent())
-        {
+        if (!user.isPresent() || user.get().isDeleted()) {
             throw new ResponseException("User not found!");
+        } else {
+            User tempUser = user.get();
+            if (tempUser.getRole().equals(Role.CUSTOMER) || tempUser.getRole().equals(Role.NOT_REGISTERED_CUSTOMER)) {
+                List<String> reservationCodes = getReservationCodes(tempUser);
+
+                return buildUserDTO( tempUser, reservationCodes, null);
+
+            } else if (tempUser.getRole().equals(Role.HOST)) {
+                List<String> reservationCodes = getReservationCodes(tempUser);
+                List<Hotel> hotels = hotelRepository.findAllByUserId(tempUser.getId());
+                List<HotelAdminResponse> hotelAdminResponses = new ArrayList<>();
+                if(!hotels.isEmpty())
+                {
+                    for (Hotel hotel : hotels) {
+                        var hotelAdminResponse = HotelAdminResponse
+                                .builder()
+                                .hotelName(hotel.getName())
+                                .status(hotel.getStatus())
+                                .build();
+                        hotelAdminResponses.add(hotelAdminResponse);
+                    }
+                }
+
+                return buildUserDTO( tempUser, reservationCodes, hotelAdminResponses);
+            } else {
+                return buildUserDTO( tempUser, null, null);
+            }
         }
+
+    }
+
+    private static UserDTO buildUserDTO(User tempUser, List<String> reservationCodes, List<HotelAdminResponse> hotelAdminResponses) {
+        int hotelCount = (hotelAdminResponses != null) ? hotelAdminResponses.size() : 0;
+        int reservationCount = (reservationCodes != null) ? reservationCodes.size() : 0;
         return UserDTO.builder()
-                .fullName(user.get().getFullName())
-                .email(user.get().getEmail())
-                .dateOfBirth(user.get().getDateOfBirth())
-                .phoneNumber(user.get().getPhoneNumber())
-                .gender(user.get().getGender())
+                .hotelList(hotelAdminResponses)
+                .reservationList(reservationCodes)
+                .hotelCount(hotelCount)
+                .reservationCount(reservationCount)
+                .fullName(tempUser.getFullName())
+                .email(tempUser.getEmail())
+                .dateOfBirth(tempUser.getDateOfBirth())
+                .phoneNumber(tempUser.getPhoneNumber())
+                .gender(tempUser.getGender())
+                .dateCreated(tempUser.getCreatedAt())
                 .build();
     }
 
-    public List<User> getAllUsers() {
-        return repository.findAll();
+    private List<String> getReservationCodes(User tempUser) {
+        List<Reservation> reservationList = reservationRepository.findAllByUserId(tempUser.getId());
+        List<String> reservationCodes = new ArrayList<>();
+        if (!reservationList.isEmpty()) {
+            for (Reservation reservation : reservationList) {
+                reservationCodes.add(reservation.getReservationCode());
+            }
+        }
+        return reservationCodes;
+    }
+
+    public UserListResponse getAllUsers(int pageIndex, int pageSize) {
+        Pageable pageable = PageRequest.of(pageIndex-1, pageSize);
+        Page<User> usersPage = repository.findByIsDeletedFalse(pageable);
+
+        List<User> users = usersPage.getContent();
+        long totalUsers = usersPage.getTotalElements();
+        long totalPages = usersPage.getTotalPages();
+
+        return new UserListResponse(users, totalUsers,totalPages);
     }
     @Transactional
     public void editNotRegisteredUser (Integer id, String name, String password, Role role){
@@ -120,7 +175,7 @@ public class UserService {
     public void editUser (EditUserRequest updateUser, Integer id){
         Optional<User> optionalUser = repository.findById(id);
 
-        if (optionalUser.isPresent()) {
+        if (optionalUser.isPresent() && !optionalUser.get().isDeleted()) {
             if(!updateUser.getPhoneNumber().isBlank()){
 
                 if (!Validator.validatePhoneNumber(updateUser.getPhoneNumber())){
@@ -136,6 +191,15 @@ public class UserService {
             throw new UserNotFoundException("User not found with id: " + id);
         }
 
+    }
+    @Transactional
+    public void deleteUser(Integer userId) {
+        User user = repository.findById(userId).orElse(null);
+        if (user != null) {
+            user.setEmail(null);
+            user.setDeleted(true);
+            repository.save(user);
+        }
     }
 
 }

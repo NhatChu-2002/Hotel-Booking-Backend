@@ -25,6 +25,8 @@ public class ReservationRequest {
     private String paymentMethod;
     private List<RoomTypeReserved> roomTypeReservedList;
     private Double totalPrice;
+    private String orderId;
+    private String transDate;
     private Double tax;
     private Double vat;
     private LocalDate startDay;

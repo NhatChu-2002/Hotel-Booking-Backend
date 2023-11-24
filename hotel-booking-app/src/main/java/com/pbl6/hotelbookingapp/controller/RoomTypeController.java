@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/room-types")
+@CrossOrigin
 public class RoomTypeController {
 
     private final RoomTypeService roomTypeService;
