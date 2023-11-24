@@ -4,18 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoomTypeDTO {
+public class RoomTypeDetailResponse {
     private String name;
-    private String roomName;
-    private List<String> sdRoomName;
     private Integer count;
     private Double price;
     private Integer bathroomCount;
@@ -26,5 +22,6 @@ public class RoomTypeDTO {
     private List<BedTypeDTO> bedTypes;
     private List<String> amenities;
     private String view;
-    private List<MultipartFile> images;
+    private List<String> rooms;
+    private List<String> images;
 }
