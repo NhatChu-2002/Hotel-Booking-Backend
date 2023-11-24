@@ -42,19 +42,17 @@ public class AuthenticationService {
         Optional<User> checkUser = repository.findByEmail(request.getEmail());
         var jwtToken = new String();
         var refreshToken = new String();
-        if (checkUser.isPresent() ){
-            if(checkUser.get().getRole()== Role.CUSTOMER || checkUser.get().getRole()== Role.ADMIN || checkUser.get().getRole()== Role.HOST)
+        if (checkUser.isPresent() && !checkUser.get().isDeleted()){
+            if(checkUser.get().getRole()== Role.CUSTOMER || checkUser.get().getRole()== Role.ADMIN || checkUser.get().getRole()== Role.HOST  )
             {
                 throw new UserNotFoundException(
                         "User with email "+request.getEmail() + " already exists");
             }else if (checkUser.get().getRole() == Role.NOT_REGISTERED_CUSTOMER){
-                userService.editNotRegisteredUser(checkUser.get().getId(),request.getFullName(), passwordEncoder.encode(request.getPassword()),Role.CUSTOMER);
 
+                userService.editNotRegisteredUser(checkUser.get().getId(),request.getFullName(), passwordEncoder.encode(request.getPassword()),Role.CUSTOMER);
                 jwtToken = jwtService.generateToken(checkUser.get());
                 refreshToken = jwtService.generateRefreshToken(checkUser.get());
-
                 saveUserToken(checkUser.get(), jwtToken);
-//                emailService.sendHtmlEmail(checkUser.get().getFullName(), checkUser.get().getEmail(), jwtToken);
 
             }
 
@@ -66,6 +64,7 @@ public class AuthenticationService {
                     .email(request.getEmail())
                     .password(passwordEncoder.encode(request.getPassword()))
                     .role(Role.CUSTOMER)
+                    .isDeleted(false)
                     .build();
             var savedUser = repository.save(user);
 
@@ -88,7 +87,7 @@ public class AuthenticationService {
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         Optional<User> checkUser = repository.findByEmail(request.getEmail());
-        if (!checkUser.isPresent()){
+        if (!checkUser.isPresent() || checkUser.get().isDeleted()){
             throw new UserNotFoundException(
                     "User not found:  "+request.getEmail());
         }

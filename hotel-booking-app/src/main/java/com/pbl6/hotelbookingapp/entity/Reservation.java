@@ -44,9 +44,14 @@ public class Reservation {
     private ReservationStatus status;
     @OneToOne
     @PrimaryKeyJoinColumn
+    @JsonIgnore
     private Invoice invoice;
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<RoomReserved> roomReserved = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "hotel_id")
+    @JsonIgnore
+    private Hotel hotel;
 
 }

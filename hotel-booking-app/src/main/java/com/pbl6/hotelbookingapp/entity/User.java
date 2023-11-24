@@ -29,7 +29,11 @@ public class User implements UserDetails {
     @Column(name="email")
     private String email;
     @Column(name="password")
+    @JsonIgnore
     private String password;
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
+
     @Column(name="phone_number")
     private String phoneNumber;
     @Column(name="date_of_birth")
@@ -71,21 +75,25 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }

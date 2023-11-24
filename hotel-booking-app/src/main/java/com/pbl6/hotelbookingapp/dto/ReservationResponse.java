@@ -15,10 +15,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReservationResponse {
+    private Integer userId;
     private String reservationCode;
     private String hotelName;
     private String province;
-
     private String address;
     private List<RoomTypesResponse> roomList;
     private Double total;

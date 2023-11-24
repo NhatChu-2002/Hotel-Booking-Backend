@@ -90,13 +90,14 @@ public class ReservationService {
 
         Optional<User> user = userService.findByEmail(request.getEmail());
         User saveUser;
-        if (!user.isPresent()){
+        if (!user.isPresent() || user.get().isDeleted()){
             var newUser = User.builder()
                     .fullName(request.getName())
                     .email(request.getEmail())
                     .phoneNumber(request.getPhoneNumber())
                     .password(null)
                     .role(Role.NOT_REGISTERED_CUSTOMER)
+                    .isDeleted(false)
                     .build();
             userService.saveUser(newUser);
             saveUser = newUser;
@@ -151,9 +152,11 @@ public class ReservationService {
             String reservationCode = ReservationCodeGenerator.generateReservationCode();
             reservation.setReservationCode(reservationCode);
             reservation.setStatus(ReservationStatus.CONFIRMED);
+            reservation.setHotel(hotel.get());
 
 
             ReservationResponse reservationResponse = ReservationResponse.builder()
+                    .userId(saveUser.getId())
                     .hotelName(hotel.get().getName())
                     .province(hotel.get().getProvince())
                     .address(hotel.get().getStreet())
@@ -167,7 +170,7 @@ public class ReservationService {
                     .reservationCode(reservationCode)
                     .status(ReservationStatus.CONFIRMED)
                     .build();
-            emailService.sendReservationConfirmationEmail(reservationResponse,saveUser.getEmail());
+//            emailService.sendReservationConfirmationEmail(reservationResponse,saveUser.getEmail());
             reservationRepository.save(reservation);
 
             for (int i = 0; i < availableRooms.size(); i++) {
@@ -179,7 +182,18 @@ public class ReservationService {
                     roomReserved.setEndDay(request.getEndDay());
                     roomReservedRepository.save(roomReserved);
             }
+            Invoice newInvoice = new Invoice();
 
+            newInvoice.setUser(saveUser);
+            newInvoice.setInvoiceAmount(reservation.getTotalPrice());
+
+            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+            newInvoice.setTimePaid(localDateTime);
+            newInvoice.setVnpRef(request.getOrderId());
+            newInvoice.setVnpTransdate(request.getTransDate());
+            newInvoice.setPaymentType(PaymentType.CREDIT_CARD);
+            newInvoice.setReservation(reservation);
+            invoiceRepository.save(newInvoice);
 
 
             return reservationResponse;
@@ -192,7 +206,15 @@ public class ReservationService {
         try {
             ReservationDto reservationDto = new ReservationDto();
             Reservation reservation = reservationRepository.findFirstByReservationCode(reservationCode).get();
-            getReservationDetails(reservationDto, reservation);
+            if(reservation.getStatus() == ReservationStatus.CANCELLED)
+            {
+                reservationDto.setReservationCode(reservation.getReservationCode());
+
+            }
+            else {
+                getReservationDetails(reservationDto, reservation);
+            }
+
             return reservationDto;
         }
         catch (ResponseException e)
@@ -268,8 +290,18 @@ public class ReservationService {
         {
             List<ReservationDto> reservationDtoList = new ArrayList<>();
             for (Reservation reservation: reservationList) {
+
                 ReservationDto reservationDto = new ReservationDto();
-                getReservationDetails(reservationDto, reservation);
+                if(reservation.getStatus() == ReservationStatus.CANCELLED)
+                {
+                    reservationDto.setReservationCode(reservation.getReservationCode());
+
+                }
+                else{
+                    getReservationDetails(reservationDto, reservation);
+                }
+
+
                 reservationDtoList.add(reservationDto);
             }
             response.setReservationList(reservationDtoList);

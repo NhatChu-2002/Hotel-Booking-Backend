@@ -13,6 +13,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("api/hotel")
+@CrossOrigin
 public class HotelController {
     private HotelService hotelService;
 
