@@ -2,11 +2,15 @@ package com.pbl6.hotelbookingapp.dto;
 
 import com.pbl6.hotelbookingapp.entity.ExtraService;
 import com.pbl6.hotelbookingapp.entity.HotelStatus;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalTime;
 import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor

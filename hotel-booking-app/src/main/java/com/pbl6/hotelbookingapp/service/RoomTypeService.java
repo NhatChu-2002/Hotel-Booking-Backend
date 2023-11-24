@@ -1,8 +1,9 @@
 package com.pbl6.hotelbookingapp.service;
 
 import com.pbl6.hotelbookingapp.Exception.HotelNotFoundException;
-import com.pbl6.hotelbookingapp.dto.RoomTypeDTO;
 import com.pbl6.hotelbookingapp.dto.BedTypeDTO;
+import com.pbl6.hotelbookingapp.dto.RoomTypeDTO;
+import com.pbl6.hotelbookingapp.dto.RoomTypeDetailResponse;
 import com.pbl6.hotelbookingapp.entity.*;
 import com.pbl6.hotelbookingapp.repository.*;
 import jakarta.transaction.Transactional;
@@ -11,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomTypeService {
@@ -56,7 +58,7 @@ public class RoomTypeService {
         RoomType roomType = new RoomType();
         roomType.setHotel(hotel);
         updateRoomType(roomType, roomTypeDTO);
-        Set<RoomAmenity> amenities = updateRoomAmenities(roomTypeDTO.getAmenities());
+        Set<RoomAmenity> amenities = updateRoomAmenities(roomType, roomTypeDTO.getAmenities());
         roomType.setAmenities(amenities);
         roomTypeRepository.save(roomType);
         updateRoomBedTypes(roomType, roomTypeDTO.getBedTypes());
@@ -68,7 +70,7 @@ public class RoomTypeService {
         RoomType roomType = roomTypeRepository.findByHotelIdAndId(hotelId, roomTypeId);
 
         updateRoomType(roomType, roomTypeDTO);
-        Set<RoomAmenity> amenities = updateRoomAmenities(roomTypeDTO.getAmenities());
+        Set<RoomAmenity> amenities = updateRoomAmenities(roomType, roomTypeDTO.getAmenities());
         roomType.setAmenities(amenities);
         roomTypeRepository.save(roomType);
         updateRoomBedTypes(roomType, roomTypeDTO.getBedTypes());
@@ -77,7 +79,6 @@ public class RoomTypeService {
 
     private void updateRoomType(RoomType roomType, RoomTypeDTO roomTypeDTO) {
         roomType.setName(roomTypeDTO.getName());
-        roomType.setRoomName(roomTypeDTO.getRoomName());
         roomType.setCount(roomTypeDTO.getCount());
         roomType.setDescription(roomTypeDTO.getDescription());
         roomType.setPrice(roomTypeDTO.getPrice());
@@ -92,17 +93,25 @@ public class RoomTypeService {
         roomTypeRepository.save(roomType);
 
 
+        roomRepository.deleteByRoomType(roomType);
+        List<String> sdRoomNames = roomTypeDTO.getSdRoomName();
+
         for (int i = 0; i < roomType.getCount(); i++) {
             Room room = new Room();
             room.setRoomType(roomType);
-            String formattedNumber = String.format("%03d", i);
-            room.setName(roomType.getRoomName() + formattedNumber);
+            if (roomTypeDTO.getRoomName() != null && !roomTypeDTO.getRoomName().trim().isEmpty()) {
+                String formattedNumber = String.format("%03d", i);
+                room.setName(roomTypeDTO.getRoomName() + formattedNumber);
+            } else {
+                room.setName(sdRoomNames.get(i));
+            }
             roomRepository.save(room);
         }
     }
 
 
-    private Set<RoomAmenity> updateRoomAmenities(List<String> amenityNames) {
+    private Set<RoomAmenity> updateRoomAmenities(RoomType roomType, List<String> amenityNames) {
+        roomBedTypeRepository.deleteByRoomType(roomType);
         Set<RoomAmenity> amenities = new HashSet<>();
         for (String amenityName : amenityNames) {
             RoomAmenity roomAmenity = roomAmenityRepository.findByName(amenityName)
@@ -134,4 +143,67 @@ public class RoomTypeService {
         }
 
     }
+
+    @Transactional
+    public void deleteRoomTypeById(Integer hotelId, Integer roomTypeId) {
+        RoomType roomType = roomTypeRepository.findByHotelIdAndId(hotelId, roomTypeId);
+        roomTypeRepository.delete(roomType);
+    }
+
+    public RoomTypeDetailResponse findRoomTypeById(Integer hotelId, Integer roomTypeId) {
+        RoomTypeDetailResponse roomTypeDetailResponse = new RoomTypeDetailResponse();
+        RoomType roomType = roomTypeRepository.findByHotelIdAndId(hotelId, roomTypeId);
+        roomTypeDetailResponse.setName(roomType.getName());
+        roomTypeDetailResponse.setCount(roomType.getCount());
+        roomTypeDetailResponse.setPrice(roomType.getPrice());
+        roomTypeDetailResponse.setBathroomCount(roomType.getBathroomCount());
+        roomTypeDetailResponse.setRoomArea(roomType.getRoomArea());
+        roomTypeDetailResponse.setAdultCount(roomType.getAdultCount());
+        roomTypeDetailResponse.setChildrenCount(roomType.getChildrenCount());
+        roomTypeDetailResponse.setDescription(roomType.getDescription());
+        roomTypeDetailResponse.setBedTypes(getBedTypes(roomTypeId));
+        roomTypeDetailResponse.setAmenities(getAmenities(roomTypeId));
+        roomTypeDetailResponse.setView(getView(roomTypeId));
+        roomTypeDetailResponse.setImages(getImagePaths(roomTypeId));
+        roomTypeDetailResponse.setRooms(getRoomNames(roomTypeId));
+        return roomTypeDetailResponse;
+    }
+
+    public List<String> getImagePaths(Integer roomTypeId) {
+        return roomImageRepository.findByRoomTypeId(roomTypeId).stream()
+                .map(RoomImage::getImagePath)
+                .collect(Collectors.toList());
+    }
+
+    private List<String> getAmenities(Integer roomTypeId) {
+        return roomTypeRepository.findById(roomTypeId)
+                .map(roomType -> roomType.getAmenities().stream()
+                        .map(RoomAmenity::getName)
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
+    }
+    private List<String> getRoomNames(Integer roomTypeId) {
+        return roomRepository.findByRoomTypeId(roomTypeId).stream()
+                .map(Room::getName)
+                .collect(Collectors.toList());
+    }
+
+    private String getView(Integer roomTypeId) {
+        return roomTypeRepository.findById(roomTypeId)
+                .map(roomType -> viewRepository.findById(roomType.getView().getId()))
+                .map(view -> view.map(View::getName).orElse(null))
+                .orElse(null);
+    }
+
+    private List<BedTypeDTO> getBedTypes(Integer roomTypeId){
+            return roomBedTypeRepository.findByRoomTypeId(roomTypeId).stream()
+                    .map(roomBedType -> {
+                        BedType bedType = bedTypeRepository.findById(roomBedType.getBedType().getId()).orElseThrow();
+                        BedTypeDTO bedTypeDTO = new BedTypeDTO();
+                        bedTypeDTO.setName(bedType.getName());
+                        bedTypeDTO.setCount(roomBedType.getCount());
+                        return bedTypeDTO;
+                    })
+                    .collect(Collectors.toList());
+        }
 }
