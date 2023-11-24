@@ -1,15 +1,11 @@
 package com.pbl6.hotelbookingapp.controller;
 
-import com.pbl6.hotelbookingapp.dto.HotelDTO;
 import com.pbl6.hotelbookingapp.service.ImageService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -33,7 +29,7 @@ public class ImageController {
         }
     }
 
-    @PostMapping(value = "/roomType/{roomTypeId}", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/room-type/{roomTypeId}", consumes = {"multipart/form-data"})
     public ResponseEntity<String> uploadRoomTypeImage(@PathVariable Integer roomTypeId, @ModelAttribute List<MultipartFile> images) {
         try {
             imageService.uploadRoomTypeImage(roomTypeId, images);

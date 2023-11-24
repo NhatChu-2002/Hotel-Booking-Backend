@@ -2,8 +2,6 @@ package com.pbl6.hotelbookingapp.service;
 
 import com.pbl6.hotelbookingapp.Exception.HotelNotFoundException;
 import com.pbl6.hotelbookingapp.Exception.RoomTypeNotFoundException;
-import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
-import com.pbl6.hotelbookingapp.dto.HotelDTO;
 import com.pbl6.hotelbookingapp.entity.Hotel;
 import com.pbl6.hotelbookingapp.entity.HotelImage;
 import com.pbl6.hotelbookingapp.entity.RoomImage;

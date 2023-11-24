@@ -108,6 +108,8 @@ public class HotelService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
+        user.setRole(Role.HOST);
+        userRepository.save(user);
         Hotel newHotel = new Hotel();
         newHotel.setUser(user);
         updateHotel(newHotel, request);
@@ -141,9 +143,8 @@ public class HotelService {
         }
     }
 
-
     private void updateHotelAmenities(Hotel hotel, List<AmenityPriceDTO> amenityPrices) {
-        Set<HotelHotelAmenity> existingAmenities = hotel.getHotelHotelAmenities();
+        hotelHotelAmenityRepository.deleteByHotel(hotel);
 
         for (AmenityPriceDTO amenityPrice : amenityPrices) {
             HotelAmenity amenity = amenityRepository.findByName(amenityPrice.getName())
@@ -153,22 +154,19 @@ public class HotelService {
                         return amenityRepository.save(newAmenity);
                     });
 
-            Optional<HotelHotelAmenity> existingAmenity = existingAmenities.stream()
-                    .filter(hotelAmenity -> hotelAmenity.getHotelAmenity().equals(amenity))
-                    .findFirst();
-
-            if (existingAmenity.isPresent()) {
-                existingAmenity.get().setPrice(amenityPrice.getPrice());
-            } else {
-                HotelHotelAmenity hotelAmenity = new HotelHotelAmenity();
-                hotelAmenity.setHotel(hotel);
-                hotelAmenity.setHotelAmenity(amenity);
-                hotelAmenity.setPrice(amenityPrice.getPrice());
-                hotelHotelAmenityRepository.save(hotelAmenity);
-            }
+            HotelHotelAmenity hotelAmenity = new HotelHotelAmenity();
+            hotelAmenity.setHotel(hotel);
+            hotelAmenity.setHotelAmenity(amenity);
+            hotelAmenity.setPrice(amenityPrice.getPrice());
+            hotelHotelAmenityRepository.save(hotelAmenity);
         }
+        deleteOrphanedHotelAmenities();
     }
 
+    private void deleteOrphanedHotelAmenities() {
+        List<HotelAmenity> orphanedAmenities = amenityRepository.findOrphanedAmenities();
+        amenityRepository.deleteAll(orphanedAmenities);
+    }
 
     private void updateHotelImages(Hotel hotel, List<MultipartFile> images) throws IOException {
         imageRepository.deleteByHotel(hotel);
@@ -211,44 +209,15 @@ public class HotelService {
         }
     }
 
-
     @Transactional
     public void deleteHotelById(Integer userId, Integer hotelId) {
         Hotel hotel = hotelRepository.findByUserIdAndId(userId, hotelId)
                 .orElseThrow(() -> new HotelNotFoundException("Hotel not found"));
 
-        List<HotelHotelAmenity> hotelAmenities = hotelHotelAmenityRepository.findByHotelId(hotelId);
-
-        if (!hotelAmenities.isEmpty()) {
-            hotelHotelAmenityRepository.deleteByHotelId(hotelId);
-            for (HotelHotelAmenity hotelAmenity : hotelAmenities) {
-                Integer amenityId = hotelAmenity.getHotelAmenity().getId();
-                if (!hotelHotelAmenityRepository.existsByHotelAmenityId(amenityId)) {
-                    amenityRepository.deleteById(amenityId);
-                }
-            }
-        }
-
+        hotelHotelAmenityRepository.deleteByHotelId(hotelId);
+        deleteOrphanedHotelAmenities();
         hotelRepository.delete(hotel);
     }
-
-    @Transactional
-    public void deleteHotelAmenity(Integer hotelId, Integer amenityId) {
-        Optional<HotelHotelAmenity> hotelAmenityOptional = hotelHotelAmenityRepository.findByHotelIdAndHotelAmenityId(hotelId, amenityId);
-
-        hotelAmenityOptional.ifPresent(hotelHotelAmenity -> {
-            HotelAmenity amenity = hotelHotelAmenity.getHotelAmenity();
-            List<HotelHotelAmenity> hotelsUsingAmenity = hotelHotelAmenityRepository.findByHotelAmenityId(amenityId);
-
-            if (hotelsUsingAmenity.size() > 1) {
-                hotelHotelAmenityRepository.delete(hotelHotelAmenity);
-            } else {
-                hotelHotelAmenityRepository.delete(hotelHotelAmenity);
-                amenityRepository.delete(amenity);
-            }
-        });
-    }
-
 
     public CustomSearchResult filterSearchHotel(FilterSearchRequest request) {
         CustomSearchResult result = new CustomSearchResult();

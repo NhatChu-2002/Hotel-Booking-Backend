@@ -8,10 +8,7 @@ CHANGE COLUMN `role` `role` ENUM('ADMIN', 'CUSTOMER', 'HOST', 'NOT_REGISTERED_CU
 ALTER TABLE `booking-app`.`user` 
 ADD UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE;
 
-ALTER TABLE `booking-app`.`room_type` 
-ADD COLUMN `room_name` VARCHAR(5) NULL AFTER `children_count`;
-
-ALTER TABLE `booking-app`.`room` 
+ALTER TABLE `booking-app`.`room`
 CHANGE COLUMN `description` `name` VARCHAR(255) NULL DEFAULT NULL ;
 
 ALTER TABLE `booking-app`.`invoice` 
@@ -33,4 +30,5 @@ ADD COLUMN hotel_id INT,
 ADD CONSTRAINT fk_hotel
     FOREIGN KEY (hotel_id)
     REFERENCES hotel(id);
+
 
