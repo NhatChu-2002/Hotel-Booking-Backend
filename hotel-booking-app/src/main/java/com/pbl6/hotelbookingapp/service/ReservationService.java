@@ -284,34 +284,57 @@ public class ReservationService {
 
     public ReservedHistoryResponse getHistory(Integer id)
     {
+        if(userRepository.findById(id).get().isDeleted())
+        {
+            throw new ResponseException("user not found!");
+        }
         ReservedHistoryResponse response = new ReservedHistoryResponse();
         List<Reservation> reservationList = reservationRepository.findAllByUserId(id);
         if(!reservationList.isEmpty())
         {
             List<ReservationDto> reservationDtoList = new ArrayList<>();
+            List<CancelledReservationDTO> cancelledReservationList = new ArrayList<>();
+
             for (Reservation reservation: reservationList) {
 
-                ReservationDto reservationDto = new ReservationDto();
+
                 if(reservation.getStatus() == ReservationStatus.CANCELLED)
                 {
-                    reservationDto.setReservationCode(reservation.getReservationCode());
+                    Invoice invoice = invoiceRepository.findByReservation(reservation).get();
+                    Hotel hotel = hotelService.getHotelById(reservation.getHotel().getId());
+                    CancelledReservationDTO cancelledReservationDTO = new CancelledReservationDTO();
+                    cancelledReservationDTO.setReservationCode(reservation.getReservationCode());
+                    cancelledReservationDTO.setHotelName(hotel.getName());
+                    cancelledReservationDTO.setTimeCancelled(invoice.getTimeCanceled());
+                    cancelledReservationDTO.setTimePaid(invoice.getTimePaid());
+                    cancelledReservationDTO.setPaidAmount(invoice.getInvoiceAmount());
+                    cancelledReservationDTO.setRefundAmount(invoice.getRefundAmount());
+                    cancelledReservationDTO.setAddress(hotel.getStreet() +", " + hotel.getWard() + ", " + hotel.getDistrict() + ", " +hotel.getProvince());
+                    cancelledReservationDTO.setStatus(reservation.getStatus());
+                    cancelledReservationDTO.setImagePath(hotelImageRepository.findFirstImagePathByHotelId(hotel.getId()));
+                    cancelledReservationList.add(cancelledReservationDTO);
 
                 }
                 else{
+                    ReservationDto reservationDto = new ReservationDto();
                     getReservationDetails(reservationDto, reservation);
+                    reservationDtoList.add(reservationDto);
                 }
 
 
-                reservationDtoList.add(reservationDto);
+
             }
             response.setReservationList(reservationDtoList);
-            response.setTotalItems(reservationDtoList.size());
+            response.setCancelList(cancelledReservationList);
+            response.setTotalReservation(reservationDtoList.size());
+            response.setTotalCancel(cancelledReservationList.size());
         }
         else {
             response.setReservationList(null);
-            response.setTotalItems(0);
+            response.setCancelList(null);
+            response.setTotalCancel(0);
+            response.setTotalReservation(0);
         }
-
 
         return response;
     }
@@ -341,7 +364,7 @@ public class ReservationService {
 
     }
     @Transactional
-    public RefundResponse cancelReservation(CancelRequest request) throws IOException
+    public CancelResponse cancelReservation(CancelRequest request) throws IOException
     {
         try {
             Optional<Reservation> reservation = reservationRepository.findFirstByReservationCode(request.getReservationCode());
@@ -351,7 +374,10 @@ public class ReservationService {
             }
             Reservation foundReservation = reservation.get();
             Optional<Invoice> findInvoice = invoiceRepository.findByReservation(reservation.get());
-
+            if(foundReservation.getStatus().equals(ReservationStatus.CANCELLED))
+            {
+                throw new ResponseException("already cancelled!");
+            }
             if(!findInvoice.isPresent())
             {
                 throw new ResponseException("no invoice found!");
@@ -390,6 +416,7 @@ public class ReservationService {
                                                                 invoice.getInvoiceAmount()*refundPercentage,
                                                                 invoice.getVnpTransdate(),
                                                                 foundReservation.getEmail());
+
             if(refundResponse.getVnp_Message().equals("Refund success"))
             {
                 invoice.setTimeCanceled(localDateTime);
@@ -406,15 +433,16 @@ public class ReservationService {
                         .amount(invoice.getInvoiceAmount().toString())
                         .refundAmount(invoice.getInvoiceAmount()*refundPercentage)
                         .build();
-                emailService.sendCancellationEmail(cancelResponse, foundReservation.getEmail());
+//                emailService.sendCancellationEmail(cancelResponse, foundReservation.getEmail());
 
                 invoiceRepository.save(invoice);
                 roomReservedRepository.deleteAllByReservation(foundReservation);
                 reservationRepository.save(foundReservation);
+                return cancelResponse;
             }
-
-
-            return refundResponse;
+            else {
+                throw new ResponseException(refundResponse.getVnp_Message());
+            }
         }
         catch (ResponseException e)
         {
