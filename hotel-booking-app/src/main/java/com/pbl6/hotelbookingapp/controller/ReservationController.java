@@ -67,7 +67,7 @@ public class ReservationController {
     @PostMapping("/cancel")
     public ResponseEntity<?> cancelReservation(@RequestBody  CancelRequest request) {
         try{
-            RefundResponse response= reservationService.cancelReservation(request);
+            CancelResponse response= reservationService.cancelReservation(request);
             return ResponseEntity.ok().body(response);
         }
         catch(ResponseException e)

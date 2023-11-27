@@ -14,5 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ReservedHistoryResponse {
     private List<ReservationDto> reservationList;
-    private int totalItems;
+    private List<CancelledReservationDTO> cancelList;
+    private int totalReservation;
+    private int totalCancel;
 }
