@@ -1,9 +1,17 @@
 package com.pbl6.hotelbookingapp.controller;
 
+import com.pbl6.hotelbookingapp.Exception.ResponseException;
+import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
+import com.pbl6.hotelbookingapp.dto.EditUserRequest;
+import com.pbl6.hotelbookingapp.dto.ErrorResponse;
+import com.pbl6.hotelbookingapp.dto.UserListResponse;
 import com.pbl6.hotelbookingapp.entity.HotelAmenity;
 import com.pbl6.hotelbookingapp.entity.RoomAmenity;
+import com.pbl6.hotelbookingapp.entity.User;
 import com.pbl6.hotelbookingapp.service.HotelAmenityService;
 import com.pbl6.hotelbookingapp.service.RoomAmenityService;
+import com.pbl6.hotelbookingapp.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +26,7 @@ import java.util.List;
 public class AdminController {
     private final HotelAmenityService hotelAmenityService;
     private final RoomAmenityService roomAmenityService;
+    private  final UserService userService;
 
     @GetMapping("/hotelService/list")
     public ResponseEntity<?> getAllHotelAmenities() {
@@ -134,5 +143,63 @@ public class AdminController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+    @PutMapping("/management/user/{id}")
+    public ResponseEntity<?> editUser(@PathVariable Integer id, @RequestBody @Valid EditUserRequest updatedUser) {
+        try{
+            userService.editUser(updatedUser, id);
+            return ResponseEntity.ok().body("Update user successfully");
+        }
+        catch(UserNotFoundException e)
+        {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+
+
+    }
+    @GetMapping("/management/user/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Integer id) {
+        try {
+            var user = userService.getUserById(id);
+            return ResponseEntity.ok(user);
+        }catch (ResponseException e)
+        {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+
+    }
+    @GetMapping("/management/user/list")
+    public ResponseEntity<UserListResponse> getAllUsers(
+            @RequestParam(defaultValue = "1") int pageIndex,
+            @RequestParam(defaultValue = "10") int pageSize) {
+
+        UserListResponse usersResult = userService.getAllUsers(pageIndex, pageSize);
+        return ResponseEntity.ok(usersResult);
+    }
+    @DeleteMapping("/management/user/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable Integer userId) {
+        try {
+            userService.deleteUser(userId);
+            return ResponseEntity.ok("User with ID " + userId + " has been deleted.");
+        }catch (ResponseException e)
+        {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+
+    }
+    @GetMapping("/management/user/search")
+    public ResponseEntity<?> getUsersByEmail(@RequestParam("email") String email) {
+        List<User> users = userService.findUserByEmailContaining(email);
+        if (!users.isEmpty()) {
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("No users found", HttpStatus.NOT_FOUND);
+        }
     }
 }
