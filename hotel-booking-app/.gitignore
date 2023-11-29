@@ -19,6 +19,7 @@ target/
 *.iml
 *.ipr
 src/main/resources/serviceAccountKey.json
+src/main/resources/config.env
 
 ### NetBeans ###
 /nbproject/private/

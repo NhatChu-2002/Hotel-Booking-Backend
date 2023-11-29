@@ -1,5 +1,6 @@
 package com.pbl6.hotelbookingapp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,6 +32,7 @@ public class RoomAmenity {
     @JoinTable(name="room_room_amenity",
             joinColumns = @JoinColumn(name="room_amenity_id"),
             inverseJoinColumns = @JoinColumn(name="room_type_id"))
+    @JsonIgnore
     private Set<RoomType> roomTypes = new HashSet<>();
 
     public RoomAmenity(String name) {
