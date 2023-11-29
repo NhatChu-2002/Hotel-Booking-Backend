@@ -21,7 +21,7 @@ import java.util.*;
 @RestController
 @RequestMapping("api/payment")
 @RequiredArgsConstructor
-@CrossOrigin
+@CrossOrigin("${allowed.origins}")
 public class PaymentController {
     private final PaymentService paymentService;
     private final ReservationService reservationService;

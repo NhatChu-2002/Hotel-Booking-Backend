@@ -22,7 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
-@CrossOrigin
+@CrossOrigin("${allowed.origins}")
 public class AdminController {
     private final HotelAmenityService hotelAmenityService;
     private final RoomAmenityService roomAmenityService;

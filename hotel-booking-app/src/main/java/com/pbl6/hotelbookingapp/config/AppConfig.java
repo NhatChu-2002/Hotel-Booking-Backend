@@ -2,6 +2,7 @@ package com.pbl6.hotelbookingapp.config;
 
 import com.pbl6.hotelbookingapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -27,12 +29,14 @@ public class AppConfig implements WebMvcConfigurer  {
     private String[] theAllowedOrigins;
     @Value("${spring.data.rest.base-path}")
     private String basePath;
+    private ApiKeyInterceptor apiKeyInterceptor;
     @Override
     public void addCorsMappings(CorsRegistry cors) {
         cors.addMapping(basePath + "/**").allowedOrigins(theAllowedOrigins).allowCredentials(true)
                 .allowedMethods("GET", "POST", "PUT", "DELETE","PATCH")
                 .allowedHeaders("*");
     }
+
     @Bean
     public UserDetailsService userDetailsService()
     {

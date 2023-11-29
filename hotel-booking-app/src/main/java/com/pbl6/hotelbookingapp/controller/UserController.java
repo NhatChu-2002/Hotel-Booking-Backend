@@ -20,7 +20,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("api/user")
 @RequiredArgsConstructor
-@CrossOrigin
+@CrossOrigin("${allowed.origins}")
 public class UserController {
 
     private final UserService service;
@@ -58,6 +58,19 @@ public class UserController {
                             .statusCode(HttpStatus.OK.value())
                             .build()
             );
+        }
+
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Integer id) {
+        try {
+            var user = service.getUserById(id);
+            return ResponseEntity.ok(user);
+        }catch (ResponseException e)
+        {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(e.getMessage()));
         }
 
     }

@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/image")
-@CrossOrigin
+@CrossOrigin("${allowed.origins}")
 public class ImageController {
 
     private ImageService imageService;
