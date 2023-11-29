@@ -4,6 +4,7 @@ import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -18,6 +19,8 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.web.accept.ContentNegotiationStrategy;
 import org.springframework.web.accept.HeaderContentNegotiationStrategy;
 
+import static com.pbl6.hotelbookingapp.entity.Permission.*;
+import static com.pbl6.hotelbookingapp.entity.Role.ADMIN;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -49,6 +52,16 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
+//                                .requestMatchers("/api/user/**").hasRole(ADMIN.name())
+//                                .requestMatchers(HttpMethod.GET,"/api/user/**").hasAuthority(ADMIN_READ.name())
+//                                .requestMatchers(HttpMethod.POST,"/api/user/**").hasAuthority(ADMIN_CREATE.name())
+//                                .requestMatchers(HttpMethod.PUT,"/api/user/**").hasAuthority(ADMIN_UPDATE.name())
+//                                .requestMatchers(HttpMethod.DELETE,"/api/user/**").hasAuthority(ADMIN_DELETE.name())
+//                                .requestMatchers("/api/admin/**").hasRole(ADMIN.name())
+//                                .requestMatchers(HttpMethod.GET,"/api/admin/**").hasAuthority(ADMIN_READ.name())
+//                                .requestMatchers(HttpMethod.POST,"/api/admin/**").hasAuthority(ADMIN_CREATE.name())
+//                                .requestMatchers(HttpMethod.PUT,"/api/admin/**").hasAuthority(ADMIN_UPDATE.name())
+//                                .requestMatchers(HttpMethod.DELETE,"/api/admin/**").hasAuthority(ADMIN_DELETE.name())
                                 .anyRequest()
                                 .permitAll()
 

@@ -129,6 +129,7 @@ public class UserService {
 
     }
 
+
     private static UserDTO buildUserDTO(User tempUser, List<String> reservationCodes, List<HotelAdminResponse> hotelAdminResponses) {
         int hotelCount = (hotelAdminResponses != null) ? hotelAdminResponses.size() : 0;
         int reservationCount = (reservationCodes != null) ? reservationCodes.size() : 0;
@@ -200,6 +201,9 @@ public class UserService {
             user.setDeleted(true);
             repository.save(user);
         }
+    }
+    public List<User> findUserByEmailContaining(String email) {
+        return repository.findByEmailIgnoreCaseContaining(email);
     }
 
 }

@@ -110,4 +110,13 @@ public class UserController {
         }
 
     }
+    @GetMapping("/search")
+    public ResponseEntity<?> getUsersByEmail(@RequestParam("email") String email) {
+        List<User> users = service.findUserByEmailContaining(email);
+        if (!users.isEmpty()) {
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("No users found", HttpStatus.NOT_FOUND);
+        }
+    }
 }
