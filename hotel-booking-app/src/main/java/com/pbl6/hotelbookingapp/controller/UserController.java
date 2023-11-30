@@ -74,5 +74,20 @@ public class UserController {
         }
 
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editUser(@PathVariable Integer id, @RequestBody @Valid EditUserRequest updatedUser) {
+        try{
+            service.editUser(updatedUser, id);
+            return ResponseEntity.ok().body("Update user successfully");
+        }
+        catch(UserNotFoundException e)
+        {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+
+
+    }
 
 }
