@@ -330,16 +330,22 @@ public class HotelService {
     private List<RoomTypeDetails> getRoomTypeDetails(List<RoomType> roomList, LocalDate checkIn, LocalDate checkOut) {
         if(checkIn == null || checkOut == null)
         {
+
             return Optional.ofNullable(roomList)
                     .orElse(List.of())
                     .stream()
                     .map(room -> {
+                        List<String> firstImageList = getFirstImageByRoom(room.getId());
+                        String firstImage = null;
 
+                        if (!firstImageList.isEmpty()) {
+                            firstImage = firstImageList.get(0);
+                        }
                         return RoomTypeDetails.builder()
                                 .id(room.getId())
                                 .roomName(room.getName())
                                 .price(room.getPrice())
-                                .roomImage(getFirstImageByRoom(room.getId()))
+                                .roomImage(firstImage)
                                 .quantity(room.getCount())
                                 .adult(room.getAdultCount())
                                 .children(room.getChildrenCount())
@@ -353,12 +359,18 @@ public class HotelService {
         for (RoomType roomType : roomList) {
 
             List<Room> availableRooms = roomService.getAvailableRooms(roomType, checkIn, checkOut, 100000);
+            List<String> firstImageList = getFirstImageByRoom(roomType.getId());
+            String firstImage = null;
+
+            if (!firstImageList.isEmpty()) {
+                firstImage = firstImageList.get(0);
+            }
 
             RoomTypeDetails roomTypeDetails = RoomTypeDetails.builder()
                     .id(roomType.getId())
                     .roomName(roomType.getName())
                     .price(roomType.getPrice())
-                    .roomImage(roomTypeRepository.findFirstImageByRoomTypeId(roomType.getId()))
+                    .roomImage(firstImage)
                     .quantity(availableRooms.size())
                     .adult(roomType.getAdultCount())
                     .children(roomType.getChildrenCount())
@@ -377,8 +389,8 @@ public class HotelService {
     private List<String> getListAmenities(RoomType room) {
         return roomTypeRepository.findAmenitiesByRoomTypeId(room.getId());
     }
-    private String getFirstImageByRoom(Integer roomId) {
-        return roomTypeRepository.findFirstImageByRoomTypeId(roomId);
+    private List<String> getFirstImageByRoom(Integer roomId) {
+        return roomTypeRepository.findImagesByRoomTypeId(roomId);
 
     }
     private List<ReviewDTO> getReviews(List<Review> reviews) {

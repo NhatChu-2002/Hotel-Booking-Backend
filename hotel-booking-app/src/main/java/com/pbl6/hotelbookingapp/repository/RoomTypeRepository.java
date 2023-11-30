@@ -13,7 +13,8 @@ public interface RoomTypeRepository extends JpaRepository<RoomType,Integer> {
     Optional<RoomType> findFirstByIdAndHotelId(Integer roomTypeId, Integer hotelId);
 
     @Query("SELECT ri.imagePath FROM RoomType r JOIN r.roomImages ri WHERE r.id = :roomTypeId")
-    String findFirstImageByRoomTypeId(@Param("roomTypeId") Integer roomTypeId);
+    List<String> findImagesByRoomTypeId(@Param("roomTypeId") Integer roomTypeId);
+
     @Query("SELECT a.name FROM  RoomType r JOIN  r.amenities a WHERE r.id = :roomTypeId")
     List<String> findAmenitiesByRoomTypeId(@Param("roomTypeId") Integer roomTypeId);
 
