@@ -1,12 +1,13 @@
 package com.pbl6.hotelbookingapp.controller;
 
-import com.pbl6.hotelbookingapp.dto.RoomTypeDTO;
-import com.pbl6.hotelbookingapp.dto.RoomTypeDetailResponse;
+import com.pbl6.hotelbookingapp.dto.*;
 import com.pbl6.hotelbookingapp.service.RoomTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/room-types")
@@ -24,6 +25,12 @@ public class RoomTypeController {
     public  RoomTypeDetailResponse getRoomTypeById(@RequestHeader("hotelId") Integer hotelId, @PathVariable Integer roomTypeId) {
         return roomTypeService.findRoomTypeById(hotelId, roomTypeId);
     }
+
+    @GetMapping(value = "")
+    public RoomTypesOfHotelResponse getRoomTypesOfHotelResponse(@RequestHeader("hotelId") Integer hotelId) {
+        return roomTypeService.findRoomTypesByHotelId(hotelId);
+    }
+
 
     @RequestMapping(value = "", method = RequestMethod.POST,  consumes = {"multipart/form-data"})
     public ResponseEntity<String> addRoomType(@RequestHeader("hotelId") Integer hotelId, @ModelAttribute RoomTypeDTO roomTypeDTO) {
@@ -46,9 +53,20 @@ public class RoomTypeController {
         }
     }
 
+    @PutMapping(value = "/price/{roomTypeId}")
+    public ResponseEntity<String> updatePrice(@RequestHeader("hotelId") Integer hotelId, @PathVariable Integer roomTypeId, @RequestBody UpdatePriceRoomTypeRequest request) {
+        try {
+            roomTypeService.updatePrice(hotelId, roomTypeId, request.getPrice());
+            return new ResponseEntity<>("Price updated successfully", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error updating price RoomType", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @DeleteMapping("/{roomTypeId}")
     public ResponseEntity<String> deleteRoomType(@RequestHeader("hotelId") Integer hotelId, @PathVariable Integer roomTypeId) {
         roomTypeService.deleteRoomTypeById(hotelId, roomTypeId);
         return ResponseEntity.ok("Room Type deleted successfully");
     }
+
 }

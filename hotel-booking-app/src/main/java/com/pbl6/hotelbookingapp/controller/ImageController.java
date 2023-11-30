@@ -19,7 +19,7 @@ public class ImageController {
         this.imageService = imageService;
     }
 
-    @PostMapping(value = "/hotel/{hotelId}", consumes = {"multipart/form-data"})
+    @RequestMapping(value = "/hotel/{hotelId}", method = RequestMethod.POST, consumes = {"multipart/form-data"})
     public ResponseEntity<String> uploadHotelImage(@PathVariable Integer hotelId, @ModelAttribute List<MultipartFile> images) {
         try {
             imageService.uploadHotelImage(hotelId, images);
@@ -29,7 +29,7 @@ public class ImageController {
         }
     }
 
-    @PostMapping(value = "/room-type/{roomTypeId}", consumes = {"multipart/form-data"})
+    @RequestMapping(value = "/room-type/{roomTypeId}", method = RequestMethod.POST, consumes = {"multipart/form-data"})
     public ResponseEntity<String> uploadRoomTypeImage(@PathVariable Integer roomTypeId, @ModelAttribute List<MultipartFile> images) {
         try {
             imageService.uploadRoomTypeImage(roomTypeId, images);

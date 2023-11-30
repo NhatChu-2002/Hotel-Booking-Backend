@@ -1,28 +1,27 @@
 package com.pbl6.hotelbookingapp.service;
 
+import com.pbl6.hotelbookingapp.Exception.HotelNotFoundException;
+import com.pbl6.hotelbookingapp.dto.RoomReservedInfoByTime;
+import com.pbl6.hotelbookingapp.dto.TimeReservedRequest;
 import com.pbl6.hotelbookingapp.entity.Hotel;
 import com.pbl6.hotelbookingapp.entity.Room;
 import com.pbl6.hotelbookingapp.entity.RoomReserved;
 import com.pbl6.hotelbookingapp.entity.RoomType;
+import com.pbl6.hotelbookingapp.repository.HotelRepository;
 import com.pbl6.hotelbookingapp.repository.RoomRepository;
 import com.pbl6.hotelbookingapp.repository.RoomReservedRepository;
-import com.pbl6.hotelbookingapp.repository.UserRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class RoomService {
     private final RoomRepository roomRepository;
+    private final HotelRepository hotelRepository;
     private final RoomReservedRepository roomReservedRepository;
 
     public List<Room> getAvailableRooms(RoomType roomType, LocalDate startDay, LocalDate endDay, int count) {
@@ -44,5 +43,10 @@ public class RoomService {
         }
 
         return availableRooms;
+    }
+
+    public List<RoomReservedInfoByTime> getListRoomReservedInfo(Integer hotelId, TimeReservedRequest timeReservedRequest) {
+        Hotel hotel = hotelRepository.findById(hotelId).orElseThrow(() -> new HotelNotFoundException("Hotel not found"));
+        return roomReservedRepository.getListRoomReservedInfo(hotelId, timeReservedRequest.getStartDay(), timeReservedRequest.getEndDay());
     }
 }
