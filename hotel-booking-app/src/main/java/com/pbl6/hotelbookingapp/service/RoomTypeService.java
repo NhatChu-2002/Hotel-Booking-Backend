@@ -1,9 +1,7 @@
 package com.pbl6.hotelbookingapp.service;
 
 import com.pbl6.hotelbookingapp.Exception.HotelNotFoundException;
-import com.pbl6.hotelbookingapp.dto.BedTypeDTO;
-import com.pbl6.hotelbookingapp.dto.RoomTypeDTO;
-import com.pbl6.hotelbookingapp.dto.RoomTypeDetailResponse;
+import com.pbl6.hotelbookingapp.dto.*;
 import com.pbl6.hotelbookingapp.entity.*;
 import com.pbl6.hotelbookingapp.repository.*;
 import jakarta.transaction.Transactional;
@@ -32,9 +30,15 @@ public class RoomTypeService {
 
     private RoomRepository roomRepository;
 
+    private RoomReservedRepository roomReservedRepository;
+
+    private UserRepository userRepository;
+
+    private ReservationRepository reservationRepository;
+
     private FirebaseStorageService firebaseStorageService;
 
-    public RoomTypeService(RoomTypeRepository roomTypeRepository, HotelRepository hotelRepository, ViewRepository viewRepository, RoomAmenityRepository roomAmenityRepository, RoomImageRepository roomImageRepository, RoomBedTypeRepository roomBedTypeRepository, BedTypeRepository bedTypeRepository, RoomRepository roomRepository, FirebaseStorageService firebaseStorageService) {
+    public RoomTypeService(RoomTypeRepository roomTypeRepository, HotelRepository hotelRepository, ViewRepository viewRepository, RoomAmenityRepository roomAmenityRepository, RoomImageRepository roomImageRepository, RoomBedTypeRepository roomBedTypeRepository, BedTypeRepository bedTypeRepository, RoomRepository roomRepository, RoomReservedRepository roomReservedRepository, UserRepository userRepository, ReservationRepository reservationRepository, FirebaseStorageService firebaseStorageService) {
         this.roomTypeRepository = roomTypeRepository;
         this.hotelRepository = hotelRepository;
         this.viewRepository = viewRepository;
@@ -43,6 +47,9 @@ public class RoomTypeService {
         this.roomBedTypeRepository = roomBedTypeRepository;
         this.bedTypeRepository = bedTypeRepository;
         this.roomRepository = roomRepository;
+        this.roomReservedRepository = roomReservedRepository;
+        this.userRepository = userRepository;
+        this.reservationRepository = reservationRepository;
         this.firebaseStorageService = firebaseStorageService;
     }
 
@@ -206,4 +213,41 @@ public class RoomTypeService {
                     })
                     .collect(Collectors.toList());
         }
+
+    public RoomTypesOfHotelResponse findRoomTypesByHotelId(Integer hotelId) {
+        Hotel hotel = hotelRepository.findById(hotelId).orElseThrow(() -> new HotelNotFoundException("Hotel not found!!"));
+        List<RoomType> roomTypes = roomTypeRepository.findByHotelId(hotelId);
+
+        List<RoomTypeDetailResponse> roomTypeDetailResponses = roomTypes.stream()
+                .map(this::convertToRoomTypeDetailResponse)
+                .collect(Collectors.toList());
+
+        return new RoomTypesOfHotelResponse(hotel.getName(), hotel.getId(), roomTypeDetailResponses);
+    }
+
+    private RoomTypeDetailResponse convertToRoomTypeDetailResponse(RoomType roomType) {
+        return RoomTypeDetailResponse.builder()
+                .name(roomType.getName())
+                .count(roomType.getCount())
+                .price(roomType.getPrice())
+                .bathroomCount(roomType.getBathroomCount())
+                .roomArea(roomType.getRoomArea())
+                .adultCount(roomType.getAdultCount())
+                .childrenCount(roomType.getChildrenCount())
+                .description(roomType.getDescription())
+                .bedTypes(getBedTypes(roomType.getId()))
+                .amenities(getAmenities(roomType.getId()))
+                .view(getView(roomType.getId()))
+                .images(getImagePaths(roomType.getId()))
+                .rooms(getRoomNames(roomType.getId()))
+                .build();
+    }
+
+    @Transactional
+    public void updatePrice(Integer hotelId, Integer roomTypeId, Double newPrice) {
+        RoomType roomType = roomTypeRepository.findByHotelIdAndId(hotelId, roomTypeId);
+        roomType.setPrice(newPrice);
+        roomTypeRepository.save(roomType);
+    }
+
 }
