@@ -21,4 +21,6 @@ public interface RoomTypeRepository extends JpaRepository<RoomType,Integer> {
     Optional<Double> findMinPriceByHotelId(@Param("hotelId") Integer hotelId);
 
     RoomType findByHotelIdAndId(Integer hotelId, Integer roomTypeId);
+
+    List<RoomType> findByHotelId(Integer hotelId);
 }
