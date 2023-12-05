@@ -250,4 +250,8 @@ public class RoomTypeService {
         roomTypeRepository.save(roomType);
     }
 
+    public List<RoomAvailableResponse> getAvailableRooms(Integer hotelId, RoomAvailableRequest roomAvailableRequest) {
+        Hotel hotel = hotelRepository.findById(hotelId).orElseThrow(() -> new HotelNotFoundException("Hotel not found"));
+        return roomTypeRepository.getAvailableRooms(hotelId, roomAvailableRequest.getStartDay(), roomAvailableRequest.getEndDay());
+    }
 }

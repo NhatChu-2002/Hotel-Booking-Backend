@@ -1,10 +1,12 @@
 package com.pbl6.hotelbookingapp.repository;
 
+import com.pbl6.hotelbookingapp.dto.RoomAvailableResponse;
 import com.pbl6.hotelbookingapp.entity.RoomType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,4 +26,22 @@ public interface RoomTypeRepository extends JpaRepository<RoomType,Integer> {
     RoomType findByHotelIdAndId(Integer hotelId, Integer roomTypeId);
 
     List<RoomType> findByHotelId(Integer hotelId);
+
+    @Query("SELECT new com.pbl6.hotelbookingapp.dto.RoomAvailableResponse(" +
+            "rt.name, " +
+            "rt.price, " +
+            "COUNT(r.id)) " +
+            "FROM Hotel h " +
+            "JOIN RoomType rt ON h.id = rt.hotel.id " +
+            "JOIN Room r ON rt.id = r.roomType.id " +
+            "LEFT JOIN RoomReserved rr ON rr.room.id = r.id " +
+            "                           AND (:endDate >= rr.startDay AND :startDate <= rr.endDay) " +
+            "WHERE h.id = :hotelId " +
+            "AND rr.room.id IS NULL " +
+            "GROUP BY rt.name, rt.price")
+    List<RoomAvailableResponse> getAvailableRooms(
+            @Param("hotelId") Integer hotelId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
+
 }
