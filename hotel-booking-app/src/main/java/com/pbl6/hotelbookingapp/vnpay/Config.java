@@ -2,6 +2,7 @@ package com.pbl6.hotelbookingapp.vnpay;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -15,7 +16,8 @@ import static com.fasterxml.jackson.databind.type.LogicalType.Map;
 
 public class Config {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static String vnp_ReturnUrl = "http://localhost:3000/book/pay";
+    @Value("${vnpay.return.url}")
+    public static String vnp_ReturnUrl ;
     public static String vnp_TmnCode = "W923D5J4";
     public static String secretKey = "BYLLNVXJETWJSJWUDBWCCKYGSNICLQUP";
     public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
