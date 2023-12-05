@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Set;
 
 
@@ -27,14 +28,19 @@ public class HotelController {
     }
 
 
+//    @RequestMapping(value = "" , method = RequestMethod.POST, consumes = {"multipart/form-data"})
+//    public ResponseEntity<String> addHotel(@RequestHeader("userId") Integer userId, @ModelAttribute HotelDTO requestDTO) {
+//        try {
+//            hotelService.addHotel(userId, requestDTO);
+//            return new ResponseEntity<>("Hotel added successfully", HttpStatus.CREATED);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>("Error adding hotel", HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
     @RequestMapping(value = "" , method = RequestMethod.POST, consumes = {"multipart/form-data"})
-    public ResponseEntity<String> addHotel(@RequestHeader("userId") Integer userId, @ModelAttribute HotelDTO requestDTO) {
-        try {
-            hotelService.addHotel(userId, requestDTO);
-            return new ResponseEntity<>("Hotel added successfully", HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error adding hotel", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public AddHotelResponse addHotel(@RequestHeader("userId") Integer userId, @ModelAttribute HotelDTO requestDTO) throws IOException {
+            return hotelService.addHotel(userId, requestDTO);
     }
 
 

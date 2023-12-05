@@ -69,4 +69,9 @@ public class RoomTypeController {
         return ResponseEntity.ok("Room Type deleted successfully");
     }
 
+    @GetMapping("/available-rooms")
+    public List<RoomAvailableResponse> getAvailableRooms(@RequestHeader("hotelId") Integer hotelId, @RequestBody RoomAvailableRequest roomAvailableRequest) {
+        return roomTypeService.getAvailableRooms(hotelId, roomAvailableRequest);
+    }
+
 }

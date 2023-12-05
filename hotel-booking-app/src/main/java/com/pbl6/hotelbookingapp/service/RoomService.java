@@ -1,6 +1,7 @@
 package com.pbl6.hotelbookingapp.service;
 
 import com.pbl6.hotelbookingapp.Exception.HotelNotFoundException;
+import com.pbl6.hotelbookingapp.dto.ListRoomReservedResponse;
 import com.pbl6.hotelbookingapp.dto.RoomReservedInfoByTime;
 import com.pbl6.hotelbookingapp.dto.TimeReservedRequest;
 import com.pbl6.hotelbookingapp.entity.Hotel;
@@ -45,8 +46,24 @@ public class RoomService {
         return availableRooms;
     }
 
-    public List<RoomReservedInfoByTime> getListRoomReservedInfo(Integer hotelId, TimeReservedRequest timeReservedRequest) {
+    public ListRoomReservedResponse getListRoomReservedInfo(Integer hotelId, TimeReservedRequest timeReservedRequest) {
         Hotel hotel = hotelRepository.findById(hotelId).orElseThrow(() -> new HotelNotFoundException("Hotel not found"));
-        return roomReservedRepository.getListRoomReservedInfo(hotelId, timeReservedRequest.getStartDay(), timeReservedRequest.getEndDay());
+
+        List<RoomReservedInfoByTime> roomReservedInfoList = roomReservedRepository.getListRoomReservedInfo(hotelId, timeReservedRequest.getStartDay(), timeReservedRequest.getEndDay());
+
+        Double totalPrice = 0.0;
+        Double totalCommission = 0.0;
+
+        for (RoomReservedInfoByTime roomReservedInfo : roomReservedInfoList) {
+            totalPrice += roomReservedInfo.getPrice();
+            totalCommission += roomReservedInfo.getCommission();
+        }
+
+        return ListRoomReservedResponse.builder()
+                .roomReservedInfoByTime(roomReservedInfoList)
+                .totalPrice(totalPrice)
+                .totalCommission(totalCommission)
+                .build();
     }
+
 }
