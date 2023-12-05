@@ -104,7 +104,7 @@ public class HotelService {
     }
 
     @Transactional
-    public void addHotel(Integer userId, HotelDTO request) throws IOException {
+    public AddHotelResponse addHotel(Integer userId, HotelDTO request) throws IOException {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -117,6 +117,7 @@ public class HotelService {
         updateHotelAmenities(newHotel, request.getAmenities());
         updateExtraAmenities(newHotel, request.getExtraServices());
         updateHotelImages(newHotel, request.getImages());
+        return new AddHotelResponse(newHotel.getId());
     }
 
     @Transactional

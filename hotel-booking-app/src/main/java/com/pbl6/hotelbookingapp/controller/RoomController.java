@@ -1,5 +1,6 @@
 package com.pbl6.hotelbookingapp.controller;
 
+import com.pbl6.hotelbookingapp.dto.ListRoomReservedResponse;
 import com.pbl6.hotelbookingapp.dto.RoomReservedInfoByTime;
 import com.pbl6.hotelbookingapp.dto.TimeReservedRequest;
 import com.pbl6.hotelbookingapp.service.RoomService;
@@ -16,9 +17,8 @@ public class RoomController {
     public RoomController(RoomService roomService) {
         this.roomService = roomService;
     }
-
-    @GetMapping("/reserved-info")
-    public List<RoomReservedInfoByTime> getReservedInfo(
+    @GetMapping("/reserved-room-info")
+    public ListRoomReservedResponse getReservedInfo(
             @RequestHeader Integer hotelId,
             @RequestBody TimeReservedRequest timeReservedRequest) {
         return roomService.getListRoomReservedInfo(hotelId, timeReservedRequest);
