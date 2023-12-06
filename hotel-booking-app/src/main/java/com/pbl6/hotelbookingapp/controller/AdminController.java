@@ -5,12 +5,8 @@ import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
 import com.pbl6.hotelbookingapp.dto.EditUserRequest;
 import com.pbl6.hotelbookingapp.dto.ErrorResponse;
 import com.pbl6.hotelbookingapp.dto.UserListResponse;
-import com.pbl6.hotelbookingapp.entity.HotelAmenity;
-import com.pbl6.hotelbookingapp.entity.RoomAmenity;
-import com.pbl6.hotelbookingapp.entity.User;
-import com.pbl6.hotelbookingapp.service.HotelAmenityService;
-import com.pbl6.hotelbookingapp.service.RoomAmenityService;
-import com.pbl6.hotelbookingapp.service.UserService;
+import com.pbl6.hotelbookingapp.entity.*;
+import com.pbl6.hotelbookingapp.service.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,6 +23,8 @@ public class AdminController {
     private final HotelAmenityService hotelAmenityService;
     private final RoomAmenityService roomAmenityService;
     private  final UserService userService;
+    private final BedTypeService bedTypeService;
+    private final ViewService viewService;
 
     @GetMapping("/hotelService/list")
     public ResponseEntity<?> getAllHotelAmenities() {
@@ -201,5 +199,106 @@ public class AdminController {
         } else {
             return new ResponseEntity<>("No users found", HttpStatus.NOT_FOUND);
         }
+    }
+
+
+
+    @GetMapping("/bedTypes/list")
+    public ResponseEntity<?> getAllBedTypes() {
+        try {
+            List<BedType> bedTypes = bedTypeService.getAllBedTypes();
+            return new ResponseEntity<>(bedTypes, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @GetMapping("/bedTypes/{id}")
+    public ResponseEntity<BedType> getBedTypeById(@PathVariable Integer id) {
+        return bedTypeService.getBedTypeById(id)
+                .map(bedType -> new ResponseEntity<>(bedType, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @PostMapping("/bedTypes")
+    public ResponseEntity<BedType> createBedType(@RequestBody BedType bedType) {
+        BedType createdBedType = bedTypeService.createOrUpdateBedType(bedType);
+        return new ResponseEntity<>(createdBedType, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/bedTypes/{id}")
+    public ResponseEntity<BedType> updateBedType(@PathVariable Integer id, @RequestBody BedType bedType) {
+        bedType.setId(id);
+        BedType updatedBedType = bedTypeService.createOrUpdateBedType(bedType);
+        return new ResponseEntity<>(updatedBedType, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/bedTypes/{id}")
+    public ResponseEntity<?> deleteBedType(@PathVariable Integer id) {
+        try {
+            bedTypeService.deleteBedTypeById(id);
+            return ResponseEntity.ok("Bed type with ID " + id + " has been deleted.");
+        }catch (ResponseException e)
+        {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+
+    }
+    @GetMapping("/bedTypes/search")
+    public ResponseEntity<List<BedType>> searchBedTypeByNameContaining(@RequestParam String name) {
+        List<BedType> bedTypes = bedTypeService.findByNameContaining(name);
+        return new ResponseEntity<>(bedTypes, HttpStatus.OK);
+    }
+
+
+
+
+    @GetMapping("/views/list")
+    public ResponseEntity<List<View>> getAllViews() {
+        List<View> views = viewService.getAllViews();
+        return new ResponseEntity<>(views, HttpStatus.OK);
+    }
+
+    @GetMapping("/views/{id}")
+    public ResponseEntity<View> getViewById(@PathVariable Integer id) {
+        return viewService.getViewById(id)
+                .map(view -> new ResponseEntity<>(view, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @PostMapping("/views")
+    public ResponseEntity<View> createView(@RequestBody View view) {
+        View createdView = viewService.createOrUpdateView(view);
+        return new ResponseEntity<>(createdView, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/views/{id}")
+    public ResponseEntity<View> updateView(@PathVariable Integer id, @RequestBody View view) {
+        view.setId(id);
+        View updatedView = viewService.createOrUpdateView(view);
+        return new ResponseEntity<>(updatedView, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/views/{id}")
+    public ResponseEntity<?> deleteView(@PathVariable Integer id) {
+        try {
+            viewService.deleteViewById(id);
+            return ResponseEntity.ok("View with ID " + id + " has been deleted.");
+        }catch (ResponseException e)
+        {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+
+    }
+
+    @GetMapping("/views/search")
+    public ResponseEntity<List<View>> searchViewByName(@RequestParam String name) {
+        List<View> views = viewService.findByNameContaining(name);
+        return new ResponseEntity<>(views, HttpStatus.OK);
     }
 }
