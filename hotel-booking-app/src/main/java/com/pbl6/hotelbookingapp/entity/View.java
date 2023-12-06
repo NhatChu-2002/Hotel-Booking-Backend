@@ -1,5 +1,6 @@
 package com.pbl6.hotelbookingapp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,6 +32,7 @@ public class View {
     @UpdateTimestamp
     private Date modifiedAt;
     @OneToMany(mappedBy = "view", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<RoomType> roomTypes = new HashSet<>();
     public View(String name) {
         this.name = name;

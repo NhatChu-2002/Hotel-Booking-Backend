@@ -1,5 +1,6 @@
 package com.pbl6.hotelbookingapp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,5 +30,6 @@ public class BedType {
     @UpdateTimestamp
     private Date modifiedAt;
     @OneToMany(mappedBy = "bedType", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<RoomBedType> roomBedTypes = new HashSet<>();
 }
