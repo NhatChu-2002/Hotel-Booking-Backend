@@ -17,7 +17,7 @@ public class RoomController {
     public RoomController(RoomService roomService) {
         this.roomService = roomService;
     }
-    @GetMapping("/reserved-room-info")
+    @PostMapping("/reserved-room-info")
     public ListRoomReservedResponse getReservedInfo(
             @RequestHeader Integer hotelId,
             @RequestBody TimeReservedRequest timeReservedRequest) {
