@@ -13,4 +13,5 @@ import java.util.Optional;
 
 public interface RoomAmenityRepository extends JpaRepository<RoomAmenity, Integer> {
     Optional<RoomAmenity> findByName(String name);
+    List<RoomAmenity> findByNameContaining(String keyword);
 }
