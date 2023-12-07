@@ -14,4 +14,5 @@ public interface HotelAmenityRepository extends JpaRepository<HotelAmenity, Inte
 
     @Query("SELECT a FROM HotelAmenity a WHERE NOT EXISTS (SELECT 1 FROM HotelHotelAmenity ha WHERE ha.hotelAmenity = a)")
     List<HotelAmenity> findOrphanedAmenities();
+    List<HotelAmenity> findByNameContaining(String keyword);
 }

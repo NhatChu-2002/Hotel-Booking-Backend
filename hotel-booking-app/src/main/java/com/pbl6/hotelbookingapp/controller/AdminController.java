@@ -2,6 +2,7 @@ package com.pbl6.hotelbookingapp.controller;
 
 import com.pbl6.hotelbookingapp.Exception.ResponseException;
 import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
+import com.pbl6.hotelbookingapp.dto.AmenitySearchResponse;
 import com.pbl6.hotelbookingapp.dto.EditUserRequest;
 import com.pbl6.hotelbookingapp.dto.ErrorResponse;
 import com.pbl6.hotelbookingapp.dto.UserListResponse;
@@ -137,6 +138,16 @@ public class AdminController {
         try {
             roomAmenityService.deleteRoomAmenity(id);
             return ResponseEntity.ok().body("Delete successfully!");
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+    @GetMapping("/roomAmenity/search")
+    public ResponseEntity<?> searchAmenities(@RequestParam String name) {
+        try {
+            AmenitySearchResponse amenities = roomAmenityService.searchAmenities(name);
+            return ResponseEntity.ok().body(amenities);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

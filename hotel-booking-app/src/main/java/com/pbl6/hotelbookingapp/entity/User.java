@@ -60,6 +60,7 @@ public class User implements UserDetails {
     private Set<Review> reviews = new HashSet<>();
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return role.getAuthorities();
     }
