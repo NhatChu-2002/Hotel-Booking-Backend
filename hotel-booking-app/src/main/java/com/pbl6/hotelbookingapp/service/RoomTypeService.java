@@ -58,7 +58,7 @@ public class RoomTypeService {
     }
 
     @Transactional
-    public void addRoomType(Integer hotelId, RoomTypeDTO roomTypeDTO) throws IOException {
+    public AddRoomTypeResponse addRoomType(Integer hotelId, RoomTypeDTO roomTypeDTO) throws IOException {
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(() -> new HotelNotFoundException("Hotel not found"));
 
@@ -70,6 +70,7 @@ public class RoomTypeService {
         roomTypeRepository.save(roomType);
         updateRoomBedTypes(roomType, roomTypeDTO.getBedTypes());
         updateRoomImages(roomType, roomTypeDTO.getImages());
+        return new AddRoomTypeResponse(roomType.getId());
     }
 
     @Transactional

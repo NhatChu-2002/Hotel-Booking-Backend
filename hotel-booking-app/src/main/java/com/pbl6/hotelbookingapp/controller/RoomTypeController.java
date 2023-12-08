@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -31,15 +32,9 @@ public class RoomTypeController {
         return roomTypeService.findRoomTypesByHotelId(hotelId);
     }
 
-
     @RequestMapping(value = "", method = RequestMethod.POST,  consumes = {"multipart/form-data"})
-    public ResponseEntity<String> addRoomType(@RequestHeader("hotelId") Integer hotelId, @ModelAttribute RoomTypeDTO roomTypeDTO) {
-        try {
-            roomTypeService.addRoomType(hotelId, roomTypeDTO);
-            return new ResponseEntity<>("Room Type added successfully", HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error adding Room Type", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public AddRoomTypeResponse addRoomType(@RequestHeader("hotelId") Integer hotelId, @ModelAttribute RoomTypeDTO roomTypeDTO) throws IOException {
+        return roomTypeService.addRoomType(hotelId, roomTypeDTO);
     }
 
 
