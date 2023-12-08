@@ -7,10 +7,8 @@ import com.pbl6.hotelbookingapp.dto.AuthenticationResponse;
 import com.pbl6.hotelbookingapp.dto.RegisterRequest;
 import com.pbl6.hotelbookingapp.dto.RegisterResponse;
 import com.pbl6.hotelbookingapp.email.EmailService;
-import com.pbl6.hotelbookingapp.entity.Role;
-import com.pbl6.hotelbookingapp.entity.Token;
-import com.pbl6.hotelbookingapp.entity.TokenType;
-import com.pbl6.hotelbookingapp.entity.User;
+import com.pbl6.hotelbookingapp.entity.*;
+import com.pbl6.hotelbookingapp.repository.HotelRepository;
 import com.pbl6.hotelbookingapp.repository.TokenRepository;
 import com.pbl6.hotelbookingapp.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +21,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -35,9 +35,8 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final HotelRepository hotelRepository;
 
-    private final UserRepository userRepository;
-    private final EmailService emailService;
     public RegisterResponse register(RegisterRequest request) {
         Optional<User> checkUser = repository.findByEmail(request.getEmail());
         var jwtToken = new String();
@@ -114,6 +113,11 @@ public class AuthenticationService {
                 var role = user.getRole();
                 var jwtToken = jwtService.generateToken(user);
                 var refreshToken = jwtService.generateRefreshToken(user);
+                List<Hotel> hotels = new ArrayList<>();
+                if(role == Role.HOST)
+                {
+                    hotels = hotelRepository.findAllByUserId(id);
+                }
                 revokeAllUserTokens(user);
                 saveUserToken(user, jwtToken);
                 return AuthenticationResponse
@@ -124,6 +128,7 @@ public class AuthenticationService {
                         .role(String.valueOf(role))
                         .name(user.getFullName())
                         .email(user.getEmail())
+                        .hotels(hotels)
                         .build();
             }
         }
