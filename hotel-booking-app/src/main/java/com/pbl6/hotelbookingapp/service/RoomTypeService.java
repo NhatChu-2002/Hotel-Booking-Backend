@@ -228,6 +228,7 @@ public class RoomTypeService {
 
     private RoomTypeDetailResponse convertToRoomTypeDetailResponse(RoomType roomType) {
         return RoomTypeDetailResponse.builder()
+                .id(roomType.getId())
                 .name(roomType.getName())
                 .count(roomType.getCount())
                 .price(roomType.getPrice())

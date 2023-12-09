@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RoomTypeDetailResponse {
+    private Integer id;
     private String name;
     private Integer count;
     private Double price;
