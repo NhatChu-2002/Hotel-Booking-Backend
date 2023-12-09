@@ -16,8 +16,8 @@ import static com.fasterxml.jackson.databind.type.LogicalType.Map;
 
 public class Config {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    @Value("${vnpay.return.url}")
-    public static String vnp_ReturnUrl ;
+//    @Value("${vnpay.return.url}")
+    public static String vnp_ReturnUrl ="https://inn-sight-client.vercel.app/book/pay" ;
     public static String vnp_TmnCode = "W923D5J4";
     public static String secretKey = "BYLLNVXJETWJSJWUDBWCCKYGSNICLQUP";
     public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
