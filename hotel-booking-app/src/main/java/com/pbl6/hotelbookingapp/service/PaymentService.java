@@ -97,7 +97,7 @@ public class PaymentService {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
-        long amount =  price.longValue()*100;
+        long amount = price.longValue()*100;
         String bankCode = "NCB";
 
         String vnp_TxnRef = Config.getRandomNumber(8);
@@ -112,12 +112,15 @@ public class PaymentService {
         vnp_Params.put("vnp_Amount", String.valueOf(amount));
         vnp_Params.put("vnp_CurrCode", "VND");
 
+
         vnp_Params.put("vnp_BankCode", bankCode);
+
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
         vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
         vnp_Params.put("vnp_OrderType", orderType);
-
         vnp_Params.put("vnp_Locale", "vn");
+
+
         vnp_Params.put("vnp_ReturnUrl", Config.vnp_ReturnUrl);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
@@ -126,7 +129,7 @@ public class PaymentService {
         String vnp_CreateDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
 
-        cld.add(Calendar.DAY_OF_YEAR, 1);
+        cld.add(Calendar.MINUTE, 15);
         String vnp_ExpireDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
 
