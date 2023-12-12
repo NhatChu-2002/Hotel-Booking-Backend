@@ -3,6 +3,8 @@ package com.pbl6.hotelbookingapp.service;
 import com.pbl6.hotelbookingapp.entity.BedType;
 import com.pbl6.hotelbookingapp.repository.BedTypeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,8 +31,8 @@ public class BedTypeService {
     public void deleteBedTypeById(Integer id) {
         bedTypeRepository.deleteById(id);
     }
-    public List<BedType> findByNameContaining(String name) {
-        return bedTypeRepository.findByNameContaining(name);
+    public Page<BedType> findBedTypesByNameContaining(String name, Pageable pageable) {
+        return bedTypeRepository.findByNameContaining(name, pageable);
     }
 
 }

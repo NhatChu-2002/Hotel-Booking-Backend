@@ -8,6 +8,8 @@ import com.pbl6.hotelbookingapp.repository.RoomAmenityRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -42,9 +44,14 @@ public class RoomAmenityService {
     public void deleteRoomAmenity(Integer id) {
         roomAmenityRepository.deleteById(id);
     }
-    public AmenitySearchResponse searchAmenities(String keyword) {
-        List<HotelAmenity> hotelAmenities = hotelAmenityRepository.findByNameContaining(keyword);
-        List<RoomAmenity> roomAmenities = roomAmenityRepository.findByNameContaining(keyword);
+    public AmenitySearchResponse searchAmenities(String keyword, Pageable pageable) {
+        Page<HotelAmenity> hotelAmenitiesPage = hotelAmenityRepository.findByNameContaining(keyword, pageable);
+        Page<RoomAmenity> roomAmenitiesPage = roomAmenityRepository.findByNameContaining(keyword, pageable);
+
+
+        List<HotelAmenity> hotelAmenities = hotelAmenitiesPage.getContent();
+        List<RoomAmenity> roomAmenities = roomAmenitiesPage.getContent();
+
 
         return new AmenitySearchResponse(hotelAmenities, roomAmenities);
     }
