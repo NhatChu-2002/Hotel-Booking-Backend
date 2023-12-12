@@ -10,6 +10,9 @@ import com.pbl6.hotelbookingapp.entity.*;
 import com.pbl6.hotelbookingapp.service.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -144,15 +147,20 @@ public class AdminController {
 
     }
     @GetMapping("/roomAmenity/search")
-    public ResponseEntity<?> searchAmenities(@RequestParam String name) {
+    public ResponseEntity<?> searchAmenities(
+            @RequestParam(required = false) String name,
+            @RequestParam(defaultValue = "0") int pageIndex,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
         try {
-            AmenitySearchResponse amenities = roomAmenityService.searchAmenities(name);
+            Pageable pageable = PageRequest.of(pageIndex, pageSize);
+            AmenitySearchResponse amenities = roomAmenityService.searchAmenities(name, pageable);
             return ResponseEntity.ok().body(amenities);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
+
     @PutMapping("/management/user/{id}")
     public ResponseEntity<?> editUser(@PathVariable Integer id, @RequestBody @Valid EditUserRequest updatedUser) {
         try{
@@ -203,14 +211,25 @@ public class AdminController {
 
     }
     @GetMapping("/management/user/search")
-    public ResponseEntity<?> getUsersByEmail(@RequestParam("email") String email) {
-        List<User> users = userService.findUserByEmailContaining(email);
-        if (!users.isEmpty()) {
-            return new ResponseEntity<>(users, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("No users found", HttpStatus.NOT_FOUND);
+    public ResponseEntity<?> getUsersByEmail(
+            @RequestParam(required = false) String email,
+            @RequestParam(defaultValue = "0") int pageIndex,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        try {
+            Pageable pageable = PageRequest.of(pageIndex, pageSize);
+            Page<User> users = userService.findUsersByEmailContaining(email, pageable);
+
+            if (users.hasContent()) {
+                return ResponseEntity.ok().body(users);
+            } else {
+                return new ResponseEntity<>("No users found", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
 
 
@@ -259,9 +278,23 @@ public class AdminController {
 
     }
     @GetMapping("/bedTypes/search")
-    public ResponseEntity<List<BedType>> searchBedTypeByNameContaining(@RequestParam String name) {
-        List<BedType> bedTypes = bedTypeService.findByNameContaining(name);
-        return new ResponseEntity<>(bedTypes, HttpStatus.OK);
+    public ResponseEntity<Page<BedType>> searchBedTypeByNameContaining(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") int pageIndex,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        try {
+            Pageable pageable = PageRequest.of(pageIndex, pageSize);
+            Page<BedType> bedTypes = bedTypeService.findBedTypesByNameContaining(name, pageable);
+
+            if (bedTypes.hasContent()) {
+                return ResponseEntity.ok().body(bedTypes);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 
@@ -308,8 +341,22 @@ public class AdminController {
     }
 
     @GetMapping("/views/search")
-    public ResponseEntity<List<View>> searchViewByName(@RequestParam String name) {
-        List<View> views = viewService.findByNameContaining(name);
-        return new ResponseEntity<>(views, HttpStatus.OK);
+    public ResponseEntity<Page<View>> searchViewByName(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") int pageIndex,
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        try {
+            Pageable pageable = PageRequest.of(pageIndex, pageSize);
+            Page<View> views = viewService.findViewsByNameContaining(name, pageable);
+
+            if (views.hasContent()) {
+                return ResponseEntity.ok().body(views);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
