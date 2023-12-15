@@ -442,6 +442,14 @@ public class HotelService {
         Hotel hotel = hotelRepository.findById(hotelId).orElseThrow(() -> new HotelNotFoundException("Hotel not found"));
         return hotelRepository.getRevenueByYear(hotelId, year);
     }
+
+    public List<RevenueResponse> getRevenueForAdminByYear(Integer year) {
+        return hotelRepository.getRevenueForAdminByYear(year);
+    }
+
+    public List<RevenueByYearResponse> getRevenueForAdmin() {
+        return hotelRepository.getRevenueForAdmin();
+    }
 }
 
 
