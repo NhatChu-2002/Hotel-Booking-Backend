@@ -4,6 +4,7 @@ package com.pbl6.hotelbookingapp.repository;
 import com.pbl6.hotelbookingapp.dto.HotelFilterSearchResult;
 import com.pbl6.hotelbookingapp.dto.HotelSearchResult;
 import com.pbl6.hotelbookingapp.dto.HotelWithTopRating;
+import com.pbl6.hotelbookingapp.dto.RevenueResponse;
 import com.pbl6.hotelbookingapp.entity.Hotel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -41,4 +42,22 @@ public interface HotelRepository extends JpaRepository<Hotel, Integer>, JpaSpeci
 
     Optional<Hotel> findByUserIdAndId(Integer userId, Integer hotelId);
     List<Hotel> findAllByUserId(Integer hostId);
+
+    @Query("SELECT NEW com.pbl6.hotelbookingapp.dto.RevenueResponse(" +
+            "MONTH(rs.createdAt), " +
+            "SUM(rs.totalPrice * 0.8)" +
+            ") " +
+            "FROM RoomReserved rr " +
+            "JOIN Reservation rs ON rr.reservation.id = rs.id " +
+            "JOIN Room r ON r.id = rr.room.id " +
+            "JOIN RoomType rt ON r.roomType.id = rt.id " +
+            "JOIN Hotel h ON rt.hotel.id = h.id " +
+            "WHERE h.id = :hotelId " +
+            "AND YEAR(rs.createdAt) = :year " +
+            "AND rs.status = 'CONFIRMED' " +
+            "GROUP BY MONTH(rs.createdAt) " +
+            "ORDER BY MONTH(rs.createdAt)")
+    List<RevenueResponse> getRevenueByYear(@Param("hotelId") Integer hotelId, @Param("year") Integer year);
+
+
 }

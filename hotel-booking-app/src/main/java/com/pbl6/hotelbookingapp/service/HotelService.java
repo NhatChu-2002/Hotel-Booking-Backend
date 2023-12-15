@@ -437,6 +437,11 @@ public class HotelService {
             throw new HotelNotFoundException("Hotel not found with ID: " + hotelId);
         }
     }
+
+    public List<RevenueResponse> getRevenueByYear(Integer hotelId, Integer year) {
+        Hotel hotel = hotelRepository.findById(hotelId).orElseThrow(() -> new HotelNotFoundException("Hotel not found"));
+        return hotelRepository.getRevenueByYear(hotelId, year);
+    }
 }
 
 

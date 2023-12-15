@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 
@@ -104,5 +105,11 @@ public class HotelController {
                     .body(new ErrorResponse(e.getMessage()));
         }
 
+    }
+
+    @PostMapping ("/revenue/by-year")
+    public ResponseEntity<List<RevenueResponse>> getRevenueByYear(@RequestHeader("hotelId") Integer hotelId, @RequestBody RevenueRequest revenueRequest) {
+        List<RevenueResponse> revenueList = hotelService.getRevenueByYear(hotelId, revenueRequest.getYear());
+        return new ResponseEntity<>(revenueList, HttpStatus.OK);
     }
 }
