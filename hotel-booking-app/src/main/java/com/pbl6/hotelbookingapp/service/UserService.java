@@ -202,8 +202,7 @@ public class UserService {
             repository.save(user);
         }
     }
-    public List<User> findUserByEmailContaining(String email) {
-        return repository.findByEmailIgnoreCaseContaining(email);
+    public Page<User> findUsersByEmailContaining(String email, Pageable pageable) {
+        return repository.findByEmailIgnoreCaseContaining(email, pageable);
     }
-
 }

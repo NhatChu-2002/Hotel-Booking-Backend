@@ -3,6 +3,8 @@ package com.pbl6.hotelbookingapp.service;
 import com.pbl6.hotelbookingapp.entity.View;
 import com.pbl6.hotelbookingapp.repository.ViewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +34,7 @@ public class ViewService {
         viewRepository.deleteById(id);
     }
 
-    public List<View> findByNameContaining(String name) {
-        return viewRepository.findByNameContaining(name);
+    public Page<View> findViewsByNameContaining(String name, Pageable pageable) {
+        return viewRepository.findByNameContaining(name, pageable);
     }
 }
