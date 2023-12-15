@@ -2,10 +2,7 @@ package com.pbl6.hotelbookingapp.controller;
 
 import com.pbl6.hotelbookingapp.Exception.ResponseException;
 import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
-import com.pbl6.hotelbookingapp.dto.AmenitySearchResponse;
-import com.pbl6.hotelbookingapp.dto.EditUserRequest;
-import com.pbl6.hotelbookingapp.dto.ErrorResponse;
-import com.pbl6.hotelbookingapp.dto.UserListResponse;
+import com.pbl6.hotelbookingapp.dto.*;
 import com.pbl6.hotelbookingapp.entity.*;
 import com.pbl6.hotelbookingapp.service.*;
 import jakarta.validation.Valid;
@@ -29,6 +26,7 @@ public class AdminController {
     private  final UserService userService;
     private final BedTypeService bedTypeService;
     private final ViewService viewService;
+    private final HotelService hotelService;
 
     @GetMapping("/hotelService/list")
     public ResponseEntity<?> getAllHotelAmenities() {
@@ -358,5 +356,17 @@ public class AdminController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PostMapping ("/revenue/by-year")
+    public ResponseEntity<List<RevenueResponse>> getRevenueForAdminByYear(@RequestBody RevenueRequest revenueRequest) {
+        List<RevenueResponse> revenueList = hotelService.getRevenueForAdminByYear(revenueRequest.getYear());
+        return new ResponseEntity<>(revenueList, HttpStatus.OK);
+    }
+
+    @PostMapping ("/revenue")
+    public ResponseEntity<List<RevenueByYearResponse>> getRevenueForAdminByYear() {
+        List<RevenueByYearResponse> revenueList = hotelService.getRevenueForAdmin();
+        return new ResponseEntity<>(revenueList, HttpStatus.OK);
     }
 }

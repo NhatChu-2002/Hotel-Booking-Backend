@@ -1,10 +1,7 @@
 package com.pbl6.hotelbookingapp.repository;
 
 
-import com.pbl6.hotelbookingapp.dto.HotelFilterSearchResult;
-import com.pbl6.hotelbookingapp.dto.HotelSearchResult;
-import com.pbl6.hotelbookingapp.dto.HotelWithTopRating;
-import com.pbl6.hotelbookingapp.dto.RevenueResponse;
+import com.pbl6.hotelbookingapp.dto.*;
 import com.pbl6.hotelbookingapp.entity.Hotel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -60,4 +57,24 @@ public interface HotelRepository extends JpaRepository<Hotel, Integer>, JpaSpeci
     List<RevenueResponse> getRevenueByYear(@Param("hotelId") Integer hotelId, @Param("year") Integer year);
 
 
+    @Query("SELECT NEW com.pbl6.hotelbookingapp.dto.RevenueResponse(" +
+            "MONTH(r.createdAt), " +
+            "SUM(r.siteFee + r.taxPaid)" +
+            ") " +
+            "FROM Reservation r " +
+            "WHERE YEAR(r.createdAt) = :year " +
+            "AND r.status = 'CONFIRMED' " +
+            "GROUP BY MONTH(r.createdAt) " +
+            "ORDER BY MONTH(r.createdAt)")
+    List<RevenueResponse> getRevenueForAdminByYear(@Param("year") Integer year);
+
+    @Query("SELECT NEW com.pbl6.hotelbookingapp.dto.RevenueByYearResponse(" +
+            "YEAR(r.createdAt), " +
+            "SUM(r.siteFee + r.taxPaid)" +
+            ") " +
+            "FROM Reservation r " +
+            "WHERE r.status = 'CONFIRMED' " +
+            "GROUP BY YEAR(r.createdAt) " +
+            "ORDER BY YEAR(r.createdAt)")
+    List<RevenueByYearResponse> getRevenueForAdmin();
 }
