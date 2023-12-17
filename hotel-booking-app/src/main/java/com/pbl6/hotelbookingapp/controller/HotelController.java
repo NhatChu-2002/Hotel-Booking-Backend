@@ -3,6 +3,9 @@ package com.pbl6.hotelbookingapp.controller;
 
 import com.pbl6.hotelbookingapp.Exception.ResponseException;
 import com.pbl6.hotelbookingapp.dto.*;
+import com.pbl6.hotelbookingapp.entity.HotelAmenity;
+import com.pbl6.hotelbookingapp.entity.RoomAmenity;
+import com.pbl6.hotelbookingapp.service.HotelAmenityService;
 import com.pbl6.hotelbookingapp.service.HotelService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,14 +21,28 @@ import java.util.Set;
 @CrossOrigin("${allowed.origins}")
 public class HotelController {
     private HotelService hotelService;
+    private HotelAmenityService hotelAmenityService;
 
-    public HotelController(HotelService hotelService) {
+    public HotelController(HotelService hotelService, HotelAmenityService hotelAmenityService) {
         this.hotelService = hotelService;
+        this.hotelAmenityService = hotelAmenityService;
     }
 
     @GetMapping("/top-4-hotels")
     public Set<HotelWithTopRating> getTop4HotelsWithFirstImage() {
         return hotelService.getTop4HotelsWithFirstImage();
+    }
+
+
+    @GetMapping("/services")
+    public ResponseEntity<?> getAllHotelAmenities() {
+        try {
+            List<HotelAmenity> list =  hotelAmenityService.getAllHotelAmenities();
+            return ResponseEntity.ok().body(list);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
 
@@ -106,6 +123,7 @@ public class HotelController {
         }
 
     }
+
 
     @PostMapping ("/revenue/by-year")
     public ResponseEntity<List<RevenueResponse>> getRevenueByYear(@RequestHeader("hotelId") Integer hotelId, @RequestBody RevenueRequest revenueRequest) {
