@@ -1,6 +1,8 @@
 package com.pbl6.hotelbookingapp.controller;
 
 import com.pbl6.hotelbookingapp.dto.*;
+import com.pbl6.hotelbookingapp.entity.RoomAmenity;
+import com.pbl6.hotelbookingapp.service.RoomAmenityService;
 import com.pbl6.hotelbookingapp.service.RoomTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,11 +18,17 @@ import java.util.List;
 public class RoomTypeController {
 
     private final RoomTypeService roomTypeService;
+    private final RoomAmenityService roomAmenityService;
 
-    @Autowired
-    public RoomTypeController(RoomTypeService roomTypeService) {
+    public RoomTypeController(RoomTypeService roomTypeService, RoomAmenityService roomAmenityService) {
         this.roomTypeService = roomTypeService;
+        this.roomAmenityService = roomAmenityService;
     }
+
+//    @Autowired
+//    public RoomTypeController(RoomTypeService roomTypeService) {
+//        this.roomTypeService = roomTypeService;
+//    }
 
     @GetMapping(value = "/{roomTypeId}")
     public  RoomTypeDetailResponse getRoomTypeById(@RequestHeader("hotelId") Integer hotelId, @PathVariable Integer roomTypeId) {
@@ -30,6 +38,17 @@ public class RoomTypeController {
     @GetMapping(value = "")
     public RoomTypesOfHotelResponse getRoomTypesOfHotelResponse(@RequestHeader("hotelId") Integer hotelId) {
         return roomTypeService.findRoomTypesByHotelId(hotelId);
+    }
+
+    @GetMapping("/amenities")
+    public ResponseEntity<?> getAllRoomAmenities() {
+        try {
+            List<RoomAmenity> roomAmenities = roomAmenityService.getAllRoomAmenities();
+
+            return ResponseEntity.ok().body(roomAmenities);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST,  consumes = {"multipart/form-data"})
