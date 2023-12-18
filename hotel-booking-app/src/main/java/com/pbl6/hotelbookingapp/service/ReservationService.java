@@ -183,17 +183,29 @@ public class ReservationService {
                     roomReservedRepository.save(roomReserved);
             }
             Invoice newInvoice = new Invoice();
+            if(request.getPaymentMethod().toLowerCase().equals("cash") )
+            {
+                newInvoice.setUser(saveUser);
+                newInvoice.setInvoiceAmount(reservation.getTotalPrice());
+                newInvoice.setTimePaid(null);
+                newInvoice.setVnpRef(null);
+                newInvoice.setVnpTransdate(null);
+                newInvoice.setPaymentType(PaymentType.CASH);
+                newInvoice.setReservation(reservation);
+                invoiceRepository.save(newInvoice);
+            }
+            else {
+                newInvoice.setUser(saveUser);
+                newInvoice.setInvoiceAmount(reservation.getTotalPrice());
+                LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+                newInvoice.setTimePaid(localDateTime);
+                newInvoice.setVnpRef(request.getOrderId());
+                newInvoice.setVnpTransdate(request.getTransDate());
+                newInvoice.setPaymentType(PaymentType.CREDIT_CARD);
+                newInvoice.setReservation(reservation);
+                invoiceRepository.save(newInvoice);
+            }
 
-            newInvoice.setUser(saveUser);
-            newInvoice.setInvoiceAmount(reservation.getTotalPrice());
-
-            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
-            newInvoice.setTimePaid(localDateTime);
-            newInvoice.setVnpRef(request.getOrderId());
-            newInvoice.setVnpTransdate(request.getTransDate());
-            newInvoice.setPaymentType(PaymentType.CREDIT_CARD);
-            newInvoice.setReservation(reservation);
-            invoiceRepository.save(newInvoice);
 
 
             return reservationResponse;

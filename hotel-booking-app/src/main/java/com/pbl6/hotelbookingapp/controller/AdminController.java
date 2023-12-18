@@ -364,7 +364,7 @@ public class AdminController {
         return new ResponseEntity<>(revenueList, HttpStatus.OK);
     }
 
-    @PostMapping ("/revenue")
+    @GetMapping  ("/revenue")
     public ResponseEntity<List<RevenueByYearResponse>> getRevenueForAdminByYear() {
         List<RevenueByYearResponse> revenueList = hotelService.getRevenueForAdmin();
         return new ResponseEntity<>(revenueList, HttpStatus.OK);
