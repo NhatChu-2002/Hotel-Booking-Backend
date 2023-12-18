@@ -1,6 +1,7 @@
 package com.pbl6.hotelbookingapp.dto;
 
 import com.pbl6.hotelbookingapp.entity.ExtraService;
+import com.pbl6.hotelbookingapp.entity.HotelStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class HotelDetails {
     private LocalTime checkOut;
     private double minPrice;
     private String description;
+    private HotelStatus status;
     private List<String> hotelImages;
     private List<String> hotelAmenities;
     private List<ExtraService> extraServices;

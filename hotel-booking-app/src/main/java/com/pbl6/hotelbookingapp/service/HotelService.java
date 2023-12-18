@@ -316,6 +316,7 @@ public class HotelService {
                     .roomList(getRoomTypeDetails(hotel.getRoomTypes().stream().toList(), request.getCheckInDay(), request.getCheckOutDay()))
                     .reviews(getReviews(hotel.getReviews().stream().toList()))
                     .rules(getRules(hotel))
+                    .status(hotel.getStatus())
                     .build();
         } else {
             throw new ResponseException("Hotel not found with id: " + request.getHotelId());
