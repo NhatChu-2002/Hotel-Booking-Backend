@@ -1,40 +1,20 @@
 package com.pbl6.hotelbookingapp.service;
 
 import com.pbl6.hotelbookingapp.entity.View;
-import com.pbl6.hotelbookingapp.repository.ViewRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class ViewService {
-    private final ViewRepository viewRepository;
+public interface ViewService {
+    List<View> getAllViews();
 
-    @Autowired
-    public ViewService(ViewRepository viewRepository) {
-        this.viewRepository = viewRepository;
-    }
+    Optional<View> getViewById(Integer id);
 
-    public List<View> getAllViews() {
-        return viewRepository.findAll();
-    }
+    View createOrUpdateView(View view);
 
-    public Optional<View> getViewById(Integer id) {
-        return viewRepository.findById(id);
-    }
+    void deleteViewById(Integer id);
 
-    public View createOrUpdateView(View view) {
-        return viewRepository.save(view);
-    }
-
-    public void deleteViewById(Integer id) {
-        viewRepository.deleteById(id);
-    }
-
-    public Page<View> findViewsByNameContaining(String name, Pageable pageable) {
-        return viewRepository.findByNameContaining(name, pageable);
-    }
+    Page<View> findViewsByNameContaining(String name, Pageable pageable);
 }
