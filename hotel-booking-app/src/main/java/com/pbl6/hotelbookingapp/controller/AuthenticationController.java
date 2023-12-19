@@ -5,6 +5,7 @@ import com.pbl6.hotelbookingapp.dto.AuthenticationResponse;
 import com.pbl6.hotelbookingapp.dto.RegisterRequest;
 import com.pbl6.hotelbookingapp.dto.RegisterResponse;
 import com.pbl6.hotelbookingapp.service.AuthenticationService;
+import com.pbl6.hotelbookingapp.service.AuthenticationServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
