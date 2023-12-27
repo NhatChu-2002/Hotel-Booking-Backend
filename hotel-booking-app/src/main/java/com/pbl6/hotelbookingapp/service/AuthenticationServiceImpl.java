@@ -114,11 +114,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 var role = user.getRole();
                 var jwtToken = jwtService.generateToken(user);
                 var refreshToken = jwtService.generateRefreshToken(user);
-                List<Hotel> hotels = new ArrayList<>();
-                if(role == Role.HOST)
-                {
-                    hotels = hotelRepository.findAllByUserId(id);
-                }
+
                 revokeAllUserTokens(user);
                 saveUserToken(user, jwtToken);
                 return AuthenticationResponse
@@ -129,7 +125,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         .role(String.valueOf(role))
                         .name(user.getFullName())
                         .email(user.getEmail())
-                        .hotels(hotels)
                         .build();
             }
         }

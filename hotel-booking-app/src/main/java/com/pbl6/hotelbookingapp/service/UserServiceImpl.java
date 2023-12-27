@@ -8,6 +8,9 @@ import com.pbl6.hotelbookingapp.repository.HotelRepository;
 import com.pbl6.hotelbookingapp.repository.ReservationRepository;
 import com.pbl6.hotelbookingapp.repository.TokenRepository;
 import com.pbl6.hotelbookingapp.repository.UserRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -215,4 +219,21 @@ public class UserServiceImpl implements UserService {
     public Page<User> findUsersByEmailContaining(String email, Pageable pageable) {
         return repository.findByEmailIgnoreCaseContaining(email, pageable);
     }
+
+    @Override
+    public List<Hotel> getHotelByUserId(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            String jwtToken = token.substring(7);
+
+
+            Claims claims = Jwts.parser().setSigningKey(jwtService.getSignInKey()).parseClaimsJws(jwtToken).getBody();
+
+
+            Integer userId = claims.get("userId", Integer.class);
+            return hotelRepository.findAllByUserId(userId);
+        }
+
+        return Collections.emptyList();
+    }
+
 }

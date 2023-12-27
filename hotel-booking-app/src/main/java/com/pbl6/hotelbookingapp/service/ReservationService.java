@@ -16,7 +16,7 @@ public interface ReservationService {
     ReservationDto getReservationByCode(String reservationCode);
 
 
-    ReservedHistoryResponse getHistory(Integer id);
+    ReservedHistoryResponse getHistory(String token);
 
     Invoice saveInvoice(SaveInvoiceRequest request);
 
