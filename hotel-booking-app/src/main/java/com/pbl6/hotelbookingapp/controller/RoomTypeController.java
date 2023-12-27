@@ -2,8 +2,10 @@ package com.pbl6.hotelbookingapp.controller;
 
 import com.pbl6.hotelbookingapp.dto.*;
 import com.pbl6.hotelbookingapp.entity.RoomAmenity;
+import com.pbl6.hotelbookingapp.entity.View;
 import com.pbl6.hotelbookingapp.service.RoomAmenityService;
 import com.pbl6.hotelbookingapp.service.RoomTypeService;
+import com.pbl6.hotelbookingapp.service.ViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +22,16 @@ public class RoomTypeController {
     private final RoomTypeService roomTypeService;
     private final RoomAmenityService roomAmenityService;
 
-    public RoomTypeController(RoomTypeService roomTypeService, RoomAmenityService roomAmenityService) {
+    private final ViewService viewService;
+
+    public RoomTypeController(RoomTypeService roomTypeService, RoomAmenityService roomAmenityService, ViewService viewService) {
         this.roomTypeService = roomTypeService;
         this.roomAmenityService = roomAmenityService;
+        this.viewService = viewService;
     }
 
-//    @Autowired
+
+    //    @Autowired
 //    public RoomTypeController(RoomTypeService roomTypeService) {
 //        this.roomTypeService = roomTypeService;
 //    }
@@ -86,6 +92,12 @@ public class RoomTypeController {
     @PostMapping("/available-rooms")
     public List<RoomAvailableResponse> getAvailableRooms(@RequestHeader("hotelId") Integer hotelId, @RequestBody RoomAvailableRequest roomAvailableRequest) {
         return roomTypeService.getAvailableRooms(hotelId, roomAvailableRequest);
+    }
+
+    @GetMapping("/views")
+    public ResponseEntity<List<View>> getAllViews() {
+        List<View> views = viewService.getAllViews();
+        return new ResponseEntity<>(views, HttpStatus.OK);
     }
 
 }

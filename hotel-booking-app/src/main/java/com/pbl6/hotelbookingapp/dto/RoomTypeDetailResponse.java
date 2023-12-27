@@ -1,5 +1,6 @@
 package com.pbl6.hotelbookingapp.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,7 @@ public class RoomTypeDetailResponse {
     private Integer id;
     private String name;
     private Integer count;
+    @JsonSerialize(using = DecimalJsonSerializer.class)
     private Double price;
     private Integer bathroomCount;
     private Integer roomArea;
