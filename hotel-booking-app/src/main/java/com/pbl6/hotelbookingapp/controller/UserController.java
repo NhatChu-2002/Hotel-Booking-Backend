@@ -3,8 +3,10 @@ package com.pbl6.hotelbookingapp.controller;
 import com.pbl6.hotelbookingapp.Exception.ResponseException;
 import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
 import com.pbl6.hotelbookingapp.dto.*;
+import com.pbl6.hotelbookingapp.entity.Hotel;
 import com.pbl6.hotelbookingapp.entity.User;
 import com.pbl6.hotelbookingapp.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -88,6 +90,18 @@ public class UserController {
         }
 
 
+    }
+    @GetMapping("/hotels")
+    public ResponseEntity<List<Hotel>> getUserHotels(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+
+        List<Hotel> userHotels = service.getHotelByUserId(token);
+
+        if (!userHotels.isEmpty()) {
+            return ResponseEntity.ok(userHotels);
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
 }

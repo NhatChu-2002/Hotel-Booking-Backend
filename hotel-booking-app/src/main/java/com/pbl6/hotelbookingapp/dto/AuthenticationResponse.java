@@ -26,7 +26,5 @@ public class AuthenticationResponse {
     private String email;
     @JsonProperty("name")
     private String name;
-    @JsonProperty("hotels")
-    private List<Hotel> hotels;
 
 }

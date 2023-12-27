@@ -1,6 +1,7 @@
 package com.pbl6.hotelbookingapp.service;
 
 import com.pbl6.hotelbookingapp.dto.*;
+import com.pbl6.hotelbookingapp.entity.Hotel;
 import com.pbl6.hotelbookingapp.entity.Role;
 import com.pbl6.hotelbookingapp.entity.User;
 import jakarta.transaction.Transactional;
@@ -42,4 +43,5 @@ public interface UserService {
     void deleteUser(Integer userId);
 
     Page<User> findUsersByEmailContaining(String email, Pageable pageable);
+    List<Hotel> getHotelByUserId(String token);
 }

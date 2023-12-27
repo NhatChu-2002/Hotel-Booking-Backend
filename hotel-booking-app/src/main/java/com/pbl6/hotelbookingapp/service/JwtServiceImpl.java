@@ -1,5 +1,6 @@
 package com.pbl6.hotelbookingapp.service;
 
+import com.pbl6.hotelbookingapp.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -33,28 +34,30 @@ public class JwtServiceImpl implements JwtService {
         return claimsResolver.apply(claims);
     }
     @Override
-    public String generateToken(UserDetails userDetails)
+    public String generateToken(User userDetails)
     {
         return generateToken(new HashMap<>(), userDetails);
     }
 
     @Override
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails)
+    public String generateToken(Map<String, Object> extraClaims, User userDetails)
     {
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
     @Override
-    public String generateRefreshToken(UserDetails userDetails)
+    public String generateRefreshToken(User userDetails)
     {
         return buildToken(new HashMap<>(), userDetails, refreshExpiration);
     }
     @Override
-    public String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
+    public String buildToken(Map<String, Object> extraClaims, User userDetails, long expiration) {
         Calendar vietnamCalendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
         vietnamCalendar.setTimeInMillis(System.currentTimeMillis());
 
         Date currentTimeInVietnam = vietnamCalendar.getTime();
         Date expirationTimeInVietnam = new Date(currentTimeInVietnam.getTime() + expiration);
+
+        extraClaims.put("userId", userDetails.getId());
 
         return Jwts
                 .builder()

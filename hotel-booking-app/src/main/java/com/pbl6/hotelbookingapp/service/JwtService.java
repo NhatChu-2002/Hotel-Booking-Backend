@@ -1,7 +1,9 @@
 package com.pbl6.hotelbookingapp.service;
 
+import com.pbl6.hotelbookingapp.entity.User;
 import io.jsonwebtoken.Claims;
 import org.springframework.security.core.userdetails.UserDetails;
+
 
 import java.security.Key;
 import java.util.Date;
@@ -13,13 +15,13 @@ public interface JwtService {
 
     <T> T extractClaim(String token, Function<Claims, T> claimsResolver);
 
-    String generateToken(UserDetails userDetails);
+    String generateToken(User userDetails);
 
-    String generateToken(Map<String, Object> extraClaims, UserDetails userDetails);
+    String generateToken(Map<String, Object> extraClaims, User userDetails);
 
-    String generateRefreshToken(UserDetails userDetails);
+    String generateRefreshToken(User userDetails);
 
-    String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration);
+    String buildToken(Map<String, Object> extraClaims, User userDetails, long expiration);
 
     boolean isTokenValid(String token, UserDetails userDetails);
 
