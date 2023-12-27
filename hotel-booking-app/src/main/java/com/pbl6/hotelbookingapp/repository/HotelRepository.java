@@ -28,7 +28,7 @@ public interface HotelRepository extends JpaRepository<Hotel, Integer>, JpaSpeci
 
 
     @Query(name = "searchHotels", nativeQuery = true)
-    List<HotelSearchResult> searchHotels(
+    List<HotelSearchResult>  searchHotels(
             @Param("province") String province,
             @Param("checkin_day") LocalDate checkinDay,
             @Param("checkout_day") LocalDate checkoutDay,
