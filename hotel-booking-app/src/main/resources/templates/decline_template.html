@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <title>Thông Báo: Từ Chối Khách Sạn</title>
+  <meta charset="UTF-8">
+  <style type="text/css">
+    /* Thiết lập CSS */
+    body, h1, p {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #007bff;
+      margin-bottom: 20px;
+    }
+    p {
+      color: #333;
+      margin-bottom: 15px;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Thông Báo Từ Chối Khách Sạn</h1>
+  <p>Xin chào [[${user.fullName}]],</p>
+  <p>Rất tiếc, khách sạn [[${hotel.name}]] của bạn đã bị từ chối.</p>
+  <!-- Nội dung bổ sung hoặc thông tin cá nhân có thể được thêm vào đây -->
+  <div class="footer">
+    <p>Email này được tạo tự động, vui lòng không trả lời.</p>
+  </div>
+</div>
+</body>
+</html>

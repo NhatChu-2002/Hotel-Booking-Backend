@@ -3,6 +3,7 @@ package com.pbl6.hotelbookingapp.repository;
 
 import com.pbl6.hotelbookingapp.dto.*;
 import com.pbl6.hotelbookingapp.entity.Hotel;
+import com.pbl6.hotelbookingapp.entity.HotelStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -77,4 +78,5 @@ public interface HotelRepository extends JpaRepository<Hotel, Integer>, JpaSpeci
             "GROUP BY YEAR(r.createdAt) " +
             "ORDER BY YEAR(r.createdAt)")
     List<RevenueByYearResponse> getRevenueForAdmin();
+    List<Hotel> findByStatus(HotelStatus status);
 }

@@ -369,4 +369,22 @@ public class AdminController {
         List<RevenueByYearResponse> revenueList = hotelService.getRevenueForAdmin();
         return new ResponseEntity<>(revenueList, HttpStatus.OK);
     }
+    @GetMapping("/hotels/pending")
+    public ResponseEntity<List<PendingHotelResponse>> getPendingHotels() {
+        List<PendingHotelResponse> pendingHotels = hotelService.getPendingHotels();
+        if (pendingHotels.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(pendingHotels);
+    }
+    @PutMapping("/hotels/{hotelId}/approve")
+    public ResponseEntity<String> approveHotel(@PathVariable Integer hotelId) {
+        hotelService.approveHotel(hotelId);
+        return ResponseEntity.ok("Hotel approved successfully");
+    }
+    @PutMapping("/hotels/{hotelId}/decline")
+    public ResponseEntity<String> declineHotel(@PathVariable Integer hotelId) {
+        hotelService.declineHotel(hotelId);
+        return ResponseEntity.ok("Hotel declined successfully");
+    }
 }

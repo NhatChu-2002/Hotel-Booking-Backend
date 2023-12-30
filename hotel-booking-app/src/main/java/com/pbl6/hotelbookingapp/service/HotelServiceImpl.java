@@ -5,6 +5,7 @@ import com.pbl6.hotelbookingapp.Exception.ResponseException;
 
 import com.pbl6.hotelbookingapp.Exception.UserNotFoundException;
 import com.pbl6.hotelbookingapp.dto.*;
+import com.pbl6.hotelbookingapp.email.EmailService;
 import com.pbl6.hotelbookingapp.entity.*;
 import com.pbl6.hotelbookingapp.repository.*;
 import jakarta.persistence.EntityManager;
@@ -38,7 +39,7 @@ public class HotelServiceImpl implements HotelService {
     private final ExtraServiceRepository extraServiceRepository;
     private final EntityManager entityManager;
     private final RoomService roomService;
-
+    private final EmailService emailService;
     private final FirebaseStorageService firebaseStorageService;
 
 
@@ -251,6 +252,23 @@ public class HotelServiceImpl implements HotelService {
         return hotelRepository.getRevenueForAdmin();
     }
 
+    @Override
+    public List<PendingHotelResponse> getPendingHotels() {
+        List<Hotel> hotels = hotelRepository.findByStatus(HotelStatus.PENDING);
+        List<PendingHotelResponse> responseList = new ArrayList<>();
+        if(!hotels.isEmpty())
+        {
+            for (Hotel hotel: hotels) {
+                PendingHotelResponse pendingHotelResponse = new PendingHotelResponse();
+                pendingHotelResponse.setHotel(hotel);
+                pendingHotelResponse.setHost(userRepository.findById(hotel.getUser().getId()).get());
+                responseList.add(pendingHotelResponse);
+            }
+        }
+        return responseList;
+    }
+
+
     void updateExtraAmenities(Hotel hotel, List<ExtraService> extraServices) {
         extraServiceRepository.deleteByHotel(hotel);
 
@@ -462,6 +480,25 @@ public class HotelServiceImpl implements HotelService {
 
     List<String> getRules(Hotel hotel) {
         return Arrays.asList(hotel.getRule().split("\\s*,\\s*"));
+    }
+    @Override
+    public void approveHotel(Integer hotelId) {
+        Optional<Hotel> optionalHotel = hotelRepository.findById(hotelId);
+        if (optionalHotel.isPresent()) {
+            Hotel hotel = optionalHotel.get();
+            hotel.setStatus(HotelStatus.ACTIVE);
+            hotelRepository.save(hotel);
+            emailService.sendApprovalNotification(hotel.getUser(), hotel);
+        }
+    }
+    public void declineHotel(Integer hotelId) {
+        Optional<Hotel> optionalHotel = hotelRepository.findById(hotelId);
+        if (optionalHotel.isPresent()) {
+            Hotel hotel = optionalHotel.get();
+            hotel.setStatus(HotelStatus.DECLINED);
+            hotelRepository.save(hotel);
+            emailService.sendDeclineNotification(hotel.getUser(), hotel);
+        }
     }
 }
 

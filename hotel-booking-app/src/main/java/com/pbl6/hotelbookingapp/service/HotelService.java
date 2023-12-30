@@ -51,4 +51,8 @@ public interface HotelService {
     List<RevenueResponse> getRevenueForAdminByYear(Integer year);
 
     List<RevenueByYearResponse> getRevenueForAdmin();
+    List<PendingHotelResponse> getPendingHotels();
+    void approveHotel(Integer hotelId);
+    void declineHotel(Integer hotelId);
+
 }
