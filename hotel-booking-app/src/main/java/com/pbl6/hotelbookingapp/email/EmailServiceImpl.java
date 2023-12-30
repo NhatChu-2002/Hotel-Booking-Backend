@@ -3,6 +3,8 @@ package com.pbl6.hotelbookingapp.email;
 
 import com.pbl6.hotelbookingapp.dto.CancelResponse;
 import com.pbl6.hotelbookingapp.dto.ReservationResponse;
+import com.pbl6.hotelbookingapp.entity.Hotel;
+import com.pbl6.hotelbookingapp.entity.User;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
@@ -81,6 +83,53 @@ public class EmailServiceImpl implements EmailService {
             throw new RuntimeException(exception.getMessage());
         }
     }
+    @Override
+    @Async
+    public void sendApprovalNotification(User user, Hotel hotel) {
+        MimeMessage message = emailSender.createMimeMessage();
+
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, UTF_8_ENCODING);
+            helper.setTo(user.getEmail()); // Gửi email đến email của user
+            helper.setSubject("Innsight-app: Hotel Approval Notification");
+            helper.setPriority(1);
+            Context context = new Context();
+            context.setVariable("user", user);
+            context.setVariable("hotel", hotel);
+
+            String emailContent = templateEngine.process("approval_template", context);
+            helper.setText(emailContent, true);
+
+            emailSender.send(message);
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+            throw new RuntimeException(exception.getMessage());
+        }
+    }
+    @Override
+    @Async
+    public void sendDeclineNotification(User user, Hotel hotel) {
+        MimeMessage message = emailSender.createMimeMessage();
+
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, UTF_8_ENCODING);
+            helper.setTo(user.getEmail()); // Gửi email đến email của user
+            helper.setSubject("Innsight-app: Hotel Decline Notification");
+            helper.setPriority(1);
+            Context context = new Context();
+            context.setVariable("user", user);
+            context.setVariable("hotel", hotel);
+
+            String emailContent = templateEngine.process("decline_template", context);
+            helper.setText(emailContent, true);
+
+            emailSender.send(message);
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+            throw new RuntimeException(exception.getMessage());
+        }
+    }
+
     @Override
     @Async
     public void sendCancellationEmail(CancelResponse cancelResponse, String to) {
