@@ -14,5 +14,5 @@ public class RoomAvailableResponse {
     private String roomName;
     @JsonSerialize(using = DecimalJsonSerializer.class)
     private Double price;
-    private Long count;
+    private long count;
 }

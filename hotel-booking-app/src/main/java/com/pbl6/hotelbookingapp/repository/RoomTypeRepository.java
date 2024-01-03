@@ -26,19 +26,17 @@ public interface RoomTypeRepository extends JpaRepository<RoomType,Integer> {
     RoomType findByHotelIdAndId(Integer hotelId, Integer roomTypeId);
 
     List<RoomType> findByHotelId(Integer hotelId);
-
     @Query("SELECT new com.pbl6.hotelbookingapp.dto.RoomAvailableResponse(" +
             "rt.name, " +
             "rt.price, " +
-            "COUNT(r.id)) " +
+            "rt.count - COUNT(rr.id)) " +
             "FROM Hotel h " +
             "JOIN RoomType rt ON h.id = rt.hotel.id " +
-            "JOIN Room r ON rt.id = r.roomType.id " +
-            "LEFT JOIN RoomReserved rr ON rr.room.id = r.id " +
-            "                           AND (:endDate >= rr.startDay AND :startDate <= rr.endDay) " +
+            "LEFT JOIN RoomReserved rr ON rr.room.roomType.id = rt.id " +
+            "                           AND :endDate >= rr.startDay " +
+            "                           AND :startDate <= rr.endDay " +
             "WHERE h.id = :hotelId " +
-            "AND rr.room.id IS NULL " +
-            "GROUP BY rt.name, rt.price")
+            "GROUP BY rt.name, rt.price, rt.count")
     List<RoomAvailableResponse> getAvailableRooms(
             @Param("hotelId") Integer hotelId,
             @Param("startDate") LocalDate startDate,
