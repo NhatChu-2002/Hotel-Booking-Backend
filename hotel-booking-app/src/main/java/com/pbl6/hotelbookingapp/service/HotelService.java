@@ -55,4 +55,5 @@ public interface HotelService {
     void approveHotel(Integer hotelId);
     void declineHotel(Integer hotelId);
 
+    HotelDetails getHotelDetailsById(Integer userId, Integer hotelId);
 }
