@@ -5,10 +5,13 @@ import com.pbl6.hotelbookingapp.dto.*;
 import com.pbl6.hotelbookingapp.entity.*;
 import com.pbl6.hotelbookingapp.repository.*;
 import jakarta.transaction.Transactional;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -85,7 +88,9 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         roomType.setAmenities(amenities);
         roomTypeRepository.save(roomType);
         updateRoomBedTypes(roomType, roomTypeDTO.getBedTypes());
-        updateRoomImages(roomType, roomTypeDTO.getImages());
+        if (roomTypeDTO.getImages() != null && !roomTypeDTO.getImages().isEmpty()) {
+            updateRoomImages(roomType, roomTypeDTO.getImages());
+        }
     }
 
     @Override
@@ -243,6 +248,7 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     @Override
     public RoomTypeDetailResponse convertToRoomTypeDetailResponse(RoomType roomType) {
+
         return RoomTypeDetailResponse.builder()
                 .id(roomType.getId())
                 .name(roomType.getName())

@@ -28,6 +28,11 @@ public class HotelController {
         this.hotelAmenityService = hotelAmenityService;
     }
 
+    @GetMapping(value = "/{hotelId}")
+    public  HotelDetails getHotelById(@RequestHeader("userId") Integer userId, @PathVariable Integer hotelId) {
+        return hotelService.getHotelDetailsById(userId, hotelId);
+    }
+
     @GetMapping("/top-4-hotels")
     public Set<HotelWithTopRating> getTop4HotelsWithFirstImage() {
         return hotelService.getTop4HotelsWithFirstImage();

@@ -131,7 +131,9 @@ public class HotelServiceImpl implements HotelService {
         hotelRepository.save(hotel);
         updateHotelAmenities(hotel, request.getAmenities());
         updateExtraAmenities(hotel, request.getExtraServices());
-        updateHotelImages(hotel, request.getImages());
+        if (request.getImages() != null && !request.getImages().isEmpty()) {
+            updateHotelImages(hotel, request.getImages());
+        }
     }
 
 
@@ -498,6 +500,34 @@ public class HotelServiceImpl implements HotelService {
             hotel.setStatus(HotelStatus.DECLINED);
             hotelRepository.save(hotel);
             emailService.sendDeclineNotification(hotel.getUser(), hotel);
+        }
+    }
+
+    @Override
+    public HotelDetails getHotelDetailsById(Integer userId, Integer hotelId) {
+        Optional<Hotel> optionalHotel = hotelRepository.findByIdAndUserId(hotelId, userId);
+
+        if (optionalHotel.isPresent()) {
+            Hotel hotel = optionalHotel.get();
+
+            return HotelDetails.builder()
+                    .id(hotel.getId())
+                    .hotelName(hotel.getName())
+                    .address(buildAddress(hotel.getProvince(), hotel.getDistrict(), hotel.getWard(), hotel.getStreet()))
+                    .minPrice(getMinPriceByHotelId(hotel))
+                    .checkIn(hotel.getCheckInTime())
+                    .checkOut(hotel.getCheckOutTime())
+                    .description(hotel.getDescription())
+                    .hotelImages(getHotelImagePaths(hotel.getId()))
+                    .hotelAmenities(getAmenityNamesByHotelId(hotel.getId()))
+                    .extraServices(getExtraAmenitiesByHotelId(hotel.getId()))
+                    .roomList(getRoomTypeDetails(hotel.getRoomTypes().stream().toList(), null , null))
+                    .reviews(getReviews(hotel.getReviews().stream().toList()))
+                    .rules(getRules(hotel))
+                    .status(hotel.getStatus())
+                    .build();
+        } else {
+            throw new ResponseException("Hotel not found");
         }
     }
 }
