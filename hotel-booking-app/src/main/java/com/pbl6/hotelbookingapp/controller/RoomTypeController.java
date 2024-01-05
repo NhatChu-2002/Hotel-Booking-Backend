@@ -100,4 +100,12 @@ public class RoomTypeController {
         return new ResponseEntity<>(views, HttpStatus.OK);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<RoomTypeDetailResponse>> searchRoomTypes(
+            @RequestHeader Integer hotelId,
+            @RequestParam String name) {
+        List<RoomTypeDetailResponse> roomTypes = roomTypeService.searchRoomTypesByName(hotelId, name);
+        return new ResponseEntity<>(roomTypes, HttpStatus.OK);
+    }
+
 }

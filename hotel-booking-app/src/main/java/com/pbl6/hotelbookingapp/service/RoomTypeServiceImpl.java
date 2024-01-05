@@ -280,4 +280,12 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         Hotel hotel = hotelRepository.findById(hotelId).orElseThrow(() -> new HotelNotFoundException("Hotel not found"));
         return roomTypeRepository.getAvailableRooms(hotelId, roomAvailableRequest.getStartDay(), roomAvailableRequest.getEndDay());
     }
+
+    @Override
+    public List<RoomTypeDetailResponse> searchRoomTypesByName(Integer hotelId, String name) {
+        List<RoomType> roomTypes = roomTypeRepository.findByNameContainingAndHotelId(name, hotelId);
+        return roomTypes.stream()
+                .map(this::convertToRoomTypeDetailResponse)
+                .collect(Collectors.toList());
+    }
 }

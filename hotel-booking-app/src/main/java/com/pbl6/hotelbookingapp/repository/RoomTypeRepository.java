@@ -25,6 +25,8 @@ public interface RoomTypeRepository extends JpaRepository<RoomType,Integer> {
 
     RoomType findByHotelIdAndId(Integer hotelId, Integer roomTypeId);
 
+    List<RoomType> findByNameContainingAndHotelId(String name, Integer hotelId);
+
     List<RoomType> findByHotelId(Integer hotelId);
     @Query("SELECT new com.pbl6.hotelbookingapp.dto.RoomAvailableResponse(" +
             "rt.name, " +

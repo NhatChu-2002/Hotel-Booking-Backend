@@ -51,4 +51,7 @@ public interface RoomTypeService {
     void updatePrice(Integer hotelId, Integer roomTypeId, Double newPrice);
 
     List<RoomAvailableResponse> getAvailableRooms(Integer hotelId, RoomAvailableRequest roomAvailableRequest);
+
+    List<RoomTypeDetailResponse> searchRoomTypesByName(Integer hotelId, String name);
+
 }
